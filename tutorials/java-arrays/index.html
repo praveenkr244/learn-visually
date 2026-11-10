@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inside Java Arrays</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../assets/theme.css">
+<script src="../../assets/embed.js"></script>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Java interview questions, drawn in memory</div>
+  <h1 aria-label="Inside Java Arrays"><span aria-hidden="true">Inside Java</span><span class="tcells" aria-hidden="true" id="titleCells"></span></h1>
+  <p class="lede">An array is one object on the heap with a fixed row of slots. Your variable holds only its address. Press Play on any diagram to watch it happen.</p>
+  <div class="legend">
+    <span style="color:var(--stack)"><b></b><span style="color:var(--muted)">Stack: variables holding addresses</span></span>
+    <span style="color:var(--heap)"><b></b><span style="color:var(--muted)">Heap: array objects and their slots</span></span>
+    <span style="color:var(--pool)"><b></b><span style="color:var(--muted)">Other objects, such as Strings</span></span>
+    <span style="color:var(--hot)"><b></b><span style="color:var(--muted)">Pink: what just changed</span></span>
+    <span style="color:var(--gc)"><b class="dash"></b><span style="color:var(--muted)">Grey dashes: garbage</span></span>
+  </div>
+  <div data-scene="hero"></div>
+</header>
+</div>
+
+<nav class="topics" aria-label="Topics"><div class="wrap"><ul>
+  <li><a href="#memory">Memory</a></li>
+  <li><a href="#copying">Copying and 2D</a></li>
+  <li><a href="#internals">Internals</a></li>
+  <li><a href="#coding">Coding</a></li>
+  <li><a href="#quiz">Predict the output</a></li>
+  <li><a href="#quick">Quick answers</a></li>
+</ul></div></nav>
+
+<main class="wrap">
+
+<section class="topic" id="memory">
+  <div><h2>How arrays live in memory</h2><p class="intro">Most array questions come down to two facts: the array is an object, and variables hold its address.</p></div>
+
+  <article class="q">
+    <h3><span class="n">Q1</span>What is an array in Java?</h3>
+    <p>An array is an object that holds a fixed number of values of one type in a single block of memory. Its size is set when it is created and can never change. It carries a <code>length</code> field, and it lives on the heap even when the elements are primitives.</p>
+    <figure class="fig">
+      <div class="anatomy" role="img" aria-label="A stack variable nums points to an int array object. The object has an 8 byte mark word, a 4 byte class pointer, a 4 byte length field holding 5, then five 4 byte elements at offsets 16 to 32.">
+        <div class="box s"><h4>STACK</h4>nums = @3f2a</div>
+        <span class="to" aria-hidden="true">→</span>
+        <div class="box h"><h4>int[] @3f2a</h4>
+          <dl><dt>mark word</dt><dd>8 bytes</dd><dd>lock and GC bits</dd><dt>class</dt><dd>4 bytes</dd><dd>"I am an int[]"</dd><dt>length</dt><dd>4 bytes</dd><dd>= 5</dd></dl>
+          <div class="cells" id="anatomyCells"></div>
+        </div>
+      </div>
+      <figcaption class="say"><code>int[] nums = {10, 20, 30, 40, 50};</code> on a 64-bit HotSpot JVM. Small labels show each element's byte offset. Size: 16-byte header + 5 × 4 = 36 bytes, padded to 40.</figcaption>
+    </figure>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q2</span>What are the default values of array elements?</h3>
+    <p>Unlike local variables, array slots are always initialised. Numbers get <code>0</code>, booleans get <code>false</code>, chars get <code>'\u0000'</code>, and every reference slot gets <code>null</code>.</p>
+    <div data-scene="defaults"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q3</span>What does an array of objects actually store?</h3>
+    <p>Addresses. A <code>String[]</code> doesn't contain any characters. Each slot points at a separate String object, or is <code>null</code>. Creating the array doesn't create a single String.</p>
+    <div data-scene="refs"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q4</span>Is an array passed by reference to a method?</h3>
+    <p>No. Java always passes by value. For an array, the value being copied is the address. The method can change the elements through that address, but reassigning its parameter doesn't affect the caller's variable.</p>
+    <div data-scene="method"></div>
+  </article>
+</section>
+
+<section class="topic" id="copying">
+  <div><h2>Copying, comparing and 2D arrays</h2><p class="intro">Where most aliasing bugs come from.</p></div>
+
+  <article class="q">
+    <h3><span class="n">Q5</span>How do you copy an array?</h3>
+    <p><code>b = a</code> isn't a copy. It gives a second name to the same array. To get a real copy, create a new array.</p>
+    <div data-scene="copy"></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Method</th><th>New array?</th><th>Use it when</th></tr></thead>
+      <tbody>
+        <tr><td><code>a.clone()</code></td><td>Yes</td><td>You want an exact copy of the same length</td></tr>
+        <tr><td><code>Arrays.copyOf(a, n)</code></td><td>Yes</td><td>You want to grow or shrink. Extra slots get default values</td></tr>
+        <tr><td><code>Arrays.copyOfRange(a, from, to)</code></td><td>Yes</td><td>You want part of the array. <code>to</code> is exclusive</td></tr>
+        <tr><td><code>System.arraycopy(src, sp, dst, dp, len)</code></td><td>No, fills an existing one</td><td>The target already exists. Works even when the ranges overlap</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">All four are shallow. They copy the values in the slots, which for object arrays means copying addresses.</p>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q6</span>What is the difference between a shallow and a deep copy?</h3>
+    <p>A 2D array is an array whose slots hold the addresses of row arrays. <code>clone()</code> copies the outer array only, so both copies share the rows. A deep copy clones every row as well.</p>
+    <div data-scene="deep"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q7</span>What is a jagged array?</h3>
+    <p>Because each row is a separate array, rows can have different lengths. <code>new int[3][]</code> creates only the outer array. <code>new int[3][4]</code> creates 4 objects: the outer array plus 3 rows.</p>
+    <div data-scene="jagged"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q8</span>How do you compare two arrays?</h3>
+    <p>Use <code>Arrays.equals(a, b)</code> for one-dimensional arrays and <code>Arrays.deepEquals(a, b)</code> for nested ones. Both <code>==</code> and <code>a.equals(b)</code> only check whether the two variables point at the same object.</p>
+    <div data-scene="eq"></div>
+  </article>
+</section>
+
+<section class="topic" id="internals">
+  <div><h2>Internals and exceptions</h2><p class="intro">Why arrays are fast, and what the JVM checks for you.</p></div>
+
+  <article class="q">
+    <h3><span class="n">Q9</span>Why is <code>a[i]</code> O(1), and why do indexes start at 0?</h3>
+    <p>All elements are the same size and sit next to each other, so the JVM finds any element with one multiply and one add. Reading <code>a[0]</code> and <code>a[999999]</code> takes the same time. Index 0 sits right at the start of the element data, so no subtraction is needed. Change the type and index to see the calculation.</p>
+    <div class="widget">
+      <div class="field"><span class="fl">Element type</span><span id="ofTypes" style="display:flex;flex-wrap:wrap;gap:6px"></span></div>
+      <div class="field"><label for="ofIdx">Index i</label><input type="range" id="ofIdx" min="0" max="5" value="3"><span class="big" id="ofI"></span></div>
+      <div class="strip" id="ofStrip"></div>
+      <div class="calc" id="ofCalc" aria-live="polite"></div>
+      <p class="note">Assumes a 64-bit HotSpot JVM with compressed pointers, so a reference takes 4 bytes. The base address 0x7C10 is made up.</p>
+    </div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q10</span>When is <code>ArrayIndexOutOfBoundsException</code> thrown?</h3>
+    <p>Valid indexes run from <code>0</code> to <code>length - 1</code>. The JVM checks every access, so reading past the end throws instead of returning random memory as C would. The classic cause is <code>&lt;=</code> in a loop. A negative size in <code>new int[-1]</code> throws <code>NegativeArraySizeException</code>.</p>
+    <div data-scene="bounds"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q11</span>What is <code>ArrayStoreException</code>?</h3>
+    <p>Arrays are covariant: a <code>String[]</code> can be used where an <code>Object[]</code> is expected. That lets the compiler accept code that is wrong, so the JVM checks every store into an object array at run time. Generics avoid this by being invariant, which is also why <code>new T[n]</code> isn't allowed.</p>
+    <div data-scene="covar"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q12</span>Array or ArrayList?</h3>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>Array</th><th>ArrayList</th></tr></thead>
+      <tbody>
+        <tr><th>Size</th><td>Fixed when created</td><td>Grows by about 1.5× when full, starting at 10</td></tr>
+        <tr><th>Element types</th><td>Primitives and objects</td><td>Objects only. <code>int</code> is boxed to <code>Integer</code></td></tr>
+        <tr><th>Length</th><td><code>a.length</code>, a field</td><td><code>list.size()</code>, a method</td></tr>
+        <tr><th>Memory for 1,000 ints</th><td>About 4 KB</td><td>About 20 KB: a 4-byte reference plus a 16-byte Integer each (small values are cached)</td></tr>
+        <tr><th>Type safety</th><td>Checked at run time</td><td>Checked at compile time</td></tr>
+        <tr><th>Use it for</th><td>Fixed-size data, primitives, speed</td><td>Collections that change size</td></tr>
+      </tbody>
+    </table></div>
+  </article>
+</section>
+
+<section class="topic" id="coding">
+  <div><h2>Coding questions</h2><p class="intro">Type your own numbers, separated by commas, then press Play to trace them.</p></div>
+
+  <article class="q">
+    <h3><span class="n">Q13</span>Binary search</h3>
+    <p>On a sorted array, check the middle and throw away the half that can't hold the target. This takes O(log n) steps, so 1 million elements need at most 20 checks. <code>(lo + hi) &gt;&gt;&gt; 1</code> avoids the overflow that <code>(lo + hi) / 2</code> can hit on huge arrays.</p>
+    <div class="field"><label for="bsIn">a =</label><input type="text" id="bsIn" value="2, 5, 8, 12, 16, 23, 38, 56, 72, 91" autocomplete="off" spellcheck="false"><label for="bsT">target =</label><input type="text" id="bsT" class="short" value="23" autocomplete="off" spellcheck="false"></div>
+    <p class="note">The numbers are sorted for you, since binary search needs sorted input.</p>
+    <div data-scene="bs"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q14</span>Bubble sort</h3>
+    <p>Compare neighbours and swap them when they're out of order. Each pass moves the largest remaining value to the end. It takes O(n²) time, but stopping when a pass makes no swaps makes it O(n) on sorted input. Up to 8 numbers.</p>
+    <div class="field"><label for="bubIn">a =</label><input type="text" id="bubIn" value="5, 1, 4, 2, 8" autocomplete="off" spellcheck="false"></div>
+    <div data-scene="bub"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q15</span>Maximum subarray sum (Kadane's algorithm)</h3>
+    <p>At each element, decide whether to extend the current run or start a new one there. Track the best sum seen so far. One pass gives O(n) time and O(1) extra space.</p>
+    <div class="field"><label for="kIn">a =</label><input type="text" id="kIn" value="-2, 1, -3, 4, -1, 2, 1, -5, 4" autocomplete="off" spellcheck="false"></div>
+    <div data-scene="kad"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q16</span>Two Sum on a sorted array</h3>
+    <p>Put one pointer at each end. If the sum is too small, move the left pointer right. If it's too big, move the right pointer left. This takes O(n) time with no extra memory. For unsorted input, a HashMap gives O(n) time instead.</p>
+    <div class="field"><label for="tsIn">a =</label><input type="text" id="tsIn" value="1, 3, 4, 6, 8, 11" autocomplete="off" spellcheck="false"><label for="tsT">target =</label><input type="text" id="tsT" class="short" value="10" autocomplete="off" spellcheck="false"></div>
+    <div data-scene="two"></div>
+  </article>
+</section>
+
+<section class="topic" id="quiz">
+  <div><h2>Predict the output</h2><p class="intro">Pick an answer to see the explanation.</p></div>
+  <div class="score"><span id="score" aria-live="polite"></span><button class="btn" id="quizReset" type="button">Start again</button></div>
+  <div class="quiz" id="quizBox"></div>
+</section>
+
+<section class="topic" id="quick">
+  <div><h2>Quick answers</h2></div>
+  <dl class="grid2">
+    <div><dt><code>length</code>, <code>length()</code> or <code>size()</code>?</dt><dd>Arrays have a <code>length</code> field. Strings have <code>length()</code>. Collections have <code>size()</code>.</dd></div>
+    <div><dt>Can an array change size?</dt><dd>No. Make a bigger one with <code>Arrays.copyOf</code>, or use an ArrayList.</dd></div>
+    <div><dt>How do I print an array?</dt><dd><code>Arrays.toString(a)</code>, or <code>Arrays.deepToString(m)</code> for 2D arrays.</dd></div>
+    <div><dt>What does <code>Arrays.sort</code> use?</dt><dd>Dual-Pivot Quicksort for primitives. TimSort for objects, which is stable.</dd></div>
+    <div><dt>What does <code>Arrays.asList</code> return?</dt><dd>A fixed-size list backed by the array. <code>set()</code> writes through to it, and <code>add()</code> throws <code>UnsupportedOperationException</code>.</dd></div>
+    <div><dt>What is the largest possible array?</dt><dd>Indexes are <code>int</code>, so just under 2<sup>31</sup> − 1 elements, if the heap is big enough.</dd></div>
+    <div><dt><code>int[] a, b</code> or <code>int a[], b</code>?</dt><dd>In the first, both are arrays. In the second, <code>b</code> is a plain <code>int</code>.</dd></div>
+    <div><dt>What are varargs?</dt><dd><code>int... nums</code> is an <code>int[]</code> inside the method. Callers can pass values or an array.</dd></div>
+    <div><dt>Can I create <code>new T[n]</code>?</dt><dd>No, because generic types are erased at run time. Use <code>(T[]) new Object[n]</code> or <code>Array.newInstance</code>.</dd></div>
+    <div><dt>Are arrays thread-safe?</dt><dd>No. Use locks, or <code>AtomicIntegerArray</code> for counters shared between threads.</dd></div>
+  </dl>
+</section>
+</main>
+
+<div class="wrap"><footer>
+  <span>Addresses such as @3f2a are made up for illustration. Sizes assume a 64-bit HotSpot JVM with compressed pointers.</span>
+  <span>Companion page: <a href="../../index.html#strings" target="_top">Inside java.lang.String</a></span>
+</footer></div>
+<script src="script.js"></script>
+</body>
+</html>

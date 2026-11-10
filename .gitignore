@@ -1,0 +1,16 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# Python (if you add scripts)
+__pycache__/
+.venv/
+venv/
+
+# Node (if you add tooling later)
+node_modules/
+dist/

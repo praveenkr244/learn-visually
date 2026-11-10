@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learn Visually</title>
+<meta name="description" content="Animated, interactive tutorials: Java Strings, Java Arrays and Python from beginner to advanced.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="assets/shell.css">
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="#" data-home>
+    <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="11" height="11" rx="3" fill="var(--t1)"/><rect x="18" y="3" width="11" height="11" rx="3" fill="var(--t2)"/><rect x="3" y="18" width="11" height="11" rx="3" fill="var(--t3)"/><circle cx="23.5" cy="23.5" r="5.5" fill="none" stroke="var(--ink)" stroke-width="2.5"/></svg>
+    <span>Learn Visually</span>
+  </a>
+  <nav class="tabs" role="tablist" aria-label="Tutorials" id="tabs"></nav>
+  <div class="tools">
+    <div class="seg" role="group" aria-label="Color theme">
+      <button type="button" data-theme-btn="auto" aria-pressed="true" title="Follow system">Auto</button>
+      <button type="button" data-theme-btn="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-btn="dark" aria-pressed="false">Dark</button>
+    </div>
+    <a class="newtab" id="newTab" href="#" target="_blank" rel="noopener" title="Open this tutorial on its own">Open ↗</a>
+  </div>
+</header>
+<main id="panels"></main>
+<script src="assets/tutorials.js"></script>
+<script src="assets/shell.js"></script>
+</body>
+</html>

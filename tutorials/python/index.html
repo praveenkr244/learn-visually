@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python, Visually</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../assets/theme.css">
+<script src="../../assets/embed.js"></script>
+</head>
+<body>
+<div class="top">
+  <div class="top-in">
+    <button class="menu-btn" id="menuBtn" aria-controls="toc" aria-expanded="false">☰ Contents</button>
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><path d="M15.8 2c-6.6 0-6.2 2.9-6.2 2.9v3h6.3v.9H7.1S3 8.3 3 14.9s3.6 6.4 3.6 6.4h2.1v-3.1s-.1-3.6 3.5-3.6h6.1s3.4.1 3.4-3.3V5.6S22.2 2 15.8 2zm-3.4 2a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2z" fill="#3776ab"/><path d="M16.2 30c6.6 0 6.2-2.9 6.2-2.9v-3h-6.3v-.9h8.8s4.1.5 4.1-6.1-3.6-6.4-3.6-6.4h-2.1v3.1s.1 3.6-3.5 3.6h-6.1s-3.4-.1-3.4 3.3v5.7S9.8 30 16.2 30zm3.4-2a1.1 1.1 0 1 1 0-2.2 1.1 1.1 0 0 1 0 2.2z" fill="#ffd43b"/></svg>
+      Python, Visually
+    </div>
+    <div class="search"><input id="q" type="search" placeholder="Search lessons and cheat sheet… (try “slice”, “dict”, “async”)" aria-label="Search lessons"></div>
+    <div class="chips" role="group" aria-label="Filter by level">
+      <button class="chip" data-f="all" aria-pressed="true">All</button>
+      <button class="chip" data-f="b" aria-pressed="false">Beginner</button>
+      <button class="chip" data-f="i" aria-pressed="false">Intermediate</button>
+      <button class="chip" data-f="a" aria-pressed="false">Advanced</button>
+      <button class="chip" data-f="d" aria-pressed="false">Dev</button>
+    </div>
+    <div class="pystat" title="Code runs in your browser with Pyodide (real CPython compiled to WebAssembly)"><span class="dot" id="pyDot"></span><span id="pyText">Python loads on first Run</span></div>
+  </div>
+  <div class="progress"><i id="prog"></i></div>
+</div>
+<div class="scrim" id="scrim"></div>
+<div class="shell">
+<nav class="toc" id="toc" aria-label="Lessons"></nav>
+<main id="main">
+
+<section class="hero" id="top">
+  <h1>Learn Python by <span>watching it run</span></h1>
+  <p>A complete path from your first <code>print()</code> to async code, testing and packaging. Every lesson has a diagram or a step-through animation, and most code blocks have a <b>Run</b> button that executes real Python right in this page. Use the search box and level filters as a quick reference once you know the basics.</p>
+  <div class="road">
+    <a href="#start" style="--c:var(--good)"><b>1 · Beginner</b><small>Syntax, types, strings, control flow, collections, functions, errors, files</small></a>
+    <a href="#comprehensions" style="--c:var(--warn)"><b>2 · Intermediate</b><small>Comprehensions, OOP, iterators, generators, decorators, context managers</small></a>
+    <a href="#typing" style="--c:var(--adv)"><b>3 · Advanced</b><small>Type hints, dataclasses, pattern matching, async, concurrency, performance</small></a>
+    <a href="#envs" style="--c:var(--accent)"><b>4 · Development</b><small>Environments, project layout, testing, tooling, APIs, databases</small></a>
+  </div>
+  <figure class="viz play" id="playground" style="margin-top:22px">
+    <div class="viz-title">Playground: edit and run any Python</div>
+    <textarea id="playCode" spellcheck="false" aria-label="Python code">name = "World"
+for i in range(3):
+    print(f"Hello, {name}! #{i + 1}")
+
+squares = {n: n * n for n in range(1, 6)}
+print(squares)</textarea>
+    <div class="ctrl"><button class="btn pri" id="playRun">▶ Run</button><button class="btn" id="playClear">Clear output</button><span class="stp-count">Tip: every code block below has “Edit” to load it here.</span></div>
+    <pre class="console" id="playOut"></pre>
+  </figure>
+</section>
+
+<!-- ===================== BEGINNER ===================== -->
+<section class="lesson" id="start" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Getting started</h2>
+<p class="lede">Python is a readable, general-purpose language used for web apps, automation, data science, AI, scripting and teaching. You write plain text files ending in <code>.py</code> and the Python interpreter runs them.</p></header>
+
+<h3>Install and run</h3>
+<ol>
+<li>Download Python 3.12 or newer from <a href="https://www.python.org/downloads/">python.org</a> (on Windows tick “Add python.exe to PATH”). macOS: <code>brew install python</code>. Linux usually ships with it.</li>
+<li>Check it works: open a terminal and type <code>python --version</code> (or <code>python3 --version</code>).</li>
+<li>Type <code>python</code> alone to get the interactive <b>REPL</b> (the <code>&gt;&gt;&gt;</code> prompt). Great for trying one-liners. Exit with <code>exit()</code>.</li>
+<li>Save code in <code>hello.py</code> and run <code>python hello.py</code>.</li>
+<li>Use an editor with Python support: VS Code (with the Python extension) or PyCharm.</li>
+</ol>
+
+<figure class="viz">
+<div class="viz-title">What happens when you run a .py file</div>
+<div class="pipe">
+  <div class="st lit"><b>hello.py</b><small>your source text</small><code>print("Hi")</code></div><div class="ar"></div>
+  <div class="st lit" style="animation-delay:1.6s"><b>Compiler</b><small>tokenize → parse → AST</small></div><div class="ar"></div>
+  <div class="st lit" style="animation-delay:3.2s"><b>Bytecode</b><small>cached in __pycache__/*.pyc</small><code>LOAD_NAME print
+LOAD_CONST 'Hi'
+CALL 1</code></div><div class="ar"></div>
+  <div class="st lit" style="animation-delay:4.8s"><b>Python VM</b><small>executes bytecode one instruction at a time</small></div><div class="ar"></div>
+  <div class="st"><b>Output</b><small>Hi</small></div>
+</div>
+<figcaption>CPython (the standard interpreter) compiles your code to bytecode, then a virtual machine runs it. That is why Python is called “interpreted”: there is no separate build step for you to run.</figcaption>
+</figure>
+
+<h3>Your first program</h3>
+<pre class="code" data-run># Lines starting with # are comments: Python ignores them
+print("Hello, world!")
+print("2 + 3 =", 2 + 3)
+
+# Indentation (4 spaces) defines blocks; there are no { braces }
+if 2 + 3 == 5:
+    print("Math still works")
+    print("Same block, same indent")
+print("Back outside the block")</pre>
+
+<div class="callout"><b>Rules of the road</b>
+<p>Python is case-sensitive (<code>Name</code> ≠ <code>name</code>). A colon <code>:</code> starts a block and the indented lines below belong to it. Use 4 spaces, never mix tabs and spaces. One statement per line; long expressions can continue inside brackets.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does a <code>:</code> at the end of a line mean? <span class="ans">— An indented block follows.</span></li>
+<li>Where does Python store compiled bytecode? <span class="ans">— In <code>__pycache__</code> folders as <code>.pyc</code> files.</span></li>
+</ol></details>
+</section>
+
+<section class="lesson" id="variables" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Variables are name tags</h2>
+<p class="lede">A variable is not a box that holds a value. It is a <b>name</b> that points to an <b>object</b> somewhere in memory. Assignment <code>=</code> sticks a name onto an object.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Step through: names and objects</div>
+<div class="widget" data-w="vars"></div>
+<figcaption>Notice the list: <code>b = a</code> does not copy anything. Both names point to the same list, so changing it through <code>b</code> is visible through <code>a</code>. Integers can't be changed in place, so <code>x = x + 5</code> creates a new object.</figcaption>
+</figure>
+
+<pre class="code" data-run>age = 30            # int
+price = 19.99       # float
+name = "Ada"        # str
+is_admin = False    # bool
+nothing = None      # the "no value" object
+
+# Multiple assignment and swapping
+a, b = 1, 2
+a, b = b, a
+print(a, b)          # 2 1
+
+# Every object has an identity, a type and a value
+x = [1, 2]
+y = x
+print(id(x) == id(y), x is y, type(x))</pre>
+
+<div class="tbl"><table>
+<tr><th>Naming rule</th><th>Example</th></tr>
+<tr><td>Letters, digits, underscores; can't start with a digit</td><td><code>total_2</code> ✓ <code>2total</code> ✗</td></tr>
+<tr><td>Use <code>snake_case</code> for variables and functions</td><td><code>user_count</code></td></tr>
+<tr><td><code>UPPER_CASE</code> signals a constant (by convention)</td><td><code>MAX_RETRIES = 3</code></td></tr>
+<tr><td><code>PascalCase</code> for classes</td><td><code>BankAccount</code></td></tr>
+<tr><td>Don't shadow built-ins</td><td>avoid <code>list = [...]</code>, <code>str = ...</code></td></tr>
+</table></div>
+</section>
+
+<section class="lesson" id="types" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Built-in data types</h2>
+<p class="lede">Every value has a type, and the type decides what you can do with it. Python checks types while running (dynamic typing) and won't silently mix incompatible ones (strong typing).</p></header>
+
+<figure class="viz">
+<div class="viz-title">The type family tree</div>
+<div class="svg-wrap"><svg viewBox="0 0 820 250" width="100%" style="min-width:620px" role="img" aria-label="Python built-in types grouped into numbers, text, sequences, mappings, sets, and None">
+<g font-size="13" text-anchor="middle">
+<rect x="350" y="10" width="120" height="34" rx="8" fill="var(--accent)"/><text x="410" y="32" fill="var(--accent-ink)" font-weight="700">object</text>
+<g stroke="var(--line)" stroke-width="2"><path d="M410 44 V70 H70 V92 M410 70 H230 V92 M410 70 H400 V92 M410 70 H570 V92 M410 70 H700 V92"/></g>
+<g font-weight="700" fill="var(--ink)">
+<rect x="10" y="92" width="120" height="30" rx="7" fill="var(--soft)" stroke="var(--accent)"/><text x="70" y="112">Numbers</text>
+<rect x="170" y="92" width="120" height="30" rx="7" fill="var(--soft)" stroke="var(--accent)"/><text x="230" y="112">Sequences</text>
+<rect x="340" y="92" width="120" height="30" rx="7" fill="var(--soft)" stroke="var(--accent)"/><text x="400" y="112">Mapping</text>
+<rect x="510" y="92" width="120" height="30" rx="7" fill="var(--soft)" stroke="var(--accent)"/><text x="570" y="112">Sets</text>
+<rect x="640" y="92" width="120" height="30" rx="7" fill="var(--soft)" stroke="var(--accent)"/><text x="700" y="112">Singletons</text>
+</g>
+<g font-family="JetBrains Mono, monospace" font-size="12.5" fill="var(--ink)">
+<text x="70" y="150">int  42</text><text x="70" y="172">float  3.14</text><text x="70" y="194">complex  2+3j</text><text x="70" y="216">bool  True</text>
+<text x="230" y="150">str  "hi"</text><text x="230" y="172">list  [1, 2]</text><text x="230" y="194">tuple  (1, 2)</text><text x="230" y="216">range  range(5)</text><text x="230" y="238">bytes  b"hi"</text>
+<text x="400" y="150">dict</text><text x="400" y="172">{"a": 1}</text>
+<text x="570" y="150">set  {1, 2}</text><text x="570" y="172">frozenset</text>
+<text x="700" y="150">None</text><text x="700" y="172">NotImplemented</text><text x="700" y="194">Ellipsis ...</text>
+</g></g>
+<g font-size="11.5" fill="var(--muted)"><text x="10" y="246">Mutable (can change in place): list, dict, set, bytearray.  Immutable: int, float, bool, str, tuple, frozenset, bytes.</text></g>
+</svg></div>
+</figure>
+
+<pre class="code" data-run>print(type(42), type(3.0), type("3"), type(True), type(None))
+
+# Converting between types
+print(int("42") + 1)      # 43
+print(float("2.5") * 2)   # 5.0
+print(str(99) + " red balloons")
+print(int(3.99))          # 3  (truncates toward zero)
+print(round(3.567, 2))    # 3.57
+print(bool(0), bool(""), bool([]), bool("False"))  # False False False True
+
+# Integers have unlimited size; floats are 64-bit binary
+print(2 ** 100)
+print(0.1 + 0.2)          # 0.30000000000000004  (binary rounding)
+from decimal import Decimal
+print(Decimal("0.1") + Decimal("0.2"))   # exact: 0.3
+
+# "3" + 3 is a TypeError: Python won't guess what you meant
+try:
+    "3" + 3
+except TypeError as e:
+    print("TypeError:", e)</pre>
+
+<div class="callout tip"><b>Readable numbers</b><p>Underscores are allowed in number literals: <code>1_000_000</code>. Other bases: <code>0b1010</code> (binary), <code>0o17</code> (octal), <code>0xFF</code> (hex).</p></div>
+</section>
+
+<section class="lesson" id="operators" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Operators</h2>
+<p class="lede">Operators combine values. Most work on numbers, but many also work on strings, lists and sets.</p></header>
+
+<div class="two">
+<div class="tbl"><table>
+<tr><th>Arithmetic</th><th>Result of <code>7 ? 3</code></th></tr>
+<tr><td><code>+ - *</code></td><td>10, 4, 21</td></tr>
+<tr><td><code>/</code> true division</td><td>2.333… (always float)</td></tr>
+<tr><td><code>//</code> floor division</td><td>2 (rounds down; <code>-7//3</code> is −3)</td></tr>
+<tr><td><code>%</code> remainder</td><td>1</td></tr>
+<tr><td><code>**</code> power</td><td>343</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Other operators</th><th>Example</th></tr>
+<tr><td>Comparison <code>== != &lt; &gt; &lt;= &gt;=</code></td><td><code>1 &lt; x &lt; 10</code> (chains!)</td></tr>
+<tr><td>Logical <code>and or not</code></td><td><code>x &gt; 0 and y &gt; 0</code></td></tr>
+<tr><td>Membership <code>in</code>, <code>not in</code></td><td><code>"a" in "cat"</code></td></tr>
+<tr><td>Identity <code>is</code>, <code>is not</code></td><td><code>x is None</code></td></tr>
+<tr><td>Augmented <code>+= -= *= //= ...</code></td><td><code>count += 1</code></td></tr>
+<tr><td>Bitwise <code>&amp; | ^ ~ &lt;&lt; &gt;&gt;</code></td><td><code>5 &amp; 3</code> → 1</td></tr>
+</table></div>
+</div>
+
+<pre class="code" data-run>print(17 // 5, 17 % 5, divmod(17, 5))   # 3 2 (3, 2)
+print("ab" * 3, [0] * 4)                 # repetition
+print(3 &lt; 5 &lt; 9)                         # chained comparison
+
+# and / or return one of their operands (short-circuit)
+name = ""
+print(name or "Anonymous")               # Anonymous
+print(0 and 1/0)                         # 0 — the division never runs
+
+# == compares values, is compares identity
+a = [1, 2]; b = [1, 2]
+print(a == b, a is b)                    # True False</pre>
+
+<div class="tbl"><table>
+<tr><th>Precedence (high → low)</th></tr>
+<tr><td><code>()</code> → <code>**</code> → unary <code>-x</code> → <code>* / // %</code> → <code>+ -</code> → <code>&lt;&lt; &gt;&gt;</code> → <code>&amp;</code> → <code>^</code> → <code>|</code> → comparisons, <code>in</code>, <code>is</code> → <code>not</code> → <code>and</code> → <code>or</code> → <code>if/else</code> → <code>lambda</code> → <code>:=</code></td></tr>
+</table></div>
+<p>When in doubt, add parentheses. Note <code>-2 ** 2</code> is <code>-4</code> because <code>**</code> binds tighter than unary minus.</p>
+</section>
+
+<section class="lesson" id="strings" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Strings, indexing and slicing</h2>
+<p class="lede">A string is an immutable sequence of Unicode characters. Each character has a positive index from the left (starting at 0) and a negative index from the right (starting at −1).</p></header>
+
+<figure class="viz">
+<div class="viz-title">Interactive slicer: s[start:stop:step]</div>
+<div class="widget" data-w="slicer"></div>
+<figcaption>The slice includes <code>start</code> and stops <i>before</i> <code>stop</code>. Leave a field empty to use the default. A negative step walks backwards, so <code>s[::-1]</code> reverses the string.</figcaption>
+</figure>
+
+<pre class="code" data-run>s = "Python"
+print(s[0], s[-1], s[1:4], s[:2], s[2:], s[::-1])
+print(len(s), "th" in s)
+
+# Strings are immutable: build a new one instead
+t = "J" + s[1:]
+print(t)
+
+# Common methods (they return NEW strings)
+msg = "  Hello, World  "
+print(msg.strip().lower())
+print(msg.strip().upper().replace("WORLD", "PYTHON"))
+print("a,b,c".split(","))           # ['a', 'b', 'c']
+print("-".join(["2026", "11", "10"]))
+print("report.pdf".endswith(".pdf"), "abc123".isalnum(), "42".isdigit())
+print("hello world".title(), "Hello".center(11, "*"))
+print("banana".count("a"), "banana".find("n"), "banana".index("n"))
+
+# Multi-line and raw strings
+poem = """Line one
+Line two"""
+path = r"C:\new\folder"    # r = raw: backslashes are literal
+print(poem, path, sep="\n")</pre>
+
+<h3>f-strings: formatting values</h3>
+<pre class="code" data-run>name, score, ratio = "Ada", 1234.5678, 0.4567
+print(f"{name} scored {score}")
+print(f"{score:.2f}")        # 1234.57   2 decimals
+print(f"{score:,.1f}")       # 1,234.6   thousands separator
+print(f"{ratio:.1%}")        # 45.7%
+print(f"[{name:>8}]")        # right-align in 8 chars
+print(f"[{name:&lt;8}]")        # left-align
+print(f"[{name:^8}]")        # center
+print(f"{42:05d} {255:x} {255:b}")   # 00042 ff 11111111
+print(f"{score=}")           # debug: score=1234.5678
+print(f"{2 + 3 = }")         # 2 + 3 = 5</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li><code>"abcdef"[1:5:2]</code>? <span class="ans">— <code>"bd"</code> (indices 1 and 3).</span></li>
+<li>Why does <code>s[0] = "J"</code> fail? <span class="ans">— Strings are immutable; create a new string.</span></li>
+</ol></details>
+</section>
+
+<section class="lesson" id="io" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Input and output</h2>
+<p class="lede"><code>print()</code> writes text out; <code>input()</code> reads a line typed by the user and always returns a string.</p></header>
+<pre class="code" data-run>print("a", "b", "c")              # a b c
+print("a", "b", "c", sep="-")     # a-b-c
+print("no newline", end=" | ")
+print("same line")
+
+items = ["apple", "kiwi"]
+print(*items, sep=", ")           # unpack a list into print</pre>
+<pre class="code"># input() pauses and waits for the user (run this in your own terminal)
+name = input("Your name: ")
+age = int(input("Your age: "))   # convert the text to a number
+print(f"Hi {name}, next year you'll be {age + 1}")</pre>
+<div class="callout warn"><b>Common bug</b><p><code>input()</code> returns text. <code>input() + 1</code> raises a <code>TypeError</code>. Convert with <code>int()</code> or <code>float()</code>, and handle <code>ValueError</code> if the user types something that isn't a number.</p></div>
+</section>
+
+<section class="lesson" id="conditions" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Conditions: if, elif, else</h2>
+<p class="lede">Python checks each condition from top to bottom and runs the <b>first</b> block whose condition is true. The rest are skipped.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Drag the slider and watch the path</div>
+<div class="widget" data-w="flow"></div>
+</figure>
+
+<pre class="code" data-run>temp = 22
+if temp > 30:
+    print("hot")
+elif temp > 15:
+    print("pleasant")
+else:
+    print("cold")
+
+# Conditional expression (ternary)
+label = "even" if temp % 2 == 0 else "odd"
+print(label)
+
+# Truthiness: empty/zero values count as False
+for value in [0, 1, "", "x", [], [0], None, {}]:
+    print(repr(value), "->", "truthy" if value else "falsy")</pre>
+
+<div class="tbl"><table>
+<tr><th>Falsy values (everything else is truthy)</th></tr>
+<tr><td><code>False</code>, <code>None</code>, <code>0</code>, <code>0.0</code>, <code>""</code>, <code>[]</code>, <code>()</code>, <code>{}</code>, <code>set()</code>, <code>range(0)</code></td></tr>
+</table></div>
+<p>Prefer <code>if items:</code> over <code>if len(items) &gt; 0:</code>, and <code>if x is None:</code> over <code>if x == None:</code>. For many fixed cases, see <a href="#match">match statements</a>.</p>
+</section>
+
+<section class="lesson" id="loops" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Loops: for and while</h2>
+<p class="lede"><code>for</code> walks through every item of an iterable (list, string, range, dict, file…). <code>while</code> repeats as long as a condition stays true.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Step through a for loop</div>
+<div class="widget" data-w="loop"></div>
+</figure>
+
+<pre class="code" data-run>for i in range(5):            # 0 1 2 3 4
+    print(i, end=" ")
+print()
+print(list(range(2, 10, 3)))  # start, stop (excluded), step → [2, 5, 8]
+
+# enumerate gives index + item; zip walks lists in parallel
+fruits = ["apple", "banana", "cherry"]
+prices = [1.2, 0.5, 3.0]
+for i, fruit in enumerate(fruits, start=1):
+    print(i, fruit)
+for fruit, price in zip(fruits, prices):
+    print(f"{fruit:8} ${price:.2f}")
+
+# while: repeat until a condition changes
+n = 10
+while n > 1:
+    n = n // 2
+    print("n is", n)
+
+# break exits the loop; continue skips to the next round
+for x in range(10):
+    if x % 2 == 0:
+        continue
+    if x > 7:
+        break
+    print("odd:", x)
+
+# for/else: else runs only if the loop did NOT break
+for x in [3, 5, 7]:
+    if x % 2 == 0:
+        print("found an even"); break
+else:
+    print("no even numbers")</pre>
+<div class="callout warn"><b>Avoid infinite loops</b><p>Make sure something inside a <code>while</code> loop moves it toward ending. Press <code>Ctrl+C</code> in the terminal to stop a runaway program. Don't add or remove items from a list while looping over it; loop over a copy (<code>for x in items[:]</code>) or build a new list.</p></div>
+</section>
+
+<section class="lesson" id="lists" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Lists and tuples</h2>
+<p class="lede">A <b>list</b> is an ordered, changeable collection: <code>[1, "two", 3.0]</code>. A <b>tuple</b> is an ordered, unchangeable one: <code>(1, 2)</code>. Use lists for collections that grow; tuples for fixed records like coordinates.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Play with list operations</div>
+<div class="widget" data-w="listops"></div>
+<figcaption>Adding or removing at the end is fast (O(1)). Inserting or removing at the front shifts every other element (O(n)). For fast operations at both ends use <code>collections.deque</code>.</figcaption>
+</figure>
+
+<pre class="code" data-run>nums = [5, 2, 9]
+nums.append(1)            # [5, 2, 9, 1]
+nums.extend([7, 3])       # add many
+nums.insert(0, 100)       # at index 0
+nums.remove(9)            # first matching value
+last = nums.pop()         # remove + return last
+print(nums, last)
+print(len(nums), min(nums), max(nums), sum(nums), 2 in nums)
+
+print(sorted(nums))                 # new sorted list
+nums.sort(reverse=True)             # sorts in place, returns None
+print(nums)
+words = ["kiwi", "Apple", "fig"]
+print(sorted(words, key=str.lower)) # sort by a key function
+print(sorted(words, key=len))
+
+matrix = [[1, 2, 3], [4, 5, 6]]     # nested list
+print(matrix[1][2])                 # 6
+
+# Tuples and unpacking
+point = (3, 4)
+x, y = point
+first, *rest = [1, 2, 3, 4]         # star collects the rest
+print(x, y, first, rest)
+single = (42,)                      # a one-item tuple needs the comma
+print(type(single), point.count(3), point.index(4))</pre>
+</section>
+
+<section class="lesson" id="dicts" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Dictionaries</h2>
+<p class="lede">A dict maps unique <b>keys</b> to <b>values</b>: <code>{"name": "Ada", "age": 36}</code>. Lookups by key are almost instant no matter how big the dict is, because of hashing. Since Python 3.7 dicts keep insertion order.</p></header>
+
+<figure class="viz">
+<div class="viz-title">How a dict finds a key: hashing into buckets</div>
+<div class="widget" data-w="hash"></div>
+<figcaption>Simplified model: Python computes <code>hash(key)</code>, uses it to pick a slot, and probes another slot on collision. That's why keys must be hashable (immutable): strings, numbers and tuples work; lists don't.</figcaption>
+</figure>
+
+<pre class="code" data-run>user = {"name": "Ada", "age": 36}
+user["email"] = "ada@example.com"   # add / update
+user["age"] += 1
+print(user["name"], user.get("phone"), user.get("phone", "n/a"))
+del user["email"]
+print("age" in user, len(user))
+
+for key, value in user.items():
+    print(key, "=", value)
+print(list(user.keys()), list(user.values()))
+
+# Counting things
+text = "the cat and the hat"
+counts = {}
+for word in text.split():
+    counts[word] = counts.get(word, 0) + 1
+print(counts)
+
+# Merging and handy methods
+defaults = {"theme": "light", "lang": "en"}
+prefs = {"theme": "dark"}
+print(defaults | prefs)             # merge (3.9+): right side wins
+print(user.setdefault("tags", []), user.pop("age"), user)
+
+from collections import Counter, defaultdict
+print(Counter(text.split()).most_common(2))
+groups = defaultdict(list)
+for w in ["apple", "avocado", "banana"]:
+    groups[w[0]].append(w)
+print(dict(groups))</pre>
+</section>
+
+<section class="lesson" id="sets" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Sets</h2>
+<p class="lede">A set is an unordered collection of <b>unique</b> items. It's perfect for removing duplicates and for fast “is this in there?” checks, and supports math-style operations.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Set operations as a Venn diagram</div>
+<div class="widget" data-w="venn"></div>
+</figure>
+
+<pre class="code" data-run>a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+print(a | b, a &amp; b, a - b, a ^ b)
+print(a.issubset({1, 2, 3, 4, 5}), {1, 2} &lt;= a)
+
+tags = ["py", "web", "py", "ai", "web"]
+unique = set(tags)
+print(unique, len(unique))
+unique.add("data"); unique.discard("web")
+print(sorted(unique))
+
+empty = set()        # {} is an empty DICT, not a set
+print(type({}), type(empty))</pre>
+<p>Membership tests (<code>x in s</code>) are O(1) on average for sets and dicts but O(n) for lists. If you check membership in a loop, convert the list to a set first.</p>
+</section>
+
+<section class="lesson" id="functions" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Functions and the call stack</h2>
+<p class="lede">A function is a named, reusable block of code. You define it once with <code>def</code> and call it as many times as you like. Each call gets its own <b>frame</b> on the call stack holding its local variables.</p></header>
+
+<pre class="code" data-run>def greet(name, greeting="Hello"):
+    """Return a greeting. (This is a docstring: help(greet) shows it.)"""
+    return f"{greeting}, {name}!"
+
+print(greet("Ada"))                     # default used
+print(greet("Linus", greeting="Hi"))    # keyword argument
+print(greet(greeting="Hey", name="Guido"))
+
+def stats(numbers):
+    return min(numbers), max(numbers), sum(numbers) / len(numbers)
+
+low, high, avg = stats([3, 9, 6])       # returning several values = a tuple
+print(low, high, avg)
+
+def say():
+    print("no return statement")
+print(say())                            # functions return None by default</pre>
+
+<figure class="viz">
+<div class="viz-title">Watch recursion build and unwind the call stack</div>
+<div class="widget" data-w="stack"></div>
+<figcaption>Every call pushes a new frame with its own <code>n</code>. When the base case returns, frames pop one by one and each multiplies by the result below it. Python limits depth to about 1000 frames (<code>RecursionError</code>).</figcaption>
+</figure>
+
+<div class="callout warn"><b>The mutable default trap</b><p>Default values are created once, when the function is defined. <code>def add(item, bucket=[])</code> shares one list across all calls. Use <code>bucket=None</code> and create the list inside. See <a href="#mutability">mutability</a>.</p></div>
+</section>
+
+<section class="lesson" id="scope" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Scope: where names live (LEGB)</h2>
+<p class="lede">When Python sees a name, it searches four scopes in order: <b>L</b>ocal → <b>E</b>nclosing function → <b>G</b>lobal (module) → <b>B</b>uilt-in. The first match wins.</p></header>
+<figure class="viz">
+<div class="viz-title">Name lookup walks outward</div>
+<div class="widget" data-w="legb"></div>
+</figure>
+<pre class="code" data-run>x = "global"
+
+def outer():
+    x = "enclosing"
+    def inner():
+        x = "local"
+        print("inner sees:", x)
+    inner()
+    print("outer sees:", x)
+
+outer()
+print("module sees:", x)
+
+counter = 0
+def bump():
+    global counter       # needed to REASSIGN a global
+    counter += 1
+bump(); bump()
+print(counter)
+
+def make_counter():
+    count = 0
+    def step():
+        nonlocal count   # reassign the enclosing variable
+        count += 1
+        return count
+    return step
+c = make_counter()
+print(c(), c(), c())</pre>
+<p>Reading an outer variable needs nothing special. Only <i>reassigning</i> it needs <code>global</code> or <code>nonlocal</code>. Prefer passing values in and returning them out over using globals.</p>
+</section>
+
+<section class="lesson" id="errors" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Errors and exceptions</h2>
+<p class="lede">When something goes wrong, Python <b>raises</b> an exception. If nobody catches it, the program stops and prints a traceback. <code>try/except</code> lets you catch and handle it.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Choose an input and follow the path through try / except / else / finally</div>
+<div class="widget" data-w="trypath"></div>
+</figure>
+
+<pre class="code" data-run>def parse_age(text):
+    if not text.isdigit():
+        raise ValueError(f"not a number: {text!r}")
+    return int(text)
+
+for raw in ["42", "forty"]:
+    try:
+        print("age:", parse_age(raw))
+    except ValueError as err:
+        print("problem:", err)
+
+# Custom exceptions: subclass Exception
+class InsufficientFunds(Exception):
+    pass
+
+def withdraw(balance, amount):
+    if amount > balance:
+        raise InsufficientFunds(f"need {amount - balance} more")
+    return balance - amount
+
+try:
+    withdraw(50, 80)
+except InsufficientFunds as e:
+    print("Declined:", e)
+
+# Catch several types at once
+try:
+    {}["missing"]
+except (KeyError, IndexError) as e:
+    print(type(e).__name__, e)</pre>
+
+<div class="tbl"><table>
+<tr><th>Exception</th><th>Typical cause</th></tr>
+<tr><td><code>SyntaxError</code> / <code>IndentationError</code></td><td>Code isn't valid Python (found before running)</td></tr>
+<tr><td><code>NameError</code></td><td>Name not defined (typo?)</td></tr>
+<tr><td><code>TypeError</code></td><td>Wrong type: <code>"a" + 1</code>, wrong number of arguments</td></tr>
+<tr><td><code>ValueError</code></td><td>Right type, bad value: <code>int("abc")</code></td></tr>
+<tr><td><code>IndexError</code> / <code>KeyError</code></td><td>List index or dict key doesn't exist</td></tr>
+<tr><td><code>AttributeError</code></td><td>Object has no such attribute/method</td></tr>
+<tr><td><code>ZeroDivisionError</code></td><td>Divided by zero</td></tr>
+<tr><td><code>FileNotFoundError</code></td><td>Opening a path that doesn't exist</td></tr>
+<tr><td><code>ImportError</code> / <code>ModuleNotFoundError</code></td><td>Package not installed or misspelled</td></tr>
+</table></div>
+<div class="callout"><b>Reading a traceback</b><p>Read it from the <b>bottom</b>: the last line names the exception and message; the lines above show the chain of calls, ending with the line that failed. Never write a bare <code>except:</code>; catch the specific exceptions you expect.</p></div>
+</section>
+
+<section class="lesson" id="files" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Working with files</h2>
+<p class="lede">Open files with a <code>with</code> block so they always get closed, even if an error happens. Use <code>pathlib</code> for paths and the <code>json</code>/<code>csv</code> modules for structured data.</p></header>
+<pre class="code" data-run>from pathlib import Path
+
+path = Path("notes.txt")
+with open(path, "w", encoding="utf-8") as f:      # "w" overwrites
+    f.write("first line\n")
+    f.write("second line\n")
+
+with open(path, "a", encoding="utf-8") as f:      # "a" appends
+    print("third line", file=f)
+
+with open(path, encoding="utf-8") as f:           # "r" is the default
+    for line_no, line in enumerate(f, 1):         # streams line by line
+        print(line_no, line.rstrip())
+
+print(path.read_text(encoding="utf-8").splitlines())
+print(path.exists(), path.suffix, path.stem, path.stat().st_size, "bytes")
+
+import json
+data = {"user": "ada", "langs": ["python", "c"], "active": True}
+Path("data.json").write_text(json.dumps(data, indent=2))
+loaded = json.loads(Path("data.json").read_text())
+print(loaded["langs"])
+
+import csv
+with open("people.csv", "w", newline="") as f:
+    writer = csv.DictWriter(f, fieldnames=["name", "age"])
+    writer.writeheader()
+    writer.writerows([{"name": "Ada", "age": 36}, {"name": "Alan", "age": 41}])
+with open("people.csv", newline="") as f:
+    for row in csv.DictReader(f):
+        print(row["name"], int(row["age"]))</pre>
+<div class="tbl"><table>
+<tr><th>Mode</th><th>Meaning</th></tr>
+<tr><td><code>"r"</code></td><td>read (default); error if missing</td></tr>
+<tr><td><code>"w"</code></td><td>write; creates or <b>erases</b> the file</td></tr>
+<tr><td><code>"a"</code></td><td>append to the end</td></tr>
+<tr><td><code>"x"</code></td><td>create; error if it exists</td></tr>
+<tr><td><code>"b"</code> / <code>"+"</code></td><td>binary (<code>"rb"</code>, <code>"wb"</code>) / read and write</td></tr>
+</table></div>
+</section>
+
+<section class="lesson" id="modules" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Modules, packages and the standard library</h2>
+<p class="lede">Any <code>.py</code> file is a <b>module</b>. A folder of modules (usually with an <code>__init__.py</code>) is a <b>package</b>. <code>import</code> loads them so you can reuse code.</p></header>
+<pre class="code" data-run>import math
+from random import choice, randint
+from datetime import date, timedelta
+import statistics as stats
+
+print(math.sqrt(16), math.pi, math.ceil(2.1))
+print(choice(["red", "green", "blue"]), randint(1, 6))
+print(date.today() + timedelta(days=30))
+print(stats.mean([2, 4, 9]), stats.median([2, 4, 9]))
+
+# Inspect what a module offers
+print([name for name in dir(math) if not name.startswith("_")][:8])</pre>
+<pre class="code"># greetings.py
+def hello(name):
+    return f"Hello {name}"
+
+if __name__ == "__main__":
+    # Runs only when you execute `python greetings.py`,
+    # NOT when another file does `import greetings`
+    print(hello("from the command line"))
+
+# main.py
+from greetings import hello
+print(hello("Ada"))</pre>
+<div class="tbl"><table>
+<tr><th>Standard-library module</th><th>Use it for</th></tr>
+<tr><td><code>os</code>, <code>pathlib</code>, <code>shutil</code></td><td>Files, folders, environment variables</td></tr>
+<tr><td><code>sys</code></td><td>Command-line args (<code>sys.argv</code>), exit, interpreter info</td></tr>
+<tr><td><code>json</code>, <code>csv</code>, <code>sqlite3</code></td><td>Data formats and a built-in database</td></tr>
+<tr><td><code>datetime</code>, <code>time</code>, <code>zoneinfo</code></td><td>Dates, times, time zones</td></tr>
+<tr><td><code>re</code></td><td>Regular expressions</td></tr>
+<tr><td><code>collections</code>, <code>itertools</code>, <code>functools</code></td><td>Power-tools for data and functions</td></tr>
+<tr><td><code>math</code>, <code>random</code>, <code>statistics</code>, <code>decimal</code>, <code>fractions</code></td><td>Numbers</td></tr>
+<tr><td><code>logging</code>, <code>argparse</code>, <code>unittest</code></td><td>Real applications</td></tr>
+<tr><td><code>urllib</code>, <code>http</code>, <code>asyncio</code>, <code>threading</code>, <code>subprocess</code></td><td>Networking and concurrency</td></tr>
+</table></div>
+<p>Third-party packages come from <a href="https://pypi.org">PyPI</a> and are installed with <code>pip</code>; see <a href="#envs">environments</a>.</p>
+</section>
+
+<!-- ===================== INTERMEDIATE ===================== -->
+<section class="lesson" id="comprehensions" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Comprehensions</h2>
+<p class="lede">A comprehension builds a list, dict or set in one readable line: <code>[expression for item in iterable if condition]</code>. Read it as “give me <i>expression</i> for each <i>item</i> where <i>condition</i>.”</p></header>
+<figure class="viz">
+<div class="viz-title">Filter, then transform</div>
+<div class="widget" data-w="comp"></div>
+</figure>
+<pre class="code" data-run>squares = [n * n for n in range(6)]
+evens = [n for n in range(10) if n % 2 == 0]
+labels = ["even" if n % 2 == 0 else "odd" for n in range(4)]   # if/else goes BEFORE for
+pairs = [(x, y) for x in "ab" for y in (1, 2)]                 # nested loops
+print(squares, evens, labels, pairs, sep="\n")
+
+words = ["apple", "banana", "cherry"]
+lengths = {w: len(w) for w in words}          # dict comprehension
+initials = {w[0] for w in words}              # set comprehension
+print(lengths, initials)
+
+matrix = [[1, 2, 3], [4, 5, 6]]
+flat = [x for row in matrix for x in row]
+transposed = [list(col) for col in zip(*matrix)]
+print(flat, transposed)
+
+# Generator expression: lazy, no list built in memory
+print(sum(n * n for n in range(1_000_000)))</pre>
+<div class="callout tip"><b>Keep it readable</b><p>If a comprehension needs more than one <code>if</code> or two <code>for</code>s, a normal loop is usually clearer.</p></div>
+</section>
+
+<section class="lesson" id="args" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Flexible arguments: *args and **kwargs</h2>
+<p class="lede"><code>*args</code> collects extra positional arguments into a tuple; <code>**kwargs</code> collects extra keyword arguments into a dict. The same stars <i>unpack</i> when calling.</p></header>
+<pre class="code" data-run>def report(title, *args, sep=", ", **kwargs):
+    print("title :", title)
+    print("args  :", args)       # tuple
+    print("kwargs:", kwargs)     # dict
+    print("joined:", sep.join(map(str, args)))
+
+report("Scores", 90, 85, 77, sep=" | ", course="Python", term=2)
+
+def area(width, height):
+    return width * height
+dims = [3, 4]
+opts = {"width": 5, "height": 2}
+print(area(*dims), area(**opts))     # unpack into arguments
+
+# Parameter kinds: positional-only / normal / keyword-only
+def connect(host, /, port=5432, *, timeout=10):
+    return f"{host}:{port} (timeout={timeout})"
+print(connect("db.local", 6543, timeout=3))
+# connect(host="x") fails: host is positional-only
+# connect("x", 1, 2) fails: timeout is keyword-only</pre>
+<div class="tbl"><table>
+<tr><th>Signature order</th></tr>
+<tr><td><code>def f(pos_only, /, normal, *args, kw_only, **kwargs)</code></td></tr>
+</table></div>
+</section>
+
+<section class="lesson" id="functional" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>First-class functions, lambdas and closures</h2>
+<p class="lede">Functions are objects. You can store them in variables, pass them to other functions, and return them. A <b>lambda</b> is a tiny anonymous function; a <b>closure</b> is a function that remembers variables from where it was created.</p></header>
+<pre class="code" data-run>def shout(text): return text.upper() + "!"
+def whisper(text): return text.lower() + "..."
+
+def speak(style, text):          # takes a function as an argument
+    return style(text)
+print(speak(shout, "hello"), speak(whisper, "HELLO"))
+
+square = lambda x: x * x         # lambda args: expression
+print(square(7))
+
+people = [("Ada", 36), ("Alan", 41), ("Grace", 30)]
+print(sorted(people, key=lambda p: p[1]))
+print(max(people, key=lambda p: p[1])[0])
+
+print(list(map(str.upper, ["a", "b"])))            # apply to each
+print(list(filter(lambda n: n > 2, [1, 2, 3, 4]))) # keep matching
+print(any(n > 3 for n in [1, 5]), all(n > 0 for n in [1, 5]))
+
+from functools import reduce, partial, lru_cache
+print(reduce(lambda acc, n: acc * n, [1, 2, 3, 4]))  # 24
+power_of_two = partial(pow, 2)
+print(power_of_two(10))                              # 1024
+
+@lru_cache(maxsize=None)          # memoize: cache results by argument
+def fib(n):
+    return n if n &lt; 2 else fib(n - 1) + fib(n - 2)
+print(fib(80))
+
+def multiplier(factor):           # closure: remembers `factor`
+    def multiply(x):
+        return x * factor
+    return multiply
+double, triple = multiplier(2), multiplier(3)
+print(double(5), triple(5))</pre>
+</section>
+
+<section class="lesson" id="oop" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Classes and objects</h2>
+<p class="lede">A <b>class</b> is a blueprint. An <b>object</b> (instance) is a thing built from it, with its own data (<b>attributes</b>) and behavior (<b>methods</b>). <code>self</code> is the particular object a method is working on.</p></header>
+<figure class="viz">
+<div class="viz-title">One blueprint, many objects</div>
+<div class="cls-diagram">
+  <div class="card"><h6>class Dog</h6><div>species = "Canis familiaris"<br><span style="color:var(--muted)">↑ class attribute (shared)</span></div><div>__init__(self, name, age)<br>bark(self)<br>birthday(self)</div></div>
+  <svg width="70" height="90" viewBox="0 0 70 90" aria-hidden="true"><path d="M5 45 H55" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="6 5"><animate attributeName="stroke-dashoffset" from="22" to="0" dur="1s" repeatCount="indefinite"/></path><path d="M50 38 L60 45 L50 52" fill="none" stroke="var(--accent)" stroke-width="2.5"/><text x="2" y="30" font-size="11" fill="var(--muted)">Dog(...)</text></svg>
+  <div class="objs">
+    <div class="card obj"><h6>rex : Dog</h6><div>name = "Rex"<br>age = 3</div></div>
+    <div class="card obj"><h6>fido : Dog</h6><div>name = "Fido"<br>age = 7</div></div>
+  </div>
+</div>
+<figcaption>Instance attributes live on each object; class attributes live once on the class. Calling <code>rex.bark()</code> is shorthand for <code>Dog.bark(rex)</code>, which is where <code>self</code> comes from.</figcaption>
+</figure>
+<pre class="code" data-run>class Dog:
+    species = "Canis familiaris"          # class attribute
+
+    def __init__(self, name, age):        # runs when you create a Dog
+        self.name = name                  # instance attributes
+        self.age = age
+
+    def bark(self):
+        return f"{self.name} says woof"
+
+    def birthday(self):
+        self.age += 1
+        return self.age
+
+    def __repr__(self):                   # how it prints
+        return f"Dog({self.name!r}, {self.age})"
+
+rex = Dog("Rex", 3)
+fido = Dog("Fido", 7)
+print(rex.bark(), rex.birthday(), rex)
+print(fido.species, Dog.species, isinstance(rex, Dog))
+print(vars(fido))
+
+class BankAccount:
+    interest = 0.02
+    def __init__(self, owner, balance=0):
+        self.owner = owner
+        self._balance = balance           # _ means "internal, please don't touch"
+
+    @property                             # read like an attribute
+    def balance(self):
+        return self._balance
+
+    def deposit(self, amount):
+        if amount &lt;= 0:
+            raise ValueError("amount must be positive")
+        self._balance += amount
+
+    @classmethod                          # alternative constructor
+    def from_string(cls, text):
+        owner, amount = text.split(":")
+        return cls(owner, float(amount))
+
+    @staticmethod                         # utility, needs no self/cls
+    def is_valid_owner(name):
+        return name.isalpha()
+
+acct = BankAccount.from_string("ada:100")
+acct.deposit(50)
+print(acct.owner, acct.balance, BankAccount.is_valid_owner("ada"))</pre>
+</section>
+
+<section class="lesson" id="inheritance" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Inheritance and polymorphism</h2>
+<p class="lede">A subclass inherits everything from its parent and can add or <b>override</b> methods. Code that works with the parent type works with every child (polymorphism).</p></header>
+<figure class="viz">
+<div class="viz-title">Class hierarchy and method resolution order</div>
+<div class="tree">
+  <div class="row"><div class="node">object</div></div><div class="vline"></div>
+  <div class="row"><div class="node">Animal<br><small style="font-weight:400">speak() · describe()</small></div></div><div class="vline"></div>
+  <div class="row"><div class="node">Dog<br><small style="font-weight:400">speak() override</small></div><div class="node">Cat<br><small style="font-weight:400">speak() override</small></div></div>
+</div>
+<figcaption>When you call <code>pet.speak()</code>, Python searches the object's class, then its parents, in the order shown by <code>Dog.__mro__</code>: Dog → Animal → object.</figcaption>
+</figure>
+<pre class="code" data-run>class Animal:
+    def __init__(self, name):
+        self.name = name
+    def speak(self):
+        return "..."
+    def describe(self):
+        return f"{self.name} says {self.speak()}"
+
+class Dog(Animal):
+    def speak(self):
+        return "Woof"
+
+class Cat(Animal):
+    def __init__(self, name, indoor=True):
+        super().__init__(name)            # run the parent's __init__
+        self.indoor = indoor
+    def speak(self):
+        return "Meow"
+
+for pet in [Dog("Rex"), Cat("Tom"), Animal("Blob")]:
+    print(pet.describe())                 # same call, different behavior
+
+print(Dog.__mro__)
+print(issubclass(Cat, Animal), isinstance(Cat("x"), Animal))
+
+# Abstract base classes force subclasses to implement methods
+from abc import ABC, abstractmethod
+class Shape(ABC):
+    @abstractmethod
+    def area(self): ...
+class Square(Shape):
+    def __init__(self, side): self.side = side
+    def area(self): return self.side ** 2
+print(Square(3).area())
+try:
+    Shape()
+except TypeError as e:
+    print("TypeError:", e)</pre>
+<div class="callout tip"><b>Composition over inheritance</b><p>Inherit when the child truly “is a” parent. When an object merely “has a” helper (a Car has an Engine), store it as an attribute instead. Python also supports <b>duck typing</b>: if it has a <code>.speak()</code> method, you can call it, no shared parent needed.</p></div>
+</section>
+
+<section class="lesson" id="dunder" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Magic (dunder) methods</h2>
+<p class="lede">Methods with double underscores, like <code>__add__</code> and <code>__len__</code>, let your objects work with Python's built-in syntax: <code>+</code>, <code>len()</code>, <code>==</code>, <code>for</code>, <code>[]</code> and more.</p></header>
+<pre class="code" data-run>class Vector:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+    def __repr__(self):  return f"Vector({self.x}, {self.y})"   # for developers
+    def __str__(self):   return f"({self.x}, {self.y})"         # for print()
+    def __add__(self, other): return Vector(self.x + other.x, self.y + other.y)
+    def __mul__(self, k):     return Vector(self.x * k, self.y * k)
+    def __eq__(self, other):  return (self.x, self.y) == (other.x, other.y)
+    def __abs__(self):        return (self.x ** 2 + self.y ** 2) ** 0.5
+    def __bool__(self):       return bool(self.x or self.y)
+    def __hash__(self):       return hash((self.x, self.y))
+
+v = Vector(3, 4) + Vector(1, 1)
+print(v, repr(v), v * 2, abs(Vector(3, 4)), v == Vector(4, 5), bool(Vector(0, 0)))
+
+class Playlist:
+    def __init__(self, *songs): self.songs = list(songs)
+    def __len__(self): return len(self.songs)
+    def __getitem__(self, i): return self.songs[i]       # enables [] and for-loops
+    def __contains__(self, song): return song in self.songs
+
+p = Playlist("Intro", "Verse", "Outro")
+print(len(p), p[0], p[-1], "Verse" in p, [s.upper() for s in p])</pre>
+<div class="tbl"><table>
+<tr><th>Syntax</th><th>Calls</th><th>Syntax</th><th>Calls</th></tr>
+<tr><td><code>len(x)</code></td><td><code>__len__</code></td><td><code>x[k]</code></td><td><code>__getitem__</code></td></tr>
+<tr><td><code>str(x)</code>, <code>print</code></td><td><code>__str__</code></td><td><code>x[k] = v</code></td><td><code>__setitem__</code></td></tr>
+<tr><td><code>repr(x)</code></td><td><code>__repr__</code></td><td><code>for i in x</code></td><td><code>__iter__</code></td></tr>
+<tr><td><code>a + b</code>, <code>a * b</code></td><td><code>__add__</code>, <code>__mul__</code></td><td><code>with x:</code></td><td><code>__enter__</code>/<code>__exit__</code></td></tr>
+<tr><td><code>a == b</code>, <code>a &lt; b</code></td><td><code>__eq__</code>, <code>__lt__</code></td><td><code>x()</code></td><td><code>__call__</code></td></tr>
+<tr><td><code>hash(x)</code></td><td><code>__hash__</code></td><td><code>x in y</code></td><td><code>__contains__</code></td></tr>
+</table></div>
+</section>
+
+<section class="lesson" id="iterators" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Iterators and generators</h2>
+<p class="lede">A <code>for</code> loop asks an object for an <b>iterator</b> (<code>iter()</code>), then calls <code>next()</code> until <code>StopIteration</code>. A <b>generator</b> is a function with <code>yield</code>: it pauses at each <code>yield</code> and resumes on the next request, producing values lazily.</p></header>
+<figure class="viz">
+<div class="viz-title">Step through a generator pausing and resuming</div>
+<div class="widget" data-w="gen"></div>
+</figure>
+<pre class="code" data-run>nums = [10, 20]
+it = iter(nums)
+print(next(it), next(it))
+try:
+    next(it)
+except StopIteration:
+    print("StopIteration: the for-loop's signal to stop")
+
+def countdown(n):
+    while n > 0:
+        yield n
+        n -= 1
+print(list(countdown(5)))
+
+def read_big_file_lazily(lines):
+    for line in lines:            # imagine millions of lines
+        if line.strip():
+            yield line.strip().upper()
+print(list(read_big_file_lazily(["a", "", "b"])))
+
+def fibonacci():                  # infinite, but lazy
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+import itertools as it2
+print(list(it2.islice(fibonacci(), 10)))
+print(list(it2.chain([1, 2], "ab")))
+print(list(it2.combinations("ABC", 2)))
+print([(k, len(list(g))) for k, g in it2.groupby("aaabbc")])
+print(list(it2.accumulate([1, 2, 3, 4])))
+
+def pipeline():
+    yield from range(3)           # delegate to another iterable
+    yield from "xy"
+print(list(pipeline()))</pre>
+<div class="callout"><b>Why it matters</b><p>Generators keep memory flat: <code>sum(x for x in huge)</code> never builds a list. They're the backbone of streaming data, reading files line by line and lazy pipelines. A generator can be consumed only once.</p></div>
+</section>
+
+<section class="lesson" id="decorators" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Decorators</h2>
+<p class="lede">A decorator is a function that takes a function and returns a new one that wraps it. <code>@timer</code> above <code>def f</code> means <code>f = timer(f)</code>. Use them to add logging, timing, caching, access checks or retries without touching the function's body.</p></header>
+<figure class="viz">
+<div class="viz-title">Step through stacked decorators: the call goes in, then back out</div>
+<div class="widget" data-w="deco"></div>
+</figure>
+<pre class="code" data-run>import functools, time
+
+def timer(func):
+    @functools.wraps(func)                # keep the name and docstring
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        print(f"{func.__name__} took {time.perf_counter() - start:.4f}s")
+        return result
+    return wrapper
+
+def log(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        print(f"calling {func.__name__}{args}")
+        return func(*args, **kwargs)
+    return wrapper
+
+@timer
+@log                     # applied bottom-up: greet = timer(log(greet))
+def greet(name):
+    return f"Hello {name}"
+print(greet("Ada"))
+
+def retry(times):        # a decorator that takes arguments = one more layer
+    def decorate(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(1, times + 1):
+                try:
+                    return func(*args, **kwargs)
+                except ValueError as e:
+                    print(f"attempt {attempt} failed: {e}")
+            raise RuntimeError("all retries failed")
+        return wrapper
+    return decorate
+
+calls = {"n": 0}
+@retry(times=3)
+def flaky():
+    calls["n"] += 1
+    if calls["n"] &lt; 3:
+        raise ValueError("not yet")
+    return "success"
+print(flaky())</pre>
+</section>
+
+<section class="lesson" id="context" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Context managers (with)</h2>
+<p class="lede">A context manager sets something up and guarantees cleanup: <code>with open(...)</code> closes the file, <code>with lock:</code> releases the lock, <code>with conn:</code> commits a transaction, even if an exception happens inside.</p></header>
+<figure class="viz">
+<div class="viz-title">What `with` does</div>
+<div class="nest" style="--c:var(--accent)"><span class="tag">__enter__()  · setup, its return value goes to "as"</span>
+  <div class="nest" style="--c:var(--good)"><span class="tag">your indented block runs</span><code>data = f.read()</code></div>
+  <div class="nest" style="--c:var(--bad)"><span class="tag">__exit__(exc_type, exc, tb)  · always runs: cleanup</span><code>f.close()</code> — return True to swallow an exception</div>
+</div>
+</figure>
+<pre class="code" data-run>import time
+from contextlib import contextmanager, suppress
+
+class Timer:
+    def __enter__(self):
+        self.start = time.perf_counter()
+        return self
+    def __exit__(self, exc_type, exc, tb):
+        self.elapsed = time.perf_counter() - self.start
+        print(f"block took {self.elapsed:.4f}s")
+        return False                      # don't swallow exceptions
+
+with Timer() as t:
+    total = sum(range(200_000))
+
+@contextmanager                           # the easy way: a generator
+def tag(name):
+    print(f"&lt;{name}>")
+    try:
+        yield
+    finally:
+        print(f"&lt;/{name}>")
+
+with tag("div"):
+    with tag("p"):
+        print("hello")
+
+with suppress(FileNotFoundError):         # ignore a specific error
+    open("does-not-exist.txt")
+print("still running")</pre>
+</section>
+
+<section class="lesson" id="mutability" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Mutability, copies and identity</h2>
+<p class="lede">Most surprising Python bugs come from two names sharing one mutable object. Know when you're copying and when you're just adding another name tag.</p></header>
+<figure class="viz">
+<div class="viz-title">Shallow vs deep copy</div>
+<div class="widget" data-w="copies"></div>
+</figure>
+<pre class="code" data-run>import copy
+original = [[1, 2], [3, 4]]
+alias = original                  # same object
+shallow = original.copy()         # new outer list, SAME inner lists
+deep = copy.deepcopy(original)    # everything copied
+
+original[0].append(99)
+print("alias  ", alias)
+print("shallow", shallow)         # sees 99 too!
+print("deep   ", deep)            # unaffected
+
+# The mutable-default-argument trap
+def add_bad(item, bucket=[]):
+    bucket.append(item); return bucket
+print(add_bad(1), add_bad(2))     # [1, 2] [1, 2]  shared!
+
+def add_good(item, bucket=None):
+    if bucket is None:
+        bucket = []
+    bucket.append(item); return bucket
+print(add_good(1), add_good(2))   # [1] [2]
+
+# Functions receive references: mutating an argument affects the caller
+def clear_it(lst): lst.clear()
+data = [1, 2, 3]; clear_it(data); print(data)
+
+# += on a list mutates; on a tuple/str it rebinds
+a = [1]; b = a; a += [2]; print(b)        # [1, 2]
+s = "hi"; t = s; s += "!"; print(t)       # hi</pre>
+</section>
+
+<!-- ===================== ADVANCED ===================== -->
+<section class="lesson" id="typing" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Type hints</h2>
+<p class="lede">Type hints document what a function expects and returns. Python ignores them at runtime, but editors and checkers like <b>mypy</b> or <b>pyright</b> use them to catch bugs before you run anything.</p></header>
+<pre class="code" data-run>from typing import Optional, Protocol, TypedDict, Literal, Callable, Iterable
+
+def greet(name: str, times: int = 1) -> str:
+    return " ".join([f"Hi {name}"] * times)
+
+scores: dict[str, list[int]] = {"ada": [90, 95]}
+maybe: int | None = None                  # same as Optional[int]
+mode: Literal["r", "w"] = "r"
+
+def apply(fn: Callable[[int], int], values: Iterable[int]) -> list[int]:
+    return [fn(v) for v in values]
+print(apply(lambda v: v * 10, [1, 2]))
+
+def first[T](items: list[T]) -> T:        # generic function (3.12+ syntax)
+    return items[0]
+print(first(["a", "b"]), first([1, 2]))
+
+type Point = tuple[float, float]          # type alias (3.12+)
+
+class Movie(TypedDict):
+    title: str
+    year: int
+m: Movie = {"title": "Arrival", "year": 2016}
+
+class SupportsClose(Protocol):            # structural typing ("duck typing" for checkers)
+    def close(self) -> None: ...
+
+def shutdown(thing: SupportsClose) -> None:
+    thing.close()
+
+print(greet.__annotations__)</pre>
+<div class="callout"><b>Run a checker</b><p><code>pip install mypy</code> then <code>mypy src/</code>. Start by annotating function signatures; local variables are usually inferred.</p></div>
+</section>
+
+<section class="lesson" id="dataclasses" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Dataclasses, enums and named tuples</h2>
+<p class="lede">For classes that mainly hold data, <code>@dataclass</code> writes <code>__init__</code>, <code>__repr__</code> and <code>__eq__</code> for you. <code>Enum</code> gives names to a fixed set of choices.</p></header>
+<pre class="code" data-run>from dataclasses import dataclass, field, asdict
+from enum import Enum, auto
+from typing import NamedTuple
+
+class Status(Enum):
+    TODO = auto()
+    DOING = auto()
+    DONE = auto()
+
+@dataclass(order=True)
+class Task:
+    priority: int
+    title: str = field(compare=False)
+    status: Status = field(default=Status.TODO, compare=False)
+    tags: list[str] = field(default_factory=list, compare=False)  # safe mutable default
+
+    def __post_init__(self):
+        if self.priority &lt; 0:
+            raise ValueError("priority must be >= 0")
+
+tasks = [Task(2, "write tests"), Task(1, "fix bug", Status.DOING, ["urgent"])]
+print(sorted(tasks)[0])
+print(asdict(tasks[1]))
+print(Status.DONE.name, Status.DONE.value, Status["TODO"], list(Status))
+
+@dataclass(frozen=True, slots=True)       # immutable + memory-efficient
+class Point:
+    x: float
+    y: float
+p = Point(1, 2)
+try:
+    p.x = 5
+except Exception as e:
+    print(type(e).__name__)
+
+class Pixel(NamedTuple):                  # tuple with named fields
+    x: int
+    y: int
+    color: str = "black"
+px = Pixel(3, 4)
+print(px.color, px[0], px._replace(color="red"))</pre>
+</section>
+
+<section class="lesson" id="match" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Pattern matching and the walrus operator</h2>
+<p class="lede"><code>match</code> (Python 3.10+) compares a value against <b>shapes</b>: literals, sequences, dicts, classes, with guards. The walrus <code>:=</code> assigns inside an expression.</p></header>
+<pre class="code" data-run>def handle(command):
+    match command.split():
+        case ["quit" | "exit"]:
+            return "bye"
+        case ["go", direction] if direction in {"north", "south"}:
+            return f"walking {direction}"
+        case ["go", _]:
+            return "unknown direction"
+        case ["take", *items] if items:
+            return f"took {', '.join(items)}"
+        case _:
+            return "huh?"
+
+for c in ["go north", "go up", "take key lamp", "exit", "dance"]:
+    print(f"{c!r:16} -> {handle(c)}")
+
+def describe(event):
+    match event:
+        case {"type": "click", "pos": (x, y)}:
+            return f"click at {x},{y}"
+        case {"type": "key", "key": str(k)}:
+            return f"key {k}"
+        case int() | float() as n if n &lt; 0:
+            return "negative number"
+        case _:
+            return "other"
+print(describe({"type": "click", "pos": (10, 20)}), describe({"type": "key", "key": "q"}), describe(-3))
+
+# Walrus: assign and test in one step
+data = [5, 12, 7, 20]
+if (n := len(data)) > 3:
+    print(f"list is long ({n} items)")
+print([y for x in data if (y := x * 2) > 15])</pre>
+</section>
+
+<section class="lesson" id="async" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Async and await</h2>
+<p class="lede"><code>asyncio</code> runs many tasks on <b>one thread</b>. When a task waits for I/O (network, disk, a timer) it <code>await</code>s and hands control back to the event loop, which runs another task. Waits overlap, so total time drops.</p></header>
+<figure class="viz">
+<div class="viz-title">Three downloads: one after another vs. concurrently</div>
+<div class="widget" data-w="async"></div>
+<figcaption>Async helps when you are <b>waiting</b> (I/O-bound). It won't speed up heavy computation; for that use multiple processes.</figcaption>
+</figure>
+<pre class="code">import asyncio, time
+
+async def download(name, seconds):
+    print(f"start {name}")
+    await asyncio.sleep(seconds)      # pretend network wait; yields to the loop
+    print(f"done  {name}")
+    return name, seconds
+
+async def main():
+    start = time.perf_counter()
+    results = await asyncio.gather(   # run concurrently
+        download("A", 2), download("B", 1), download("C", 3)
+    )
+    print(results, f"{time.perf_counter() - start:.1f}s")   # ~3.0s, not 6.0s
+
+    # Structured concurrency (3.11+)
+    async with asyncio.TaskGroup() as tg:
+        t1 = tg.create_task(download("D", 1))
+        t2 = tg.create_task(download("E", 1))
+    print(t1.result(), t2.result())
+
+    try:                               # timeouts
+        async with asyncio.timeout(0.5):
+            await download("slow", 5)
+    except TimeoutError:
+        print("gave up on slow")
+
+asyncio.run(main())                   # start the event loop</pre>
+<div class="callout warn"><b>Rules of async</b><p>Only call <code>await</code> inside <code>async def</code>. Never call blocking code (<code>time.sleep</code>, <code>requests.get</code>) inside a coroutine; it freezes the whole loop. Use async libraries (<code>httpx</code>, <code>aiohttp</code>, <code>asyncpg</code>) or <code>await asyncio.to_thread(blocking_fn)</code>.</p></div>
+</section>
+
+<section class="lesson" id="concurrency" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Threads, processes and the GIL</h2>
+<p class="lede">CPython's <b>Global Interpreter Lock</b> lets only one thread execute Python bytecode at a time. Threads still help for waiting on I/O; for CPU-heavy work, use separate processes, each with its own interpreter.</p></header>
+<figure class="viz">
+<div class="viz-title">Pick the right tool</div>
+<div class="svg-wrap"><svg viewBox="0 0 780 210" width="100%" style="min-width:600px" role="img" aria-label="Comparison of asyncio, threads and processes">
+<g font-size="13">
+<g transform="translate(10,10)"><rect width="240" height="190" rx="12" fill="var(--soft)" stroke="var(--accent)"/><text x="16" y="28" font-weight="800" fill="var(--ink)" font-size="16">asyncio</text><text x="16" y="48" fill="var(--muted)">1 process · 1 thread · many tasks</text>
+<g fill="var(--accent)"><rect x="16" y="64" width="40" height="14" rx="3"/><rect x="62" y="84" width="30" height="14" rx="3"/><rect x="98" y="104" width="50" height="14" rx="3"/><rect x="154" y="64" width="30" height="14" rx="3"/><rect x="190" y="84" width="30" height="14" rx="3"/></g>
+<text x="16" y="145" fill="var(--ink)">Best: thousands of network</text><text x="16" y="163" fill="var(--ink)">connections, web servers, bots</text><text x="16" y="181" fill="var(--muted)">I/O-bound · cooperative</text></g>
+<g transform="translate(270,10)"><rect width="240" height="190" rx="12" fill="var(--soft)" stroke="var(--warn)"/><text x="16" y="28" font-weight="800" fill="var(--ink)" font-size="16">threading</text><text x="16" y="48" fill="var(--muted)">1 process · N threads · 1 GIL</text>
+<g fill="var(--warn)"><rect x="16" y="64" width="60" height="14" rx="3"/><rect x="76" y="84" width="50" height="14" rx="3"/><rect x="126" y="104" width="40" height="14" rx="3"/><rect x="166" y="64" width="50" height="14" rx="3"/></g>
+<text x="16" y="145" fill="var(--ink)">Best: blocking I/O with</text><text x="16" y="163" fill="var(--ink)">sync libraries, file/network</text><text x="16" y="181" fill="var(--muted)">I/O-bound · preemptive</text></g>
+<g transform="translate(530,10)"><rect width="240" height="190" rx="12" fill="var(--soft)" stroke="var(--adv)"/><text x="16" y="28" font-weight="800" fill="var(--ink)" font-size="16">multiprocessing</text><text x="16" y="48" fill="var(--muted)">N processes · N GILs · N cores</text>
+<g fill="var(--adv)"><rect x="16" y="64" width="200" height="14" rx="3"/><rect x="16" y="84" width="200" height="14" rx="3"/><rect x="16" y="104" width="200" height="14" rx="3"/></g>
+<text x="16" y="145" fill="var(--ink)">Best: number crunching,</text><text x="16" y="163" fill="var(--ink)">image processing, simulations</text><text x="16" y="181" fill="var(--muted)">CPU-bound · true parallelism</text></g>
+</g></svg></div>
+<figcaption>Each bar is a stretch of time a worker is actually running. Python 3.13+ also ships an experimental “free-threaded” build without the GIL.</figcaption>
+</figure>
+<pre class="code">from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+import urllib.request, math
+
+URLS = ["https://python.org", "https://pypi.org", "https://docs.python.org"]
+
+def fetch(url):
+    with urllib.request.urlopen(url, timeout=10) as r:
+        return url, len(r.read())
+
+def heavy(n):
+    return sum(math.isqrt(i) for i in range(n))
+
+if __name__ == "__main__":           # required for processes on Windows/macOS
+    with ThreadPoolExecutor(max_workers=8) as pool:         # I/O-bound
+        for url, size in pool.map(fetch, URLS):
+            print(url, size)
+
+    with ProcessPoolExecutor() as pool:                     # CPU-bound
+        print(list(pool.map(heavy, [10**6] * 4)))
+
+# Shared state between threads needs a lock
+import threading
+counter = 0
+lock = threading.Lock()
+def work():
+    global counter
+    for _ in range(100_000):
+        with lock:
+            counter += 1</pre>
+</section>
+
+<section class="lesson" id="regex" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Regular expressions</h2>
+<p class="lede">The <code>re</code> module finds and transforms text by pattern. Always write patterns as raw strings: <code>r"\d+"</code>.</p></header>
+<pre class="code" data-run>import re
+text = "Order #123 shipped 2026-11-10 to ada@example.com; order #456 pending."
+
+print(re.findall(r"#(\d+)", text))                       # ['123', '456']
+m = re.search(r"(\d{4})-(\d{2})-(\d{2})", text)
+print(m.group(0), m.group(1), m.groups())
+email = re.search(r"(?P&lt;user>[\w.]+)@(?P&lt;domain>[\w.]+)", text)
+print(email["user"], email["domain"])
+print(re.sub(r"#(\d+)", r"[ID \1]", text))
+print(re.split(r"[;,]\s*", "a, b;c"))
+print(bool(re.fullmatch(r"[A-Z]{3}-\d{3}", "ABC-123")))
+
+pattern = re.compile(r"\border\b", re.IGNORECASE)        # reuse a compiled pattern
+print(len(pattern.findall(text)))</pre>
+<div class="tbl"><table>
+<tr><th>Pattern</th><th>Matches</th><th>Pattern</th><th>Matches</th></tr>
+<tr><td><code>.</code></td><td>any char except newline</td><td><code>\d \w \s</code></td><td>digit, word char, whitespace</td></tr>
+<tr><td><code>^ $</code></td><td>start / end</td><td><code>\D \W \S</code></td><td>the opposites</td></tr>
+<tr><td><code>* + ?</code></td><td>0+, 1+, 0 or 1</td><td><code>{3} {2,5}</code></td><td>exact / range count</td></tr>
+<tr><td><code>[abc] [^abc]</code></td><td>one of / none of</td><td><code>a|b</code></td><td>either</td></tr>
+<tr><td><code>( ) (?P&lt;n&gt; )</code></td><td>group / named group</td><td><code>*? +?</code></td><td>lazy (shortest) match</td></tr>
+<tr><td><code>\b</code></td><td>word boundary</td><td><code>(?= ) (?! )</code></td><td>lookahead</td></tr>
+</table></div>
+</section>
+
+<section class="lesson" id="performance" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Performance and Big-O</h2>
+<p class="lede">Choosing the right data structure matters more than micro-tricks. Big-O describes how work grows as input size <i>n</i> grows.</p></header>
+<figure class="viz">
+<div class="viz-title">How operation counts grow with n</div>
+<div class="widget" data-w="bigo"></div>
+</figure>
+<div class="tbl"><table>
+<tr><th>Operation</th><th>list</th><th>dict / set</th><th>deque</th></tr>
+<tr><td>index <code>x[i]</code></td><td>O(1)</td><td>key lookup O(1)</td><td>O(n)</td></tr>
+<tr><td><code>x in c</code></td><td>O(n)</td><td><b>O(1)</b></td><td>O(n)</td></tr>
+<tr><td>append / add at end</td><td>O(1)</td><td>O(1)</td><td>O(1)</td></tr>
+<tr><td>insert / pop at front</td><td>O(n)</td><td>—</td><td><b>O(1)</b></td></tr>
+<tr><td>sort</td><td>O(n log n)</td><td>—</td><td>—</td></tr>
+<tr><td>min / max / sum</td><td>O(n)</td><td>O(n)</td><td>O(n)</td></tr>
+</table></div>
+<pre class="code" data-run>import timeit
+setup = "data = list(range(10_000)); s = set(data)"
+print("list in:", timeit.timeit("9_999 in data", setup=setup, number=2_000))
+print("set  in:", timeit.timeit("9_999 in s", setup=setup, number=2_000))
+
+# Faster idioms
+words = ["a"] * 10_000
+print(len("".join(words)))          # join, don't += strings in a loop
+import heapq, bisect
+print(heapq.nsmallest(3, [9, 1, 8, 2, 7]))   # top-k without full sort
+sorted_list = [1, 3, 5, 7]
+bisect.insort(sorted_list, 4); print(sorted_list)   # keep sorted, binary search</pre>
+<pre class="code"># Profile before optimizing
+python -m cProfile -s cumulative my_script.py
+python -m timeit "sum(range(1000))"
+
+# Memory / speed helpers:  __slots__ on many small objects, generators for
+# streams, functools.lru_cache for repeated pure calls, NumPy for numeric arrays.</pre>
+</section>
+
+<section class="lesson" id="metaprog" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Under the hood: descriptors, __slots__, metaclasses</h2>
+<p class="lede">These power features explain how <code>@property</code>, ORMs and frameworks work. You'll rarely write them, but recognizing them helps you read library code.</p></header>
+<pre class="code" data-run>class Positive:
+    """A descriptor: controls attribute access on another class."""
+    def __set_name__(self, owner, name):
+        self.name = "_" + name
+    def __get__(self, obj, objtype=None):
+        return getattr(obj, self.name)
+    def __set__(self, obj, value):
+        if value &lt;= 0:
+            raise ValueError(f"{self.name[1:]} must be positive")
+        setattr(obj, self.name, value)
+
+class Product:
+    price = Positive()
+    qty = Positive()
+    def __init__(self, price, qty):
+        self.price, self.qty = price, qty
+
+p = Product(9.5, 2)
+try:
+    p.qty = 0
+except ValueError as e:
+    print(e)
+
+class Slim:
+    __slots__ = ("x", "y")            # no per-object __dict__: less memory
+    def __init__(self, x, y): self.x, self.y = x, y
+
+class Registry(type):                 # a metaclass: a class that makes classes
+    plugins = {}
+    def __new__(mcls, name, bases, ns):
+        cls = super().__new__(mcls, name, bases, ns)
+        if bases:
+            mcls.plugins[name.lower()] = cls
+        return cls
+
+class Plugin(metaclass=Registry): pass
+class CsvExport(Plugin): pass
+class PdfExport(Plugin): pass
+print(Registry.plugins)
+
+# Simpler alternative for most registries:
+class Base:
+    registry = []
+    def __init_subclass__(cls, **kw):
+        super().__init_subclass__(**kw)
+        Base.registry.append(cls.__name__)
+class A(Base): pass
+print(Base.registry, getattr(p, "price"), hasattr(p, "color"))</pre>
+</section>
+
+<!-- ===================== DEVELOPMENT ===================== -->
+<section class="lesson" id="envs" data-level="d" data-group="Development">
+<header><span class="lvl d">Development</span><h2>Virtual environments and packages</h2>
+<p class="lede">Each project should have its own <b>virtual environment</b>: an isolated folder with its own Python and packages, so projects don't fight over versions.</p></header>
+<figure class="viz">
+<div class="viz-title">One machine, isolated projects</div>
+<div class="two">
+<div class="nest" style="--c:var(--accent)"><span class="tag">shop-api/.venv</span><code>fastapi 0.115 · pydantic 2 · sqlalchemy 2</code></div>
+<div class="nest" style="--c:var(--adv)"><span class="tag">data-report/.venv</span><code>pandas 2.2 · matplotlib 3.9 · pydantic 1</code></div>
+</div>
+<figcaption>Both projects can use different versions of pydantic because each has its own <code>site-packages</code>.</figcaption>
+</figure>
+<pre class="code"># Create and activate (standard library)
+python -m venv .venv
+source .venv/bin/activate          # macOS/Linux
+.venv\Scripts\activate             # Windows (PowerShell: .venv\Scripts\Activate.ps1)
+
+pip install requests "pandas>=2.2"
+pip list
+pip freeze > requirements.txt      # pin exact versions
+pip install -r requirements.txt    # recreate elsewhere
+pip install -e .                   # install your own project in editable mode
+deactivate
+
+# Modern, much faster alternative: uv  (https://docs.astral.sh/uv/)
+uv init my-app && cd my-app
+uv add requests                    # updates pyproject.toml + lockfile
+uv run main.py                     # runs inside the project's environment
+uv python install 3.13             # manage Python versions too</pre>
+<div class="callout tip"><b>Add .venv to .gitignore</b><p>Commit <code>pyproject.toml</code> (and a lockfile or <code>requirements.txt</code>), never the environment folder itself.</p></div>
+</section>
+
+<section class="lesson" id="project" data-level="d" data-group="Development">
+<header><span class="lvl d">Development</span><h2>Structuring a real project</h2>
+<p class="lede">A predictable layout makes code easy to test, package and share. The “src layout” below is the common modern choice.</p></header>
+<div class="two">
+<pre class="code">my-app/
+├── pyproject.toml        # metadata, deps, tool config
+├── README.md
+├── .gitignore
+├── src/
+│   └── my_app/
+│       ├── __init__.py
+│       ├── __main__.py   # python -m my_app
+│       ├── cli.py
+│       ├── config.py
+│       ├── models.py
+│       └── services/
+│           ├── __init__.py
+│           └── billing.py
+└── tests/
+    ├── conftest.py
+    └── test_billing.py</pre>
+<pre class="code"># pyproject.toml
+[project]
+name = "my-app"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["httpx>=0.27"]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "mypy"]
+
+[project.scripts]
+my-app = "my_app.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100</pre>
+</div>
+<h3>A command-line app with logging and config</h3>
+<pre class="code"># src/my_app/cli.py
+import argparse, logging, os, sys
+
+log = logging.getLogger(__name__)
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Greet people")
+    parser.add_argument("name")
+    parser.add_argument("-n", "--times", type=int, default=1)
+    parser.add_argument("-v", "--verbose", action="store_true")
+    args = parser.parse_args(argv)
+
+    logging.basicConfig(
+        level=logging.DEBUG if args.verbose else logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
+    api_key = os.environ.get("MY_APP_API_KEY")       # secrets come from env vars
+    if not api_key:
+        log.warning("MY_APP_API_KEY not set; running in demo mode")
+
+    for _ in range(args.times):
+        print(f"Hello, {args.name}!")
+    log.debug("finished greeting %s", args.name)
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())</pre>
+<pre class="code" data-run>import logging
+logging.basicConfig(level=logging.INFO, format="%(levelname)-8s %(message)s", force=True)
+log = logging.getLogger("demo")
+log.debug("hidden at INFO level")
+log.info("server started on port %d", 8000)
+log.warning("disk 85%% full")
+try:
+    1 / 0
+except ZeroDivisionError:
+    log.exception("calculation failed")    # logs the traceback too</pre>
+</section>
+
+<section class="lesson" id="testing" data-level="d" data-group="Development">
+<header><span class="lvl d">Development</span><h2>Testing and debugging</h2>
+<p class="lede">Tests are small programs that check your code still works. <b>pytest</b> is the standard: write functions named <code>test_*</code> with plain <code>assert</code> statements and run <code>pytest</code>.</p></header>
+<pre class="code"># src/my_app/pricing.py
+def apply_discount(price: float, percent: float) -> float:
+    if not 0 &lt;= percent &lt;= 100:
+        raise ValueError("percent must be 0-100")
+    return round(price * (1 - percent / 100), 2)
+
+# tests/test_pricing.py
+import pytest
+from my_app.pricing import apply_discount
+
+def test_basic_discount():
+    assert apply_discount(100, 15) == 85.0
+
+@pytest.mark.parametrize("price, pct, expected", [
+    (50, 0, 50), (50, 100, 0), (19.99, 10, 17.99),
+])
+def test_many_cases(price, pct, expected):
+    assert apply_discount(price, pct) == expected
+
+def test_rejects_bad_percent():
+    with pytest.raises(ValueError, match="0-100"):
+        apply_discount(10, 150)
+
+@pytest.fixture
+def cart():                         # reusable setup
+    return {"apple": 1.0, "pear": 2.5}
+
+def test_cart_total(cart):
+    assert sum(cart.values()) == pytest.approx(3.5)
+
+def test_uses_api(monkeypatch):     # replace a dependency
+    monkeypatch.setattr("my_app.pricing.apply_discount", lambda p, d: 0)
+
+# Run:  pytest -q        pytest -k discount        pytest --cov=my_app</pre>
+<pre class="code" data-run># unittest (built in) + mocking
+import unittest
+from unittest.mock import Mock
+
+def notify(user, sender):
+    if user.get("email"):
+        sender.send(user["email"], "Welcome!")
+        return True
+    return False
+
+class TestNotify(unittest.TestCase):
+    def test_sends_when_email(self):
+        sender = Mock()
+        self.assertTrue(notify({"email": "a@b.c"}, sender))
+        sender.send.assert_called_once_with("a@b.c", "Welcome!")
+    def test_skips_without_email(self):
+        sender = Mock()
+        self.assertFalse(notify({}, sender))
+        sender.send.assert_not_called()
+
+unittest.main(argv=["x"], exit=False, verbosity=2)</pre>
+<div class="callout"><b>Debugging toolkit</b><p>Put <code>breakpoint()</code> on any line to pause there in the <code>pdb</code> debugger: <code>n</code> next line, <code>s</code> step into, <code>c</code> continue, <code>p var</code> print, <code>l</code> list code, <code>q</code> quit. VS Code and PyCharm give you the same with clickable breakpoints. For quick checks, <code>print(f"{var=}")</code>.</p></div>
+</section>
+
+<section class="lesson" id="quality" data-level="d" data-group="Development">
+<header><span class="lvl d">Development</span><h2>Code style and tooling</h2>
+<p class="lede">Consistent style (PEP 8) and automated tools keep a codebase readable and catch mistakes early.</p></header>
+<div class="tbl"><table>
+<tr><th>Tool</th><th>What it does</th><th>Command</th></tr>
+<tr><td><b>ruff</b></td><td>Very fast linter + formatter (replaces flake8, isort, black)</td><td><code>ruff check . --fix</code>, <code>ruff format .</code></td></tr>
+<tr><td><b>mypy</b> / <b>pyright</b></td><td>Static type checking</td><td><code>mypy src</code></td></tr>
+<tr><td><b>pytest</b> + <b>coverage</b></td><td>Tests and how much code they exercise</td><td><code>pytest --cov</code></td></tr>
+<tr><td><b>pre-commit</b></td><td>Runs the above on every git commit</td><td><code>pre-commit install</code></td></tr>
+<tr><td><b>pip-audit</b></td><td>Scans dependencies for known vulnerabilities</td><td><code>pip-audit</code></td></tr>
+</table></div>
+<div class="two">
+<div class="callout tip"><b>PEP 8 essentials</b><p>4-space indents · lines ≤ 79–100 chars · <code>snake_case</code> functions, <code>PascalCase</code> classes, <code>UPPER_CASE</code> constants · two blank lines between top-level definitions · imports at the top: standard library, third-party, then local.</p></div>
+<div class="callout"><b>The Zen of Python</b><p>Run <code>import this</code>. Highlights: explicit is better than implicit; simple is better than complex; readability counts; errors should never pass silently.</p></div>
+</div>
+<h3>Pythonic idioms</h3>
+<div class="tbl"><table>
+<tr><th>Instead of</th><th>Write</th></tr>
+<tr><td><code>for i in range(len(xs)): print(xs[i])</code></td><td><code>for x in xs: print(x)</code></td></tr>
+<tr><td><code>i = 0</code> … <code>i += 1</code> inside the loop</td><td><code>for i, x in enumerate(xs):</code></td></tr>
+<tr><td><code>if x == True:</code> / <code>if len(xs) == 0:</code></td><td><code>if x:</code> / <code>if not xs:</code></td></tr>
+<tr><td><code>d.has_key(k)</code>, <code>if k in d.keys()</code></td><td><code>if k in d:</code></td></tr>
+<tr><td><code>try: v = d[k] except KeyError: v = 0</code></td><td><code>v = d.get(k, 0)</code></td></tr>
+<tr><td><code>s = ""; for w in words: s += w</code></td><td><code>s = "".join(words)</code></td></tr>
+<tr><td><code>f = open(p); data = f.read(); f.close()</code></td><td><code>with open(p) as f: data = f.read()</code></td></tr>
+<tr><td><code>"%s is %d" % (n, a)</code>, <code>.format()</code></td><td><code>f"{n} is {a}"</code></td></tr>
+<tr><td><code>os.path.join(a, "b", "c.txt")</code></td><td><code>Path(a) / "b" / "c.txt"</code></td></tr>
+</table></div>
+</section>
+
+<section class="lesson" id="apps" data-level="d" data-group="Development">
+<header><span class="lvl d">Development</span><h2>APIs, web and databases</h2>
+<p class="lede">The building blocks of most real apps: calling HTTP APIs, storing data, and serving your own API.</p></header>
+<pre class="code"># Call an HTTP API   (pip install httpx   — or requests)
+import httpx
+
+resp = httpx.get("https://api.github.com/repos/python/cpython", timeout=10)
+resp.raise_for_status()                  # turn 4xx/5xx into exceptions
+repo = resp.json()
+print(repo["full_name"], repo["stargazers_count"])
+
+resp = httpx.post("https://httpbin.org/post", json={"name": "Ada"},
+                  headers={"Authorization": "Bearer TOKEN"})</pre>
+<pre class="code" data-run># SQLite: a full SQL database built into Python
+import sqlite3
+con = sqlite3.connect(":memory:")        # or "app.db" for a file
+con.row_factory = sqlite3.Row
+con.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, age INT)")
+with con:                                # commits on success, rolls back on error
+    con.executemany("INSERT INTO users (name, age) VALUES (?, ?)",
+                    [("Ada", 36), ("Alan", 41), ("Grace", 30)])
+# ALWAYS use ? placeholders, never f-strings (prevents SQL injection)
+for row in con.execute("SELECT name, age FROM users WHERE age > ? ORDER BY age", (32,)):
+    print(dict(row))
+print(con.execute("SELECT AVG(age) FROM users").fetchone()[0])</pre>
+<pre class="code"># A tiny web API with FastAPI   (pip install "fastapi[standard]")
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+
+app = FastAPI()
+items: dict[int, "Item"] = {}
+
+class Item(BaseModel):          # request/response validation from type hints
+    name: str
+    price: float
+
+@app.get("/items/{item_id}")
+def read_item(item_id: int) -> Item:
+    if item_id not in items:
+        raise HTTPException(status_code=404, detail="Not found")
+    return items[item_id]
+
+@app.post("/items/{item_id}", status_code=201)
+def create_item(item_id: int, item: Item) -> Item:
+    items[item_id] = item
+    return item
+
+# Run:  fastapi dev main.py   → open http://127.0.0.1:8000/docs</pre>
+<h3>Where to go next</h3>
+<div class="tbl"><table>
+<tr><th>Path</th><th>Learn these</th></tr>
+<tr><td>Web back-end</td><td>FastAPI or Django, SQLAlchemy, PostgreSQL, Docker, authentication</td></tr>
+<tr><td>Data analysis</td><td>Jupyter, NumPy, pandas or Polars, matplotlib / seaborn</td></tr>
+<tr><td>Machine learning / AI</td><td>scikit-learn, PyTorch, LLM SDKs and APIs</td></tr>
+<tr><td>Automation &amp; scripting</td><td>pathlib, subprocess, schedule, Playwright, openpyxl</td></tr>
+<tr><td>Desktop / games</td><td>Tkinter, PySide6 (Qt), pygame</td></tr>
+</table></div>
+</section>
+
+<!-- ===================== CHEAT SHEET ===================== -->
+<section class="lesson" id="cheatsheet" data-level="ref" data-group="Reference">
+<header><span class="lvl d">Quick reference</span><h2>Cheat sheet</h2>
+<p class="lede">Everything at a glance. The search box at the top filters these cards too.</p></header>
+<div class="cheat" id="cheat">
+<div class="cc"><h4>Basics</h4><pre class="mini">x = 5; name = "Ada"     # assignment
+a, b = b, a             # swap
+print(f"{name}: {x:.2f}")
+type(x); isinstance(x, int)
+int("3") float("2.5") str(9) bool(0)
+len(s) range(0, 10, 2) input("? ")
+# comment     """docstring"""</pre></div>
+<div class="cc"><h4>Control flow</h4><pre class="mini">if x > 0: ...
+elif x == 0: ...
+else: ...
+v = a if cond else b
+for i, x in enumerate(xs): ...
+for a, b in zip(xs, ys): ...
+while cond: ...
+break  continue  pass
+match v:
+    case 1 | 2: ...
+    case _: ...</pre></div>
+<div class="cc"><h4>String methods</h4><pre class="mini">s.upper() s.lower() s.title()
+s.strip() s.lstrip() s.rstrip()
+s.split(",") ",".join(xs)
+s.replace(a, b) s.find(x) s.count(x)
+s.startswith(x) s.endswith(x)
+s.isdigit() s.isalpha() s.isalnum()
+s.zfill(5) s.center(9, "*")
+s[1:4] s[::-1] s * 3 "a" in s</pre></div>
+<div class="cc"><h4>f-string format spec</h4><pre class="mini">f"{x:.2f}"     # 3.14
+f"{x:,}"       # 1,234,567
+f"{x:.1%}"     # 45.6%
+f"{s:>10}" f"{s:&lt;10}" f"{s:^10}"
+f"{n:05d}"     # 00042
+f"{n:x} {n:b} {n:o}"  # hex bin oct
+f"{x=}"        # debug print
+f"{d:%Y-%m-%d}" # dates</pre></div>
+<div class="cc"><h4>List methods</h4><pre class="mini">xs.append(x)  xs.extend(ys)
+xs.insert(i, x)  xs.pop()  xs.pop(i)
+xs.remove(x)  xs.clear()
+xs.index(x)  xs.count(x)
+xs.sort(key=f, reverse=True)
+xs.reverse()  xs.copy()
+sorted(xs) reversed(xs) sum min max
+xs[i]  xs[a:b]  xs[-1]  del xs[i]</pre></div>
+<div class="cc"><h4>Dict methods</h4><pre class="mini">d[k] = v   d.get(k, default)
+d.keys() d.values() d.items()
+d.pop(k)  d.popitem()  del d[k]
+d.update(other)  d | other
+d.setdefault(k, [])
+k in d   len(d)   dict.fromkeys(ks, 0)
+{k: v for k, v in pairs}</pre></div>
+<div class="cc"><h4>Sets &amp; tuples</h4><pre class="mini">s = {1, 2}; empty = set()
+s.add(x) s.discard(x) s.remove(x)
+a | b  a &amp; b  a - b  a ^ b
+a &lt;= b  (subset)   x in s
+t = (1, 2); one = (1,)
+x, *rest = t
+t.count(x) t.index(x)</pre></div>
+<div class="cc"><h4>Comprehensions</h4><pre class="mini">[f(x) for x in xs if p(x)]
+[a if c else b for x in xs]
+{k: v for k, v in items}
+{x for x in xs}
+(x for x in xs)   # generator
+[x for row in m for x in row]</pre></div>
+<div class="cc"><h4>Functions</h4><pre class="mini">def f(a, b=2, *args, k=1, **kw):
+    """Docstring."""
+    return a + b
+f(1, b=3)   f(*lst)   f(**dct)
+lambda x: x * 2
+def f(pos, /, either, *, kw): ...
+global x   nonlocal y</pre></div>
+<div class="cc"><h4>Classes</h4><pre class="mini">class Dog(Animal):
+    kind = "canine"
+    def __init__(self, name):
+        super().__init__()
+        self.name = name
+    def __repr__(self): ...
+    @property
+    def tag(self): ...
+    @classmethod
+    def create(cls): ...
+    @staticmethod
+    def util(): ...</pre></div>
+<div class="cc"><h4>Exceptions</h4><pre class="mini">try:
+    risky()
+except (ValueError, KeyError) as e:
+    handle(e)
+else:      # no exception
+    ...
+finally:   # always
+    cleanup()
+raise ValueError("bad")
+raise NewError() from e
+class MyError(Exception): pass</pre></div>
+<div class="cc"><h4>Files &amp; paths</h4><pre class="mini">with open(p, "w", encoding="utf-8") as f:
+    f.write(text)
+with open(p) as f:
+    for line in f: ...
+from pathlib import Path
+p = Path("dir") / "file.txt"
+p.read_text() p.write_text(s)
+p.exists() p.mkdir(parents=True)
+p.glob("*.py") p.suffix p.stem
+json.load(f) json.dumps(obj, indent=2)</pre></div>
+<div class="cc"><h4>Generators &amp; itertools</h4><pre class="mini">def gen():
+    yield 1
+    yield from other()
+next(it)  iter(xs)
+itertools: count cycle repeat chain
+  islice product permutations
+  combinations groupby accumulate
+  zip_longest batched(3.12)</pre></div>
+<div class="cc"><h4>Decorators &amp; context</h4><pre class="mini">def deco(fn):
+    @functools.wraps(fn)
+    def wrap(*a, **k):
+        return fn(*a, **k)
+    return wrap
+@functools.lru_cache
+@contextlib.contextmanager
+def ctx():
+    setup(); yield; teardown()</pre></div>
+<div class="cc"><h4>Useful built-ins</h4><pre class="mini">abs round pow divmod min max sum
+len sorted reversed enumerate zip
+map filter any all range
+isinstance issubclass type id hash
+getattr setattr hasattr vars dir
+open print input repr help
+chr ord bin hex int float str</pre></div>
+<div class="cc"><h4>Type hints</h4><pre class="mini">def f(x: int, y: str | None = None) -> list[str]:
+items: dict[str, list[int]] = {}
+from typing import Any, Callable, Iterable,
+  Literal, Protocol, TypedDict, Self
+def first[T](xs: list[T]) -> T: ...
+type UserId = int</pre></div>
+<div class="cc"><h4>Dataclass &amp; Enum</h4><pre class="mini">@dataclass(frozen=True, order=True)
+class P:
+    x: int
+    tags: list = field(default_factory=list)
+class Color(Enum):
+    RED = auto()
+Color.RED.name  Color["RED"]</pre></div>
+<div class="cc"><h4>Async</h4><pre class="mini">async def fetch():
+    await asyncio.sleep(1)
+await asyncio.gather(a(), b())
+async with asyncio.TaskGroup() as tg:
+    tg.create_task(a())
+async with asyncio.timeout(5): ...
+await asyncio.to_thread(blocking)
+asyncio.run(main())</pre></div>
+<div class="cc"><h4>Environment &amp; pip</h4><pre class="mini">python -m venv .venv
+source .venv/bin/activate   # Win: .venv\Scripts\activate
+pip install pkg  pip install -r requirements.txt
+pip freeze > requirements.txt
+pip install -e ".[dev]"
+uv init / uv add pkg / uv run app.py</pre></div>
+<div class="cc"><h4>Testing &amp; debugging</h4><pre class="mini">def test_x(): assert f(2) == 4
+pytest -q  -k name  -x  --pdb
+pytest.raises(ValueError)
+@pytest.mark.parametrize("a,b", [...])
+@pytest.fixture
+breakpoint()   # n s c p l q
+python -m cProfile -s cumtime app.py</pre></div>
+<div class="cc"><h4>Standard library picks</h4><pre class="mini">collections: Counter defaultdict deque
+             namedtuple OrderedDict
+datetime  zoneinfo  time
+os  sys  shutil  subprocess
+re  json  csv  sqlite3
+math  random  statistics  decimal
+logging  argparse  unittest
+functools  itertools  operator
+heapq  bisect  copy  uuid  hashlib</pre></div>
+<div class="cc"><h4>Common gotchas</h4><pre class="mini">def f(x=[])    # shared default! use None
+b = a          # alias, not a copy
+0.1 + 0.2 != 0.3   # use math.isclose
+{}             # empty dict, not set
+is vs ==       # identity vs equality
+(1)            # int; (1,) is a tuple
+list.sort()    # returns None
+except:        # never bare; be specific</pre></div>
+</div>
+</section>
+
+<footer>Built for learning. Code runs in your browser with Pyodide (CPython 3.12 for WebAssembly); examples that need the network, threads, processes or a terminal are shown without a Run button. Official docs: <a href="https://docs.python.org/3/">docs.python.org</a>.</footer>
+</main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

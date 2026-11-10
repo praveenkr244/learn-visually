@@ -1,0 +1,32 @@
+/*
+ * theme.css — YOUR global style overrides.
+ * This file loads LAST on the shell and on every tutorial page, so anything here wins.
+ * Everything below is commented out: uncomment a block and change the values.
+ *
+ * Each page is styled with CSS variables ("tokens"). Change a token here and the
+ * whole page follows. The token names per page:
+ *
+ *   Shell (index.html)      --bg --surface --ink --muted --line --accent --t1 --t2 --t3
+ *   Java Strings / Arrays   --bg --surface --ink --muted --line --stack --heap --pool --hot
+ *                           --code-bg --code-ink --display --body --mono
+ *   Python                  --bg --surface --ink --muted --line --accent --accent2
+ *                           --code-bg --font-display --font-body --font-mono
+ */
+
+/* 1. Use one font everywhere (load it from Google Fonts in the page <head> first, or use a system font)
+:root {
+  --font-display: "Georgia", serif;  --display: "Georgia", serif;
+  --font-body: system-ui, sans-serif; --body: system-ui, sans-serif;
+}
+*/
+
+/* 2. Change the background and main accent color in light mode only
+:root[data-theme="light"] { --bg: #f7f5ef; --accent: #0f766e; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) { --bg: #f7f5ef; --accent: #0f766e; }
+}
+*/
+
+/* 3. Bigger base text for reading
+body { font-size: 18px; }
+*/

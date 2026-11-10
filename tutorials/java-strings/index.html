@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inside java.lang.String</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../assets/theme.css">
+<script src="../../assets/embed.js"></script>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Java interview questions, drawn in memory</div>
+  <h1 aria-label="Inside java.lang.String"><span aria-hidden="true">Inside java.lang.</span><span class="tcells" aria-hidden="true" id="titleCells"></span></h1>
+  <p class="lede">A String object never changes. Your variable just points somewhere new. Press Play on any diagram and watch it happen.</p>
+  <div class="legend">
+    <span style="color:var(--stack)"><b></b><span style="color:var(--muted)">Stack: variables holding addresses</span></span>
+    <span style="color:var(--heap)"><b></b><span style="color:var(--muted)">Heap: objects made at run time</span></span>
+    <span style="color:var(--pool)"><b></b><span style="color:var(--muted)">Pool: shared literals</span></span>
+    <span style="color:var(--hot)"><b></b><span style="color:var(--muted)">Pink: what just changed</span></span>
+  </div>
+  <div data-scene="hero"></div>
+</header>
+</div>
+
+<nav class="topics" aria-label="Topics"><div class="wrap"><ul>
+  <li><a href="#memory">Memory</a></li>
+  <li><a href="#immutable">Immutability</a></li>
+  <li><a href="#concat">Concatenation</a></li>
+  <li><a href="#internals">Internals</a></li>
+  <li><a href="#coding">Coding</a></li>
+  <li><a href="#quiz">Predict the output</a></li>
+  <li><a href="#quick">Quick answers</a></li>
+</ul></div></nav>
+
+<main class="wrap">
+
+<section class="topic" id="memory">
+  <div><h2>Where Strings live</h2><p class="intro">Most tricky String questions come down to one thing: which object does this variable point at?</p></div>
+
+  <article class="q">
+    <h3><span class="n">Q1</span>What is a String in Java?</h3>
+    <p>A String is an object of the <code>final</code> class <code>java.lang.String</code>, not a primitive. It represents a fixed sequence of characters. The variable holds only an address, and the characters sit in a <code>byte[]</code> inside the object.</p>
+    <figure class="fig">
+      <div class="anatomy" role="img" aria-label="A stack variable named name points to a String object with fields value, coder, hash and hashIsZero. The value field points to a byte array holding 106, 97, 118, 97.">
+        <div class="box s"><h4>STACK</h4>name = @3f2a</div>
+        <span class="to" aria-hidden="true">→</span>
+        <div class="box h"><h4>String @3f2a</h4><dl><dt>value</dt><dd>@7c11</dd><dt>coder</dt><dd>0 (LATIN1)</dd><dt>hash</dt><dd>0 (not computed yet)</dd><dt>hashIsZero</dt><dd>false</dd></dl></div>
+        <span class="to" aria-hidden="true">→</span>
+        <div class="box h"><h4>byte[4] @7c11</h4><div class="cells" id="anatomyCells"></div></div>
+      </div>
+      <figcaption class="say">Anatomy of <code>String name = "java";</code> on Java 9 or later. Older versions stored a <code>char[]</code> instead.</figcaption>
+    </figure>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q2</span>What is the String Constant Pool?</h3>
+    <p>The pool is a table of shared Strings kept inside the heap (it moved out of PermGen in Java 7). When a literal is used, the JVM looks for equal text in the pool. If it finds one, it reuses that object. If not, it adds one. This saves memory because identical literals become one object.</p>
+    <div data-scene="pool"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q3</span>How many objects does <code>new String("java")</code> create?</h3>
+    <p><strong>Two String objects the first time, one after that.</strong> The literal <code>"java"</code> needs a pool entry if it isn't there yet, and <code>new</code> always creates one more object on the heap. The new object shares the literal's <code>byte[]</code> instead of copying it.</p>
+    <div data-scene="newstr"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q4</span>What is the difference between <code>==</code> and <code>equals()</code>?</h3>
+    <p><code>==</code> compares addresses, so it asks whether both variables point at the same object. <code>equals()</code> compares content. Use <code>equals()</code> for Strings, every time.</p>
+    <div data-scene="eq"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q5</span>What does <code>intern()</code> do?</h3>
+    <p>It returns the pool's copy of the text. If the pool has no such entry, Java 7 and later record a reference to the current object in the pool and return that same object.</p>
+    <div data-scene="intern"></div>
+  </article>
+</section>
+
+<section class="topic" id="immutable">
+  <div><h2>Immutability</h2><p class="intro">Once created, a String object's characters can never change.</p></div>
+
+  <article class="q">
+    <h3><span class="n">Q6</span>What does immutable mean?</h3>
+    <p>Methods such as <code>concat</code>, <code>replace</code> and <code>toUpperCase</code> leave the original alone and return a new String. If you ignore the return value, the work is lost. The variable can still be reassigned, because the variable is separate from the object.</p>
+    <div data-scene="immut"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q7</span>Why is String immutable?</h3>
+    <p>The pool depends on it. Many variables share one object, so a change through one would reach all of them. This imaginary example shows what would go wrong.</p>
+    <div data-scene="whatif"></div>
+    <dl class="grid2">
+      <div><dt>Safe sharing</dt><dd>The pool can give one object to the whole program.</dd></div>
+      <div><dt>Security</dt><dd>A file path or URL can't be changed after it passes a permission check.</dd></div>
+      <div><dt>Stable hash keys</dt><dd>The hash stays valid, so HashMap lookups keep working.</dd></div>
+      <div><dt>Thread safety</dt><dd>Threads can read the same String with no locking.</dd></div>
+    </dl>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q8</span>How is <code>hashCode()</code> calculated, and why is it cached?</h3>
+    <p>The formula is <code>s[0]×31<sup>n-1</sup> + s[1]×31<sup>n-2</sup> + … + s[n-1]</code>, in 32-bit <code>int</code> arithmetic that wraps on overflow. Because the text can't change, the result is saved in the <code>hash</code> field. Later calls return it without looping. Type below to run the same calculation.</p>
+    <div class="widget">
+      <div class="field"><label for="hashIn">Text</label><input type="text" id="hashIn" value="Java" maxlength="16" autocomplete="off" spellcheck="false"></div>
+      <div class="tbl" style="border:0"><table style="min-width:340px"><thead><tr><th>char</th><th>code</th><th>31 × h + code</th></tr></thead><tbody id="hashRows"></tbody></table></div>
+      <div class="stats"><span>hashCode()</span><span class="big" id="hashOut"></span></div>
+    </div>
+  </article>
+</section>
+
+<section class="topic" id="concat">
+  <div><h2>Concatenation and builders</h2><p class="intro">The compiler joins what it can. Everything else happens at run time and costs a new object.</p></div>
+
+  <article class="q">
+    <h3><span class="n">Q9</span>Is <code>"hel" + "lo"</code> the same as <code>y + "lo"</code>?</h3>
+    <p>No. Two literals form a constant expression, so the compiler writes a single <code>"hello"</code> into the class file. A plain variable's value is only known at run time, so the result is a new heap object outside the pool. Marking the variable <code>final</code> and setting it to a constant makes it a compile-time constant again.</p>
+    <div data-scene="fold"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q10</span>Why avoid <code>+=</code> on a String inside a loop?</h3>
+    <p>Each pass allocates a new String and copies every character so far, and the previous String becomes garbage. Total copying grows with the square of the length. StringBuilder appends into one array, so its cost grows in line with the length.</p>
+    <div data-scene="loop"></div>
+    <div class="widget">
+      <div class="field"><label for="nRange">Append one character</label><input type="range" id="nRange" min="100" max="50000" step="100" value="10000"><span class="big" id="nOut"></span><span class="note">times</span></div>
+      <div class="bar-row"><div class="lbl"><span>String <code>+=</code></span><span class="num" id="aOut"></span></div><div class="track"><div class="fillbar a" id="aBar"></div></div></div>
+      <div class="bar-row"><div class="lbl"><span>StringBuilder</span><span class="num" id="bOut"></span></div><div class="track"><div class="fillbar b" id="bBar"></div></div></div>
+      <p class="note">Characters copied, drawn to one scale. Figures are calculated from each approach's copying rule, assuming the default builder capacity of 16.</p>
+    </div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q11</span>How does StringBuilder grow?</h3>
+    <p>It starts with room for 16 characters. When an append doesn't fit, it allocates a larger array, normally <code>(old × 2) + 2</code>, and copies the contents across. If you know the final size, <code>new StringBuilder(1000)</code> avoids these copies.</p>
+    <div data-scene="sb"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q12</span>String, StringBuilder or StringBuffer?</h3>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>String</th><th>StringBuilder</th><th>StringBuffer</th></tr></thead>
+      <tbody>
+        <tr><th>Can it change?</th><td>No</td><td>Yes</td><td>Yes</td></tr>
+        <tr><th>Thread safety</th><td>Safe, it never changes</td><td>Not safe</td><td>Safe, methods are synchronized</td></tr>
+        <tr><th>Repeated edits</th><td>Slow, copies each time</td><td>Fastest</td><td>Slower, because of locking</td></tr>
+        <tr><th>Added in</th><td>Java 1.0</td><td>Java 5</td><td>Java 1.0</td></tr>
+        <tr><th>Use it for</th><td>Values, keys, constants</td><td>Building text in one thread</td><td>Older code sharing a buffer across threads</td></tr>
+      </tbody>
+    </table></div>
+  </article>
+</section>
+
+<section class="topic" id="internals">
+  <div><h2>Internals and security</h2><p class="intro">Details that separate a good answer from a great one.</p></div>
+
+  <article class="q">
+    <h3><span class="n">Q13</span>What are Compact Strings?</h3>
+    <p>Since Java 9, a String stores one byte per character when all its characters fit in LATIN1, and two bytes per UTF-16 unit otherwise. The <code>coder</code> field records which. English-heavy text uses about half the memory it did with <code>char[]</code>. Try the samples, including the emoji: <code>length()</code> counts UTF-16 units, so one emoji has length 2.</p>
+    <div class="widget">
+      <div class="field">
+        <label for="cpIn">Text</label><input type="text" id="cpIn" value="Java" maxlength="18" autocomplete="off" spellcheck="false">
+        <button class="btn" data-s="Java" type="button">Java</button><button class="btn" data-s="café" type="button">café</button><button class="btn" data-s="हिन्दी" type="button">हिन्दी</button><button class="btn" data-s="😀" type="button">😀</button>
+      </div>
+      <div class="stats"><span class="chip" id="cpChip"></span><span>length() <b class="num" id="cpLen"></b></span><span>bytes stored <b class="num" id="cpBytes"></b></span></div>
+      <div class="cells" id="cpCells"></div>
+      <p class="note">Bytes are shown most significant first. The order in memory follows the platform.</p>
+    </div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q14</span>Does <code>substring()</code> share the original array?</h3>
+    <p>Not since Java 7 update 6. It copies the selected range into a new array, so a short substring no longer keeps a huge parent String alive. Earlier versions shared the array, which caused memory leaks. The cost today is an extra copy.</p>
+    <div data-scene="sub"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q15</span>Why is <code>char[]</code> preferred over String for passwords?</h3>
+    <p>You can overwrite an array the moment you finish with it. A String can't be wiped, so the secret stays in memory until the garbage collector reclaims and overwrites that space, and it could appear in a heap dump. Printing an array by accident also shows a type and address, while printing a String shows the secret.</p>
+    <div data-scene="pwd"></div>
+  </article>
+</section>
+
+<section class="topic" id="coding">
+  <div><h2>Coding questions</h2><p class="intro">Change the input, then press Play to trace your own example.</p></div>
+
+  <article class="q">
+    <h3><span class="n">Q16</span>Reverse a String without <code>reverse()</code></h3>
+    <p>Copy it to a <code>char[]</code>, then swap from both ends towards the middle. This takes O(n) time. In real code, use <code>new StringBuilder(s).reverse().toString()</code>, which also keeps emoji intact.</p>
+    <div class="field"><label for="revIn">s =</label><input type="text" id="revIn" value="string" maxlength="12" autocomplete="off" spellcheck="false"></div>
+    <div data-scene="rev"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q17</span>Check whether a String is a palindrome</h3>
+    <p>Compare from both ends and stop at the first mismatch. This takes O(n) time and needs no extra array. Try <code>racecar</code> and <code>rotator</code>, then a word that fails.</p>
+    <div class="field"><label for="palIn">s =</label><input type="text" id="palIn" value="madam" maxlength="12" autocomplete="off" spellcheck="false"></div>
+    <div data-scene="pal"></div>
+  </article>
+
+  <article class="q">
+    <h3><span class="n">Q18</span>Check whether two words are anagrams</h3>
+    <p>Count letters up for the first word and down for the second. If every count ends at zero, they use the same letters. This takes O(n) time and beats sorting, which takes O(n log n). The demo keeps lowercase a to z only.</p>
+    <div class="field"><label for="anaA">a =</label><input type="text" id="anaA" value="listen" maxlength="10" autocomplete="off" spellcheck="false"><label for="anaB">b =</label><input type="text" id="anaB" value="silent" maxlength="10" autocomplete="off" spellcheck="false"></div>
+    <div data-scene="ana"></div>
+  </article>
+</section>
+
+<section class="topic" id="quiz">
+  <div><h2>Predict the output</h2><p class="intro">Pick an answer to see the explanation.</p></div>
+  <div class="score"><span id="score" aria-live="polite"></span><button class="btn" id="quizReset" type="button">Start again</button></div>
+  <div class="quiz" id="quizBox"></div>
+</section>
+
+<section class="topic" id="quick">
+  <div><h2>Quick answers</h2></div>
+  <dl class="grid2">
+    <div><dt>Can you extend String?</dt><dd>No. The class is <code>final</code>.</dd></div>
+    <div><dt><code>length</code> or <code>length()</code>?</dt><dd>Arrays have a <code>length</code> field. String has a <code>length()</code> method.</dd></div>
+    <div><dt><code>isEmpty()</code> or <code>isBlank()</code>?</dt><dd><code>isEmpty()</code> means length 0. <code>isBlank()</code> (Java 11) is also true for whitespace only.</dd></div>
+    <div><dt><code>trim()</code> or <code>strip()</code>?</dt><dd><code>trim()</code> removes characters up to U+0020. <code>strip()</code> (Java 11) understands Unicode whitespace.</dd></div>
+    <div><dt>What does <code>compareTo()</code> return?</dt><dd>The difference at the first mismatch. <code>"apple".compareTo("apricot")</code> gives <code>'p' - 'r'</code>, which is -2.</dd></div>
+    <div><dt>How do I compare safely with null?</dt><dd>Write <code>"java".equals(s)</code> or <code>Objects.equals(a, b)</code>. Neither throws.</dd></div>
+    <div><dt>How does <code>switch</code> work on a String?</dt><dd>Since Java 7, it compiles to a <code>hashCode()</code> switch followed by <code>equals()</code>.</dd></div>
+    <div><dt>Is String a good HashMap key?</dt><dd>Yes. It is immutable, has a correct <code>equals()</code>, and caches its hash.</dd></div>
+  </dl>
+</section>
+</main>
+
+<div class="wrap"><footer>Addresses such as @3f2a are made up for illustration. Real behaviour shown matches modern HotSpot JVMs.</footer></div>
+<script src="script.js"></script>
+</body>
+</html>
