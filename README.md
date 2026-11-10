@@ -30,7 +30,8 @@ learn-visually/
 ├── assets/
 │   ├── tutorials.js        # ← the list of tabs (add/rename/reorder tabs here)
 │   ├── shell.css           # styles for the top bar and tabs
-│   ├── shell.js            # tab switching, URL hash, light/dark theme
+│   ├── shell.js            # tab switching, URL hash, theme switcher
+│   ├── palettes.css        # Sepia / Ocean / Forest color themes
 │   ├── theme.css           # ← YOUR global style overrides (loaded last everywhere)
 │   ├── embed.js            # lets the shell set each page's theme
 │   └── java-runner.js/.css # Edit/Run boxes for the Java examples
@@ -53,6 +54,7 @@ Each tutorial also works on its own: open `tutorials/python/index.html` directly
 1. Copy a folder, e.g. `tutorials/python` → `tutorials/javascript`, and replace its content.
 2. Keep these lines in its `<head>` so the theme switcher works:
    ```html
+   <link rel="stylesheet" href="../../assets/palettes.css">
    <link rel="stylesheet" href="../../assets/theme.css">
    <script src="../../assets/embed.js"></script>
    ```
@@ -60,6 +62,7 @@ Each tutorial also works on its own: open `tutorials/python/index.html` directly
 
 ## Change the style
 
+- **Color themes**: the top bar has Auto / Light / Dark plus three color swatches (Sepia, Ocean, Forest). Edit or add palettes in `assets/palettes.css`; a new one also needs a swatch button in `index.html` and its name added to the `sepia|ocean|forest` checks in `assets/shell.js` and `assets/embed.js`.
 - **Quick, site-wide**: uncomment and edit the examples in `assets/theme.css`.
 - **One page**: edit the `:root { ... }` block at the top of that tutorial's `style.css`. Colors, fonts and spacing are CSS variables, so changing a token updates the whole page. The light palette is in `:root`, the dark palette in the two blocks right below it.
 - **The tab bar**: `assets/shell.css` (tab colors are `--t1`, `--t2`, `--t3`).

@@ -1,0 +1,15 @@
+/*
+ * palettes.css — extra color themes (Sepia, Ocean, Forest), picked from the swatches in the top bar.
+ * Each one is a light theme with its own background: the page gets data-theme="light"
+ * plus data-palette="<name>", so every page's light styles still apply underneath.
+ * Loaded on the shell and every tutorial page, just before theme.css.
+ */
+:root[data-palette="sepia"] {
+  --bg: #f4ecdc; --surface: #fbf6ec; --line: #e2d6bf; --ink: #2b2318; --muted: #67593f;
+}
+:root[data-palette="ocean"] {
+  --bg: #e6eff9; --surface: #f6faff; --line: #c9d9ec; --ink: #13233a; --muted: #4a5b74;
+}
+:root[data-palette="forest"] {
+  --bg: #e7f1ea; --surface: #f6fbf7; --line: #c8ddcd; --ink: #15261b; --muted: #485e4f;
+}
