@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../assets/java-runner.css">
 <link rel="stylesheet" href="../../assets/theme.css">
 <script src="../../assets/embed.js"></script>
 </head>
@@ -55,30 +56,166 @@
       </div>
       <figcaption class="say">Anatomy of <code>String name = "java";</code> on Java 9 or later. Older versions stored a <code>char[]</code> instead.</figcaption>
     </figure>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Strings are objects with methods">class Main {
+    public static void main(String[] args) {
+        String name = "java";
+        System.out.println(name.length());          // 4
+        System.out.println(name.charAt(0));         // j
+        System.out.println(name.toUpperCase());     // JAVA
+        System.out.println(name instanceof Object); // true: String is a class
+        System.out.println(name.getClass().getName());
+    }
+}</pre>
+      <pre class="jrun" data-title="Reading the characters behind a String">import java.util.Arrays;
+
+class Main {
+    public static void main(String[] args) {
+        String s = "java";
+        char[] chars = s.toCharArray();       // a copy, not the internal array
+        byte[] bytes = s.getBytes();          // encoded with the default charset
+        System.out.println(Arrays.toString(chars)); // [j, a, v, a]
+        System.out.println(Arrays.toString(bytes)); // [106, 97, 118, 97]
+
+        chars[0] = 'J';                       // changing the copy...
+        System.out.println(s);                // ...leaves the String alone: java
+        System.out.println(new String(chars));// Java
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q2</span>What is the String Constant Pool?</h3>
     <p>The pool is a table of shared Strings kept inside the heap (it moved out of PermGen in Java 7). When a literal is used, the JVM looks for equal text in the pool. If it finds one, it reuses that object. If not, it adds one. This saves memory because identical literals become one object.</p>
     <div data-scene="pool"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Literals share one pooled object">class Main {
+    public static void main(String[] args) {
+        String a = "pool";
+        String b = "pool";
+        String c = "po" + "ol";          // folded to "pool" by the compiler
+        System.out.println(a == b);      // true: same pooled object
+        System.out.println(a == c);      // true: also from the pool
+        System.out.println(System.identityHashCode(a) == System.identityHashCode(b));
+    }
+}</pre>
+      <pre class="jrun" data-title="Literals in different methods are still shared">class Main {
+    static String fromHelper() { return "shared"; }
+
+    public static void main(String[] args) {
+        String here = "shared";
+        String there = fromHelper();
+        // The pool is global, so both literals resolve to the same object
+        System.out.println(here == there);   // true
+
+        String built = new StringBuilder("sha").append("red").toString();
+        System.out.println(here == built);   // false: built at run time
+        System.out.println(here.equals(built)); // true
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q3</span>How many objects does <code>new String("java")</code> create?</h3>
     <p><strong>Two String objects the first time, one after that.</strong> The literal <code>"java"</code> needs a pool entry if it isn't there yet, and <code>new</code> always creates one more object on the heap. The new object shares the literal's <code>byte[]</code> instead of copying it.</p>
     <div data-scene="newstr"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Counting distinct objects">class Main {
+    public static void main(String[] args) {
+        String lit = "java";
+        String n1 = new String("java");
+        String n2 = new String("java");
+        System.out.println(lit == n1);   // false
+        System.out.println(n1 == n2);    // false: each new is a fresh object
+        System.out.println(n1.equals(n2)); // true
+        System.out.println(n1.intern() == lit); // true: the pooled one
+    }
+}</pre>
+      <pre class="jrun" data-title="new String from a char array">class Main {
+    public static void main(String[] args) {
+        char[] letters = {'j', 'a', 'v', 'a'};
+        String s1 = new String(letters);     // one heap object, no literal involved
+        String s2 = String.valueOf(letters); // also a new heap object
+        System.out.println(s1);              // java
+        System.out.println(s1 == s2);        // false
+        System.out.println(s1 == "java");    // false: not the pooled literal
+        System.out.println(s1.intern() == "java"); // true
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q4</span>What is the difference between <code>==</code> and <code>equals()</code>?</h3>
     <p><code>==</code> compares addresses, so it asks whether both variables point at the same object. <code>equals()</code> compares content. Use <code>equals()</code> for Strings, every time.</p>
     <div data-scene="eq"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="== versus equals on user input">import java.util.Scanner;
+
+class Main {
+    public static void main(String[] args) {
+        // Text read at run time is never the pooled literal
+        String input = new Scanner("yes\n").nextLine();
+        System.out.println(input == "yes");       // false
+        System.out.println(input.equals("yes"));  // true
+        System.out.println("yes".equals(input));  // true, and safe if input is null
+    }
+}</pre>
+      <pre class="jrun" data-title="equalsIgnoreCase and Objects.equals">import java.util.Objects;
+
+class Main {
+    public static void main(String[] args) {
+        String a = "Java", b = "JAVA", n = null;
+        System.out.println(a.equals(b));             // false
+        System.out.println(a.equalsIgnoreCase(b));   // true
+        System.out.println(Objects.equals(n, a));    // false, no exception
+        System.out.println(Objects.equals(n, null)); // true
+        try {
+            n.equals(a);
+        } catch (NullPointerException e) {
+            System.out.println("n.equals(a) throws NullPointerException");
+        }
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q5</span>What does <code>intern()</code> do?</h3>
     <p>It returns the pool's copy of the text. If the pool has no such entry, Java 7 and later record a reference to the current object in the pool and return that same object.</p>
     <div data-scene="intern"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="intern() turns runtime text into the pooled copy">class Main {
+    public static void main(String[] args) {
+        String part = "ja";
+        String runtime = part + "va";        // new heap object
+        System.out.println(runtime == "java");          // false
+        System.out.println(runtime.intern() == "java"); // true
+    }
+}</pre>
+      <pre class="jrun" data-title="Deduplicating repeated values with intern()">import java.util.*;
+
+class Main {
+    public static void main(String[] args) {
+        String[] raw = "red,green,red,blue,red".split(",");
+        // split() makes a new String for every piece
+        System.out.println(raw[0] == raw[2]);   // false
+
+        for (int i = 0; i &lt; raw.length; i++) raw[i] = raw[i].intern();
+        System.out.println(raw[0] == raw[2]);   // true: one shared object
+        Set&lt;String&gt; ids = Collections.newSetFromMap(new IdentityHashMap&lt;&gt;());
+        ids.addAll(Arrays.asList(raw));
+        System.out.println("distinct objects: " + ids.size()); // 3
+    }
+}</pre>
+    </div>
   </article>
 </section>
 
@@ -89,6 +226,30 @@
     <h3><span class="n">Q6</span>What does immutable mean?</h3>
     <p>Methods such as <code>concat</code>, <code>replace</code> and <code>toUpperCase</code> leave the original alone and return a new String. If you ignore the return value, the work is lost. The variable can still be reassigned, because the variable is separate from the object.</p>
     <div data-scene="immut"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Methods return new Strings">class Main {
+    public static void main(String[] args) {
+        String s = "  Java  ";
+        s.trim();
+        s.toUpperCase();
+        System.out.println("[" + s + "]");  // [  Java  ]: unchanged
+
+        String t = s.trim().toUpperCase();   // keep the result
+        System.out.println("[" + t + "]");  // [JAVA]
+    }
+}</pre>
+      <pre class="jrun" data-title="Reassigning the variable, not changing the object">class Main {
+    public static void main(String[] args) {
+        String s = "cat";
+        String alias = s;           // both point at "cat"
+        s = s.replace('c', 'b');    // s now points at a new "bat"
+        System.out.println(s);      // bat
+        System.out.println(alias);  // cat: the original object never changed
+        System.out.println(s == alias); // false
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
@@ -101,6 +262,38 @@
       <div><dt>Stable hash keys</dt><dd>The hash stays valid, so HashMap lookups keep working.</dd></div>
       <div><dt>Thread safety</dt><dd>Threads can read the same String with no locking.</dd></div>
     </dl>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="A String is safe to share; a StringBuilder is not">class Main {
+    public static void main(String[] args) {
+        String path = "/home/user";
+        String copy = path;
+        path = path + "/../root";        // only path moves
+        System.out.println(copy);        // /home/user
+
+        StringBuilder sb = new StringBuilder("/home/user");
+        StringBuilder sbCopy = sb;
+        sb.append("/../root");           // the shared object changes
+        System.out.println(sbCopy);      // /home/user/../root
+    }
+}</pre>
+      <pre class="jrun" data-title="Stable keys in a HashMap">import java.util.*;
+
+class Main {
+    public static void main(String[] args) {
+        Map&lt;String, Integer&gt; byString = new HashMap&lt;&gt;();
+        String key = "alice";
+        byString.put(key, 30);
+        System.out.println(byString.get("alice"));   // 30: key can't change
+
+        Map&lt;StringBuilder, Integer&gt; byBuilder = new HashMap&lt;&gt;();
+        StringBuilder mutable = new StringBuilder("alice");
+        byBuilder.put(mutable, 30);
+        mutable.append("!");                          // key mutated after put
+        System.out.println(byBuilder.get(new StringBuilder("alice"))); // null
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
@@ -110,6 +303,32 @@
       <div class="field"><label for="hashIn">Text</label><input type="text" id="hashIn" value="Java" maxlength="16" autocomplete="off" spellcheck="false"></div>
       <div class="tbl" style="border:0"><table style="min-width:340px"><thead><tr><th>char</th><th>code</th><th>31 × h + code</th></tr></thead><tbody id="hashRows"></tbody></table></div>
       <div class="stats"><span>hashCode()</span><span class="big" id="hashOut"></span></div>
+    </div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Compute hashCode by hand">class Main {
+    static int myHash(String s) {
+        int h = 0;
+        for (int i = 0; i &lt; s.length(); i++) h = 31 * h + s.charAt(i);
+        return h;
+    }
+    public static void main(String[] args) {
+        for (String s : new String[]{"Java", "a", "", "hello world"}) {
+            System.out.println(s + " -&gt; " + myHash(s) + " / " + s.hashCode());
+        }
+    }
+}</pre>
+      <pre class="jrun" data-title="Collisions and overflow">class Main {
+    public static void main(String[] args) {
+        // Different text can share a hash: equals() still tells them apart
+        System.out.println("Aa".hashCode() + " " + "BB".hashCode()); // 2112 2112
+        System.out.println("Aa".equals("BB"));                       // false
+
+        // Long strings overflow int, so the hash can be negative
+        System.out.println("polygenelubricants".hashCode()); // Integer.MIN_VALUE
+        System.out.println(Integer.MIN_VALUE);
+    }
+}</pre>
     </div>
   </article>
 </section>
@@ -121,6 +340,32 @@
     <h3><span class="n">Q9</span>Is <code>"hel" + "lo"</code> the same as <code>y + "lo"</code>?</h3>
     <p>No. Two literals form a constant expression, so the compiler writes a single <code>"hello"</code> into the class file. A plain variable's value is only known at run time, so the result is a new heap object outside the pool. Marking the variable <code>final</code> and setting it to a constant makes it a compile-time constant again.</p>
     <div data-scene="fold"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Compile-time constants are folded">class Main {
+    public static void main(String[] args) {
+        String hello = "hello";
+        String y = "hel";
+        final String fy = "hel";
+
+        System.out.println(hello == "hel" + "lo"); // true: folded
+        System.out.println(hello == y + "lo");     // false: run time
+        System.out.println(hello == fy + "lo");    // true: final constant
+        System.out.println(hello == (y + "lo").intern()); // true
+    }
+}</pre>
+      <pre class="jrun" data-title="Constants from static final fields">class Main {
+    static final String PREFIX = "user_";
+    static final int ID = 42;
+    static String dynamicPrefix = "user_";
+
+    public static void main(String[] args) {
+        System.out.println((PREFIX + ID) == "user_42");        // true: all constants
+        System.out.println((dynamicPrefix + ID) == "user_42"); // false: not final
+        System.out.println((dynamicPrefix + ID).equals("user_42")); // true
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
@@ -133,12 +378,78 @@
       <div class="bar-row"><div class="lbl"><span>StringBuilder</span><span class="num" id="bOut"></span></div><div class="track"><div class="fillbar b" id="bBar"></div></div></div>
       <p class="note">Characters copied, drawn to one scale. Figures are calculated from each approach's copying rule, assuming the default builder capacity of 16.</p>
     </div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Timing += against StringBuilder">class Main {
+    public static void main(String[] args) {
+        int n = 20_000;
+        long t0 = System.nanoTime();
+        String s = "";
+        for (int i = 0; i &lt; n; i++) s += "x";
+        long t1 = System.nanoTime();
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i &lt; n; i++) sb.append("x");
+        String t = sb.toString();
+        long t2 = System.nanoTime();
+
+        System.out.println(s.equals(t));
+        System.out.printf("+=            %6d ms%n", (t1 - t0) / 1_000_000);
+        System.out.printf("StringBuilder %6d ms%n", (t2 - t1) / 1_000_000);
+    }
+}</pre>
+      <pre class="jrun" data-title="Joining a list the right way">import java.util.*;
+import java.util.stream.*;
+
+class Main {
+    public static void main(String[] args) {
+        List&lt;String&gt; words = List.of("arrays", "strings", "maps");
+
+        System.out.println(String.join(", ", words));
+        System.out.println(words.stream().collect(Collectors.joining(" | ", "[", "]")));
+
+        StringJoiner sj = new StringJoiner(" -&gt; ");
+        for (String w : words) sj.add(w.toUpperCase());
+        System.out.println(sj);
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q11</span>How does StringBuilder grow?</h3>
     <p>It starts with room for 16 characters. When an append doesn't fit, it allocates a larger array, normally <code>(old × 2) + 2</code>, and copies the contents across. If you know the final size, <code>new StringBuilder(1000)</code> avoids these copies.</p>
     <div data-scene="sb"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Watching capacity grow">class Main {
+    public static void main(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        int last = sb.capacity();
+        System.out.println("start capacity " + last);    // 16
+        for (int i = 0; i &lt; 100; i++) {
+            sb.append('x');
+            if (sb.capacity() != last) {
+                last = sb.capacity();
+                System.out.println("length " + sb.length() + " -&gt; capacity " + last);
+            }
+        }
+    }
+}</pre>
+      <pre class="jrun" data-title="Presizing and editing in place">class Main {
+    public static void main(String[] args) {
+        StringBuilder sb = new StringBuilder(64);   // no regrowth needed
+        sb.append("Hello").append(' ').append("World");
+        sb.insert(0, "&gt;&gt; ");
+        sb.replace(3, 8, "Howdy");
+        sb.setCharAt(sb.length() - 1, 'D');
+        sb.deleteCharAt(sb.length() - 2);
+        System.out.println(sb);                     // &gt;&gt; Howdy WorD
+        System.out.println(sb.length() + " / " + sb.capacity());
+        System.out.println(sb.reverse());
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
@@ -153,6 +464,43 @@
         <tr><th>Use it for</th><td>Values, keys, constants</td><td>Building text in one thread</td><td>Older code sharing a buffer across threads</td></tr>
       </tbody>
     </table></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="StringBuilder loses updates across threads">class Main {
+    public static void main(String[] args) throws Exception {
+        StringBuilder builder = new StringBuilder();
+        StringBuffer buffer = new StringBuffer();
+        Runnable work = () -&gt; {
+            for (int i = 0; i &lt; 100_000; i++) {
+                buffer.append('x');
+                try { builder.append('x'); } catch (RuntimeException e) { /* can even crash */ }
+            }
+        };
+        Thread t1 = new Thread(work), t2 = new Thread(work);
+        t1.start(); t2.start(); t1.join(); t2.join();
+        System.out.println("expected      200000");
+        System.out.println("StringBuffer  " + buffer.length());  // always 200000
+        System.out.println("StringBuilder " + builder.length()); // usually less
+    }
+}</pre>
+      <pre class="jrun" data-title="Choosing the right type">class Main {
+    // String for values that should never change
+    static final String GREETING = "Hello";
+
+    static String csv(int[] values) {
+        StringBuilder sb = new StringBuilder();       // building text in one thread
+        for (int i = 0; i &lt; values.length; i++) {
+            if (i &gt; 0) sb.append(',');
+            sb.append(values[i]);
+        }
+        return sb.toString();                         // hand back an immutable String
+    }
+
+    public static void main(String[] args) {
+        System.out.println(GREETING + ": " + csv(new int[]{3, 1, 4, 1, 5}));
+    }
+}</pre>
+    </div>
   </article>
 </section>
 
@@ -171,18 +519,91 @@
       <div class="cells" id="cpCells"></div>
       <p class="note">Bytes are shown most significant first. The order in memory follows the platform.</p>
     </div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="LATIN1 or UTF16?">class Main {
+    static boolean latin1(String s) {
+        return s.chars().allMatch(c -&gt; c &lt;= 0xFF);
+    }
+    public static void main(String[] args) {
+        for (String s : new String[]{"Java", "café", "हिन्दी", "😀"}) {
+            System.out.printf("%-8s length=%d latin1=%b stored≈%d bytes%n",
+                s, s.length(), latin1(s), latin1(s) ? s.length() : s.length() * 2);
+        }
+    }
+}</pre>
+      <pre class="jrun" data-title="length() vs code points">class Main {
+    public static void main(String[] args) {
+        String s = "hi😀";
+        System.out.println(s.length());                       // 4: UTF-16 units
+        System.out.println(s.codePointCount(0, s.length()));  // 3: real characters
+        s.codePoints().forEach(cp -&gt;
+            System.out.println(Character.toChars(cp).length + " unit(s): U+" + Integer.toHexString(cp).toUpperCase()));
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q14</span>Does <code>substring()</code> share the original array?</h3>
     <p>Not since Java 7 update 6. It copies the selected range into a new array, so a short substring no longer keeps a huge parent String alive. Earlier versions shared the array, which caused memory leaks. The cost today is an extra copy.</p>
     <div data-scene="sub"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="substring copies, and the parent can be freed">class Main {
+    public static void main(String[] args) {
+        String big = "x".repeat(1_000_000) + "needle";
+        String small = big.substring(big.length() - 6);
+        big = null;                    // the 1 MB parent can now be collected
+        System.out.println(small);     // needle
+        System.out.println(small.length());
+    }
+}</pre>
+      <pre class="jrun" data-title="Index rules for substring">class Main {
+    public static void main(String[] args) {
+        String s = "interview";
+        System.out.println(s.substring(5));       // view
+        System.out.println(s.substring(0, 5));    // inter (end is exclusive)
+        System.out.println(s.substring(3, 3).isEmpty()); // true
+        System.out.println(s.substring(0) == s);  // true: whole string is reused
+        try {
+            s.substring(4, 2);
+        } catch (StringIndexOutOfBoundsException e) {
+            System.out.println("begin &gt; end: " + e.getMessage());
+        }
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q15</span>Why is <code>char[]</code> preferred over String for passwords?</h3>
     <p>You can overwrite an array the moment you finish with it. A String can't be wiped, so the secret stays in memory until the garbage collector reclaims and overwrites that space, and it could appear in a heap dump. Printing an array by accident also shows a type and address, while printing a String shows the secret.</p>
     <div data-scene="pwd"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Wiping a char[] password">import java.util.Arrays;
+
+class Main {
+    static boolean check(char[] pw) {
+        return Arrays.equals(pw, "s3cret".toCharArray());
+    }
+    public static void main(String[] args) {
+        char[] pw = {'s', '3', 'c', 'r', 'e', 't'};
+        System.out.println("valid: " + check(pw));
+        Arrays.fill(pw, '*');                        // wipe it straight away
+        System.out.println("after wipe: " + new String(pw)); // ******
+    }
+}</pre>
+      <pre class="jrun" data-title="What accidental printing shows">class Main {
+    public static void main(String[] args) {
+        String pwString = "hunter2";
+        char[] pwChars = "hunter2".toCharArray();
+        System.out.println("log: " + pwString); // log: hunter2   (leaked)
+        System.out.println("log: " + pwChars);  // log: [C@...    (type and hash)
+    }
+}</pre>
+    </div>
   </article>
 </section>
 
@@ -194,6 +615,36 @@
     <p>Copy it to a <code>char[]</code>, then swap from both ends towards the middle. This takes O(n) time. In real code, use <code>new StringBuilder(s).reverse().toString()</code>, which also keeps emoji intact.</p>
     <div class="field"><label for="revIn">s =</label><input type="text" id="revIn" value="string" maxlength="12" autocomplete="off" spellcheck="false"></div>
     <div data-scene="rev"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Reverse with two pointers">class Main {
+    static String reverse(String s) {
+        char[] c = s.toCharArray();
+        for (int i = 0, j = c.length - 1; i &lt; j; i++, j--) {
+            char t = c[i]; c[i] = c[j]; c[j] = t;
+        }
+        return new String(c);
+    }
+    public static void main(String[] args) {
+        for (String s : new String[]{"string", "a", "", "racecar"}) {
+            System.out.println("\"" + s + "\" -&gt; \"" + reverse(s) + "\"");
+        }
+    }
+}</pre>
+      <pre class="jrun" data-title="Reverse the words in a sentence">import java.util.*;
+
+class Main {
+    static String reverseWords(String s) {
+        String[] words = s.trim().split("\\s+");
+        Collections.reverse(Arrays.asList(words));
+        return String.join(" ", words);
+    }
+    public static void main(String[] args) {
+        System.out.println(reverseWords("the sky   is blue"));  // blue is sky the
+        System.out.println(new StringBuilder("héllo😀").reverse()); // emoji kept intact
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
@@ -201,6 +652,40 @@
     <p>Compare from both ends and stop at the first mismatch. This takes O(n) time and needs no extra array. Try <code>racecar</code> and <code>rotator</code>, then a word that fails.</p>
     <div class="field"><label for="palIn">s =</label><input type="text" id="palIn" value="madam" maxlength="12" autocomplete="off" spellcheck="false"></div>
     <div data-scene="pal"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Palindrome check">class Main {
+    static boolean isPalindrome(String s) {
+        for (int i = 0, j = s.length() - 1; i &lt; j; i++, j--) {
+            if (s.charAt(i) != s.charAt(j)) return false;
+        }
+        return true;
+    }
+    public static void main(String[] args) {
+        for (String s : new String[]{"madam", "racecar", "rotator", "java", "a"}) {
+            System.out.println(s + " -&gt; " + isPalindrome(s));
+        }
+    }
+}</pre>
+      <pre class="jrun" data-title="Ignore case, spaces and punctuation">class Main {
+    static boolean isPalindrome(String s) {
+        int i = 0, j = s.length() - 1;
+        while (i &lt; j) {
+            char a = s.charAt(i), b = s.charAt(j);
+            if (!Character.isLetterOrDigit(a)) { i++; continue; }
+            if (!Character.isLetterOrDigit(b)) { j--; continue; }
+            if (Character.toLowerCase(a) != Character.toLowerCase(b)) return false;
+            i++; j--;
+        }
+        return true;
+    }
+    public static void main(String[] args) {
+        System.out.println(isPalindrome("A man, a plan, a canal: Panama")); // true
+        System.out.println(isPalindrome("Was it a car or a cat I saw?"));   // true
+        System.out.println(isPalindrome("race a car"));                     // false
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
@@ -208,6 +693,39 @@
     <p>Count letters up for the first word and down for the second. If every count ends at zero, they use the same letters. This takes O(n) time and beats sorting, which takes O(n log n). The demo keeps lowercase a to z only.</p>
     <div class="field"><label for="anaA">a =</label><input type="text" id="anaA" value="listen" maxlength="10" autocomplete="off" spellcheck="false"><label for="anaB">b =</label><input type="text" id="anaB" value="silent" maxlength="10" autocomplete="off" spellcheck="false"></div>
     <div data-scene="ana"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Anagram check with a count array">class Main {
+    static boolean isAnagram(String a, String b) {
+        if (a.length() != b.length()) return false;
+        int[] count = new int[26];
+        for (int i = 0; i &lt; a.length(); i++) {
+            count[a.charAt(i) - 'a']++;
+            count[b.charAt(i) - 'a']--;
+        }
+        for (int c : count) if (c != 0) return false;
+        return true;
+    }
+    public static void main(String[] args) {
+        System.out.println(isAnagram("listen", "silent")); // true
+        System.out.println(isAnagram("rat", "car"));       // false
+    }
+}</pre>
+      <pre class="jrun" data-title="Group words that are anagrams">import java.util.*;
+
+class Main {
+    public static void main(String[] args) {
+        String[] words = {"eat", "tea", "tan", "ate", "nat", "bat"};
+        Map&lt;String, List&lt;String&gt;&gt; groups = new TreeMap&lt;&gt;();
+        for (String w : words) {
+            char[] c = w.toCharArray();
+            Arrays.sort(c);                          // sorted letters are the key
+            groups.computeIfAbsent(new String(c), k -&gt; new ArrayList&lt;&gt;()).add(w);
+        }
+        groups.forEach((key, list) -&gt; System.out.println(key + " -&gt; " + list));
+    }
+}</pre>
+    </div>
   </article>
 </section>
 
@@ -234,5 +752,6 @@
 
 <div class="wrap"><footer>Addresses such as @3f2a are made up for illustration. Real behaviour shown matches modern HotSpot JVMs.</footer></div>
 <script src="script.js"></script>
+<script src="../../assets/java-runner.js"></script>
 </body>
 </html>

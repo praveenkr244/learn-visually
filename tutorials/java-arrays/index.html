@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../assets/java-runner.css">
 <link rel="stylesheet" href="../../assets/theme.css">
 <script src="../../assets/embed.js"></script>
 </head>
@@ -56,24 +57,144 @@
       </div>
       <figcaption class="say"><code>int[] nums = {10, 20, 30, 40, 50};</code> on a 64-bit HotSpot JVM. Small labels show each element's byte offset. Size: 16-byte header + 5 × 4 = 36 bytes, padded to 40.</figcaption>
     </figure>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Declare, fill and loop">import java.util.Arrays;
+
+class Main {
+    public static void main(String[] args) {
+        int[] scores = {90, 72, 85};         // literal: size fixed at 3
+        double[] prices = new double[4];     // all zeros
+        prices[1] = 9.99;
+
+        System.out.println(scores.length);               // 3: a field, not a method
+        System.out.println(Arrays.toString(prices));     // [0.0, 9.99, 0.0, 0.0]
+        int sum = 0;
+        for (int s : scores) sum += s;
+        System.out.println("average " + sum / (double) scores.length);
+    }
+}</pre>
+      <pre class="jrun" data-title="An array is an object">class Main {
+    public static void main(String[] args) {
+        int[] a = {1, 2, 3};
+        Object o = a;                                     // arrays are Objects
+        System.out.println(o instanceof int[]);           // true
+        System.out.println(a.getClass().getSimpleName()); // int[]
+        System.out.println(a.getClass().getName());       // [I
+        System.out.println(new String[0].getClass().getName()); // [Ljava.lang.String;
+        int[] b = a.clone();                              // inherited from Object
+        System.out.println(a == b);                       // false
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q2</span>What are the default values of array elements?</h3>
     <p>Unlike local variables, array slots are always initialised. Numbers get <code>0</code>, booleans get <code>false</code>, chars get <code>'\u0000'</code>, and every reference slot gets <code>null</code>.</p>
     <div data-scene="defaults"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Default value for every type">import java.util.Arrays;
+
+class Main {
+    public static void main(String[] args) {
+        System.out.println(Arrays.toString(new int[3]));      // [0, 0, 0]
+        System.out.println(Arrays.toString(new double[2]));   // [0.0, 0.0]
+        System.out.println(Arrays.toString(new boolean[2]));  // [false, false]
+        System.out.println(Arrays.toString(new String[2]));   // [null, null]
+        char[] cs = new char[2];
+        System.out.println((int) cs[0]);                      // 0: the '\u0000' char
+    }
+}</pre>
+      <pre class="jrun" data-title="Defaults versus local variables">import java.util.Arrays;
+
+class Main {
+    public static void main(String[] args) {
+        int[] counts = new int[5];      // elements start at 0, so ++ just works
+        for (int d : new int[]{1, 3, 3, 4, 1, 3}) counts[d]++;
+        System.out.println(Arrays.toString(counts));   // [0, 2, 0, 3, 1]
+
+        // A local int has no default: uncommenting the next line won't compile
+        // int x; System.out.println(x);
+        Arrays.fill(counts, -1);                      // pick your own default
+        System.out.println(Arrays.toString(counts));
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q3</span>What does an array of objects actually store?</h3>
     <p>Addresses. A <code>String[]</code> doesn't contain any characters. Each slot points at a separate String object, or is <code>null</code>. Creating the array doesn't create a single String.</p>
     <div data-scene="refs"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="An array of references">class Main {
+    static class Point { int x, y; Point(int x, int y) { this.x = x; this.y = y; } }
+
+    public static void main(String[] args) {
+        Point[] pts = new Point[3];        // 3 empty slots, no Point objects yet
+        System.out.println(pts[0]);        // null
+        pts[0] = new Point(1, 2);
+        pts[1] = pts[0];                   // two slots, one object
+        pts[1].x = 99;
+        System.out.println(pts[0].x);      // 99
+        try { System.out.println(pts[2].x); }
+        catch (NullPointerException e) { System.out.println("pts[2] is null"); }
+    }
+}</pre>
+      <pre class="jrun" data-title="Strings in an array are shared, not copied">class Main {
+    public static void main(String[] args) {
+        String hello = "hello";
+        String[] words = {hello, hello, "hello"};
+        System.out.println(words[0] == words[2]); // true: one pooled object, three references
+
+        words[0] = "bye";                         // replaces a reference
+        System.out.println(hello);                // hello: the String is untouched
+        System.out.println(String.join(",", words));
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q4</span>Is an array passed by reference to a method?</h3>
     <p>No. Java always passes by value. For an array, the value being copied is the address. The method can change the elements through that address, but reassigning its parameter doesn't affect the caller's variable.</p>
     <div data-scene="method"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="The method changes the shared array">import java.util.Arrays;
+
+class Main {
+    static void doubleAll(int[] a) {
+        for (int i = 0; i &lt; a.length; i++) a[i] *= 2;   // writes through the copied address
+    }
+    public static void main(String[] args) {
+        int[] nums = {1, 2, 3};
+        doubleAll(nums);
+        System.out.println(Arrays.toString(nums));      // [2, 4, 6]
+    }
+}</pre>
+      <pre class="jrun" data-title="Reassigning the parameter has no effect outside">import java.util.Arrays;
+
+class Main {
+    static void replace(int[] a) {
+        a = new int[]{9, 9, 9};       // only the local copy of the address moves
+        a[0] = 0;
+    }
+    static int[] grow(int[] a) {
+        return Arrays.copyOf(a, a.length + 1);   // return the new array instead
+    }
+    public static void main(String[] args) {
+        int[] nums = {1, 2, 3};
+        replace(nums);
+        System.out.println(Arrays.toString(nums));   // [1, 2, 3]
+        nums = grow(nums);
+        System.out.println(Arrays.toString(nums));   // [1, 2, 3, 0]
+    }
+}</pre>
+    </div>
   </article>
 </section>
 
@@ -94,24 +215,149 @@
       </tbody>
     </table></div>
     <p class="note">All four are shallow. They copy the values in the slots, which for object arrays means copying addresses.</p>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Four ways to copy">import java.util.Arrays;
+
+class Main {
+    public static void main(String[] args) {
+        int[] src = {1, 2, 3, 4, 5};
+        int[] a = src.clone();
+        int[] b = Arrays.copyOf(src, 7);          // padded with zeros
+        int[] c = Arrays.copyOfRange(src, 1, 4);  // [2, 3, 4]
+        int[] d = new int[5];
+        System.arraycopy(src, 0, d, 1, 4);        // shift right by one
+
+        src[0] = 100;                             // copies don't change
+        System.out.println(Arrays.toString(a));
+        System.out.println(Arrays.toString(b));
+        System.out.println(Arrays.toString(c));
+        System.out.println(Arrays.toString(d));
+    }
+}</pre>
+      <pre class="jrun" data-title="Assignment is not a copy">import java.util.Arrays;
+
+class Main {
+    public static void main(String[] args) {
+        int[] original = {1, 2, 3};
+        int[] alias = original;            // same array
+        int[] copy = original.clone();     // new array
+        alias[0] = 42;
+        System.out.println(Arrays.toString(original)); // [42, 2, 3]
+        System.out.println(Arrays.toString(copy));     // [1, 2, 3]
+
+        // arraycopy handles overlapping ranges correctly
+        System.arraycopy(original, 0, original, 1, 2);
+        System.out.println(Arrays.toString(original)); // [42, 42, 2]
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q6</span>What is the difference between a shallow and a deep copy?</h3>
     <p>A 2D array is an array whose slots hold the addresses of row arrays. <code>clone()</code> copies the outer array only, so both copies share the rows. A deep copy clones every row as well.</p>
     <div data-scene="deep"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="clone() of a 2D array is shallow">import java.util.Arrays;
+
+class Main {
+    public static void main(String[] args) {
+        int[][] grid = {{1, 2}, {3, 4}};
+        int[][] shallow = grid.clone();       // new outer array, same rows
+        shallow[0][0] = 99;
+        System.out.println(Arrays.deepToString(grid));   // [[99, 2], [3, 4]]
+        System.out.println(grid[0] == shallow[0]);       // true: shared row
+    }
+}</pre>
+      <pre class="jrun" data-title="Writing a deep copy">import java.util.Arrays;
+
+class Main {
+    static int[][] deepCopy(int[][] src) {
+        int[][] out = new int[src.length][];
+        for (int i = 0; i &lt; src.length; i++) out[i] = src[i].clone();
+        return out;
+    }
+    public static void main(String[] args) {
+        int[][] grid = {{1, 2}, {3, 4}};
+        int[][] deep = deepCopy(grid);
+        deep[0][0] = 99;
+        System.out.println(Arrays.deepToString(grid));   // [[1, 2], [3, 4]]
+        System.out.println(Arrays.deepToString(deep));   // [[99, 2], [3, 4]]
+        System.out.println(grid[0] == deep[0]);          // false
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q7</span>What is a jagged array?</h3>
     <p>Because each row is a separate array, rows can have different lengths. <code>new int[3][]</code> creates only the outer array. <code>new int[3][4]</code> creates 4 objects: the outer array plus 3 rows.</p>
     <div data-scene="jagged"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Pascal's triangle as a jagged array">import java.util.Arrays;
+
+class Main {
+    public static void main(String[] args) {
+        int n = 6;
+        int[][] tri = new int[n][];
+        for (int r = 0; r &lt; n; r++) {
+            tri[r] = new int[r + 1];               // each row its own length
+            tri[r][0] = tri[r][r] = 1;
+            for (int c = 1; c &lt; r; c++) tri[r][c] = tri[r - 1][c - 1] + tri[r - 1][c];
+        }
+        for (int[] row : tri) System.out.println(Arrays.toString(row));
+    }
+}</pre>
+      <pre class="jrun" data-title="Rows of different lengths">class Main {
+    public static void main(String[] args) {
+        String[][] teams = {
+            {"Ada", "Linus"},
+            {"Grace"},
+            {"Ken", "Dennis", "Bjarne"},
+        };
+        for (int i = 0; i &lt; teams.length; i++) {
+            System.out.println("team " + i + " has " + teams[i].length + ": " + String.join(", ", teams[i]));
+        }
+        int[][] m = new int[2][];          // second size can be left out
+        System.out.println(m[0]);          // null until you create the row
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q8</span>How do you compare two arrays?</h3>
     <p>Use <code>Arrays.equals(a, b)</code> for one-dimensional arrays and <code>Arrays.deepEquals(a, b)</code> for nested ones. Both <code>==</code> and <code>a.equals(b)</code> only check whether the two variables point at the same object.</p>
     <div data-scene="eq"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="== vs equals vs Arrays.equals">import java.util.Arrays;
+
+class Main {
+    public static void main(String[] args) {
+        int[] a = {1, 2, 3}, b = {1, 2, 3};
+        System.out.println(a == b);               // false: different objects
+        System.out.println(a.equals(b));          // false: Object.equals is ==
+        System.out.println(Arrays.equals(a, b));  // true: compares elements
+        System.out.println(Arrays.hashCode(a) == Arrays.hashCode(b)); // true
+    }
+}</pre>
+      <pre class="jrun" data-title="Nested arrays need deepEquals">import java.util.Arrays;
+
+class Main {
+    public static void main(String[] args) {
+        int[][] x = {{1, 2}, {3}};
+        int[][] y = {{1, 2}, {3}};
+        System.out.println(Arrays.equals(x, y));      // false: compares row references
+        System.out.println(Arrays.deepEquals(x, y));  // true
+        System.out.println(Arrays.compare(new int[]{1, 2}, new int[]{1, 3})); // negative
+        System.out.println(Arrays.mismatch(new int[]{1, 2, 3}, new int[]{1, 2, 4})); // 2
+    }
+}</pre>
+    </div>
   </article>
 </section>
 
@@ -128,18 +374,101 @@
       <div class="calc" id="ofCalc" aria-live="polite"></div>
       <p class="note">Assumes a 64-bit HotSpot JVM with compressed pointers, so a reference takes 4 bytes. The base address 0x7C10 is made up.</p>
     </div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Address arithmetic, shown as a formula">class Main {
+    public static void main(String[] args) {
+        long base = 0x1000;          // pretend start of the element data
+        int elementSize = 4;         // an int takes 4 bytes
+        for (int i = 0; i &lt; 5; i++) {
+            long addr = base + (long) i * elementSize;   // one multiply, one add
+            System.out.printf("a[%d] at 0x%X%n", i, addr);
+        }
+    }
+}</pre>
+      <pre class="jrun" data-title="Constant time, any index">class Main {
+    public static void main(String[] args) {
+        int[] big = new int[10_000_000];
+        big[9_999_999] = 7;
+        long t0 = System.nanoTime();
+        long sum = 0;
+        for (int rep = 0; rep &lt; 1_000_000; rep++) sum += big[0] + big[9_999_999];
+        long t1 = System.nanoTime();
+        System.out.println("sum " + sum);
+        System.out.printf("first and last element read 1,000,000 times each in %d ms%n", (t1 - t0) / 1_000_000);
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q10</span>When is <code>ArrayIndexOutOfBoundsException</code> thrown?</h3>
     <p>Valid indexes run from <code>0</code> to <code>length - 1</code>. The JVM checks every access, so reading past the end throws instead of returning random memory as C would. The classic cause is <code>&lt;=</code> in a loop. A negative size in <code>new int[-1]</code> throws <code>NegativeArraySizeException</code>.</p>
     <div data-scene="bounds"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Catching an off-by-one">class Main {
+    public static void main(String[] args) {
+        int[] a = {10, 20, 30};
+        try {
+            for (int i = 0; i &lt;= a.length; i++) {      // bug: should be &lt;
+                System.out.println(a[i]);
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Caught: " + e.getMessage());
+        }
+    }
+}</pre>
+      <pre class="jrun" data-title="Negative indexes and safe access">class Main {
+    static int getOr(int[] a, int i, int fallback) {
+        return (i &gt;= 0 &amp;&amp; i &lt; a.length) ? a[i] : fallback;
+    }
+    public static void main(String[] args) {
+        int[] a = {10, 20, 30};
+        System.out.println(getOr(a, 1, -1));   // 20
+        System.out.println(getOr(a, -1, -1));  // -1: Java has no negative indexing
+        try { System.out.println(a[-1]); }
+        catch (ArrayIndexOutOfBoundsException e) { System.out.println(e.getMessage()); }
+        try { int[] bad = new int[-1]; }
+        catch (NegativeArraySizeException e) { System.out.println("NegativeArraySizeException: " + e.getMessage()); }
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
     <h3><span class="n">Q11</span>What is <code>ArrayStoreException</code>?</h3>
     <p>Arrays are covariant: a <code>String[]</code> can be used where an <code>Object[]</code> is expected. That lets the compiler accept code that is wrong, so the JVM checks every store into an object array at run time. Generics avoid this by being invariant, which is also why <code>new T[n]</code> isn't allowed.</p>
     <div data-scene="covar"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Covariance lets a bad store compile">class Main {
+    public static void main(String[] args) {
+        Object[] objs = new String[2];     // allowed: String[] is an Object[]
+        objs[0] = "fine";
+        try {
+            objs[1] = Integer.valueOf(42);  // compiles, fails at run time
+        } catch (ArrayStoreException e) {
+            System.out.println("ArrayStoreException: " + e.getMessage());
+        }
+    }
+}</pre>
+      <pre class="jrun" data-title="Generics catch it at compile time instead">import java.util.*;
+
+class Main {
+    public static void main(String[] args) {
+        List&lt;String&gt; names = new ArrayList&lt;&gt;();
+        // List&lt;Object&gt; objs = names;   // won't compile: generics are invariant
+        List&lt;? extends Object&gt; view = names; // read-only view is fine
+        names.add("Ada");
+        System.out.println(view.get(0));
+
+        Number[] nums = new Integer[1];
+        try { nums[0] = 3.14; }             // Double into an Integer[]
+        catch (ArrayStoreException e) { System.out.println("ArrayStoreException: " + e.getMessage()); }
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
@@ -155,6 +484,38 @@
         <tr><th>Use it for</th><td>Fixed-size data, primitives, speed</td><td>Collections that change size</td></tr>
       </tbody>
     </table></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="ArrayList grows; an array doesn't">import java.util.*;
+
+class Main {
+    public static void main(String[] args) {
+        int[] fixed = new int[2];
+        List&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+        for (int i = 1; i &lt;= 5; i++) list.add(i * 10);   // grows as needed
+        list.remove(Integer.valueOf(30));
+        System.out.println(list + " size=" + list.size());
+        System.out.println("array length stays " + fixed.length);
+    }
+}</pre>
+      <pre class="jrun" data-title="Converting between the two">import java.util.*;
+
+class Main {
+    public static void main(String[] args) {
+        String[] arr = {"b", "c", "a"};
+        List&lt;String&gt; fixedView = Arrays.asList(arr);   // backed by arr
+        fixedView.set(0, "z");
+        System.out.println(arr[0]);                     // z: writes through
+        try { fixedView.add("d"); }
+        catch (UnsupportedOperationException e) { System.out.println("asList can't grow"); }
+
+        List&lt;String&gt; list = new ArrayList&lt;&gt;(Arrays.asList(arr));  // independent copy
+        list.add("d");
+        String[] back = list.toArray(new String[0]);
+        System.out.println(Arrays.toString(back));
+    }
+}</pre>
+    </div>
   </article>
 </section>
 
@@ -167,6 +528,41 @@
     <div class="field"><label for="bsIn">a =</label><input type="text" id="bsIn" value="2, 5, 8, 12, 16, 23, 38, 56, 72, 91" autocomplete="off" spellcheck="false"><label for="bsT">target =</label><input type="text" id="bsT" class="short" value="23" autocomplete="off" spellcheck="false"></div>
     <p class="note">The numbers are sorted for you, since binary search needs sorted input.</p>
     <div data-scene="bs"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Binary search, written out">class Main {
+    static int search(int[] a, int target) {
+        int lo = 0, hi = a.length - 1, steps = 0;
+        while (lo &lt;= hi) {
+            int mid = (lo + hi) &gt;&gt;&gt; 1;
+            steps++;
+            if (a[mid] == target) { System.out.println("steps: " + steps); return mid; }
+            if (a[mid] &lt; target) lo = mid + 1; else hi = mid - 1;
+        }
+        System.out.println("steps: " + steps);
+        return -(lo + 1);                     // same convention as Arrays.binarySearch
+    }
+    public static void main(String[] args) {
+        int[] a = {2, 5, 8, 12, 16, 23, 38, 56, 72, 91};
+        System.out.println(search(a, 23));    // 5
+        System.out.println(search(a, 7));     // -3: would insert at index 2
+    }
+}</pre>
+      <pre class="jrun" data-title="Arrays.binarySearch and the insertion point">import java.util.Arrays;
+
+class Main {
+    public static void main(String[] args) {
+        int[] a = {91, 2, 56, 8, 23};
+        Arrays.sort(a);                                 // must be sorted first
+        System.out.println(Arrays.toString(a));
+        System.out.println(Arrays.binarySearch(a, 23)); // 2
+        int r = Arrays.binarySearch(a, 50);
+        System.out.println(r + " -&gt; insert at " + (-r - 1));
+        int n = 1_000_000;
+        System.out.println("max checks for 1M: " + (32 - Integer.numberOfLeadingZeros(n)));
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
@@ -174,6 +570,47 @@
     <p>Compare neighbours and swap them when they're out of order. Each pass moves the largest remaining value to the end. It takes O(n²) time, but stopping when a pass makes no swaps makes it O(n) on sorted input. Up to 8 numbers.</p>
     <div class="field"><label for="bubIn">a =</label><input type="text" id="bubIn" value="5, 1, 4, 2, 8" autocomplete="off" spellcheck="false"></div>
     <div data-scene="bub"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Bubble sort with early exit">import java.util.Arrays;
+
+class Main {
+    static void bubble(int[] a) {
+        for (int pass = 0; pass &lt; a.length - 1; pass++) {
+            boolean swapped = false;
+            for (int i = 0; i &lt; a.length - 1 - pass; i++) {
+                if (a[i] &gt; a[i + 1]) { int t = a[i]; a[i] = a[i + 1]; a[i + 1] = t; swapped = true; }
+            }
+            System.out.println("pass " + (pass + 1) + ": " + Arrays.toString(a));
+            if (!swapped) break;
+        }
+    }
+    public static void main(String[] args) {
+        bubble(new int[]{5, 1, 4, 2, 8});
+    }
+}</pre>
+      <pre class="jrun" data-title="Counting comparisons: sorted vs reversed">class Main {
+    static int comparisons(int[] a) {
+        int count = 0;
+        for (int pass = 0; pass &lt; a.length - 1; pass++) {
+            boolean swapped = false;
+            for (int i = 0; i &lt; a.length - 1 - pass; i++) {
+                count++;
+                if (a[i] &gt; a[i + 1]) { int t = a[i]; a[i] = a[i + 1]; a[i + 1] = t; swapped = true; }
+            }
+            if (!swapped) break;
+        }
+        return count;
+    }
+    public static void main(String[] args) {
+        int n = 100;
+        int[] sorted = new int[n], reversed = new int[n];
+        for (int i = 0; i &lt; n; i++) { sorted[i] = i; reversed[i] = n - i; }
+        System.out.println("sorted:   " + comparisons(sorted));    // n - 1
+        System.out.println("reversed: " + comparisons(reversed));  // n(n-1)/2
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
@@ -181,6 +618,38 @@
     <p>At each element, decide whether to extend the current run or start a new one there. Track the best sum seen so far. One pass gives O(n) time and O(1) extra space.</p>
     <div class="field"><label for="kIn">a =</label><input type="text" id="kIn" value="-2, 1, -3, 4, -1, 2, 1, -5, 4" autocomplete="off" spellcheck="false"></div>
     <div data-scene="kad"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Kadane with the subarray bounds">import java.util.Arrays;
+
+class Main {
+    public static void main(String[] args) {
+        int[] a = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+        int cur = a[0], best = a[0], start = 0, bestL = 0, bestR = 0;
+        for (int i = 1; i &lt; a.length; i++) {
+            if (a[i] &gt; cur + a[i]) { cur = a[i]; start = i; }   // start fresh
+            else cur += a[i];                                   // extend
+            if (cur &gt; best) { best = cur; bestL = start; bestR = i; }
+        }
+        System.out.println("best sum " + best);
+        System.out.println(Arrays.toString(Arrays.copyOfRange(a, bestL, bestR + 1)));
+    }
+}</pre>
+      <pre class="jrun" data-title="All negative numbers">class Main {
+    static int maxSub(int[] a) {
+        int cur = a[0], best = a[0];
+        for (int i = 1; i &lt; a.length; i++) {
+            cur = Math.max(a[i], cur + a[i]);
+            best = Math.max(best, cur);
+        }
+        return best;
+    }
+    public static void main(String[] args) {
+        System.out.println(maxSub(new int[]{-8, -3, -6, -2, -5}));  // -2: the least negative
+        System.out.println(maxSub(new int[]{5, -9, 6, -2, 3}));     // 7
+    }
+}</pre>
+    </div>
   </article>
 
   <article class="q">
@@ -188,6 +657,39 @@
     <p>Put one pointer at each end. If the sum is too small, move the left pointer right. If it's too big, move the right pointer left. This takes O(n) time with no extra memory. For unsorted input, a HashMap gives O(n) time instead.</p>
     <div class="field"><label for="tsIn">a =</label><input type="text" id="tsIn" value="1, 3, 4, 6, 8, 11" autocomplete="off" spellcheck="false"><label for="tsT">target =</label><input type="text" id="tsT" class="short" value="10" autocomplete="off" spellcheck="false"></div>
     <div data-scene="two"></div>
+    <div class="jx">
+      <h4>Try it: 2 runnable examples</h4>
+      <pre class="jrun" data-title="Two pointers on a sorted array">class Main {
+    public static void main(String[] args) {
+        int[] a = {1, 3, 4, 6, 8, 11};
+        int target = 10, lo = 0, hi = a.length - 1;
+        while (lo &lt; hi) {
+            int sum = a[lo] + a[hi];
+            System.out.println("a[" + lo + "] + a[" + hi + "] = " + sum);
+            if (sum == target) { System.out.println("found " + a[lo] + " + " + a[hi]); return; }
+            if (sum &lt; target) lo++; else hi--;
+        }
+        System.out.println("no pair");
+    }
+}</pre>
+      <pre class="jrun" data-title="Unsorted input with a HashMap">import java.util.*;
+
+class Main {
+    static int[] twoSum(int[] a, int target) {
+        Map&lt;Integer, Integer&gt; seen = new HashMap&lt;&gt;();   // value -&gt; index
+        for (int i = 0; i &lt; a.length; i++) {
+            Integer j = seen.get(target - a[i]);
+            if (j != null) return new int[]{j, i};
+            seen.put(a[i], i);
+        }
+        return new int[0];
+    }
+    public static void main(String[] args) {
+        System.out.println(Arrays.toString(twoSum(new int[]{8, 3, 11, 1, 6}, 9)));  // [0, 3]
+        System.out.println(Arrays.toString(twoSum(new int[]{2, 4}, 100)));        // []
+    }
+}</pre>
+    </div>
   </article>
 </section>
 
@@ -219,5 +721,6 @@
   <span>Companion page: <a href="../../index.html#strings" target="_top">Inside java.lang.String</a></span>
 </footer></div>
 <script src="script.js"></script>
+<script src="../../assets/java-runner.js"></script>
 </body>
 </html>
