@@ -4,8 +4,10 @@
   var KEY = "lv-theme";
   function apply(theme) {
     var root = document.documentElement;
-    if (theme === "light" || theme === "dark") root.setAttribute("data-theme", theme);
+    var palette = /^(sepia|ocean|forest)$/.test(theme);
+    if (theme === "light" || theme === "dark" || palette) root.setAttribute("data-theme", palette ? "light" : theme);
     else root.removeAttribute("data-theme");
+    if (palette) root.setAttribute("data-palette", theme); else root.removeAttribute("data-palette");
   }
   try { apply(localStorage.getItem(KEY)); } catch (e) {}
   window.addEventListener("message", function (e) {

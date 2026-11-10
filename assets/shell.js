@@ -62,14 +62,17 @@
     select(list[n].id, true); document.getElementById("tab-" + list[n].id).focus();
   });
 
-  /* theme: auto / light / dark, applied to the shell and every loaded tutorial */
+  /* theme: auto / light / dark, or a light color palette (sepia / ocean / forest),
+     applied to the shell and every loaded tutorial */
   function sendTheme(frame) {
     var theme = store(THEME_KEY) || "auto";
     try { frame.contentWindow.postMessage({ type: "lv-theme", theme: theme }, "*"); } catch (e) {}
   }
   function applyTheme(theme) {
     var root = document.documentElement;
-    if (theme === "light" || theme === "dark") root.setAttribute("data-theme", theme); else root.removeAttribute("data-theme");
+    var palette = /^(sepia|ocean|forest)$/.test(theme);
+    if (theme === "light" || theme === "dark" || palette) root.setAttribute("data-theme", palette ? "light" : theme); else root.removeAttribute("data-theme");
+    if (palette) root.setAttribute("data-palette", theme); else root.removeAttribute("data-palette");
     document.querySelectorAll("[data-theme-btn]").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.themeBtn === theme); });
     store(THEME_KEY, theme);
     document.querySelectorAll(".panel iframe").forEach(sendTheme);
