@@ -32,7 +32,8 @@ learn-visually/
 │   ├── shell.css           # styles for the top bar and tabs
 │   ├── shell.js            # tab switching, URL hash, light/dark theme
 │   ├── theme.css           # ← YOUR global style overrides (loaded last everywhere)
-│   └── embed.js            # lets the shell set each page's theme
+│   ├── embed.js            # lets the shell set each page's theme
+│   └── java-runner.js/.css # Edit/Run boxes for the Java examples
 └── tutorials/
     ├── java-strings/  index.html · style.css · script.js
     ├── java-arrays/   index.html · style.css · script.js
@@ -43,7 +44,7 @@ Each tutorial also works on its own: open `tutorials/python/index.html` directly
 
 ## Change the content
 
-- **Text and code examples**: edit the tutorial's `index.html`. Lessons are `<section>` blocks; code examples are `<pre class="code">` blocks. In the Python page, add `data-run` to a `<pre class="code">` to give it a **Run** button. Inside code, write `<` as `&lt;` and `&` as `&amp;`.
+- **Text and code examples**: edit the tutorial's `index.html`. Lessons are `<section>` blocks; code examples are `<pre class="code">` blocks. In the Python page, add `data-run` to a `<pre class="code">` to give it a **Run** button. In the Java pages, a runnable example is `<pre class="jrun" data-title="…">` holding a full program with a non-public `class Main`; it gets **Edit**, **Reset** and **Run** buttons (`assets/java-runner.js`). Inside code, write `<` as `&lt;` and `&` as `&amp;`.
 - **Animations and widgets**: edit the tutorial's `script.js`. In the Python page each widget is a function in the `W` object (for example `W.slicer`), mounted by `<div class="widget" data-w="slicer"></div>`.
 - **Tabs**: edit `assets/tutorials.js`. Each entry has an `id` (used in the URL, e.g. `index.html#python`), a `label`, a `note`, the page `path` and a tab `color`.
 
@@ -87,5 +88,6 @@ This repo includes `.github/workflows/pages.yml`. After pushing:
 ## Notes
 
 - The Python page's **Run** buttons load [Pyodide](https://pyodide.org) (CPython in WebAssembly, about 10 MB) from the jsDelivr CDN the first time you press Run, so they need an internet connection.
+- The Java pages' **Run** buttons send the example's code to the free [Wandbox](https://wandbox.org) online compiler (OpenJDK 21) and show its output, so they also need an internet connection.
 - Fonts come from Google Fonts; without internet the pages fall back to system fonts.
 - Lesson progress and the chosen theme are saved in the browser's `localStorage`.

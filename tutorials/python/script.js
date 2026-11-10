@@ -84,6 +84,7 @@ async function runPy(code, outEl) {
   py.setStdout({ batched: s => { buf += s + "\n"; } });
   py.setStderr({ batched: s => { buf += s + "\n"; } });
   try {
+    await py.loadPackagesFromImports(code);   // e.g. sqlite3 ships separately in Pyodide
     await py.runPythonAsync(code);
     outEl.textContent = buf || "(no output)";
   } catch (e) {

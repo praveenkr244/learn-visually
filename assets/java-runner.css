@@ -1,0 +1,21 @@
+/* Runnable Java examples (used by the Java tutorials). Uses each page's colour tokens. */
+.jx { display: grid; gap: 12px; min-width: 0 }
+.jx > h4 { margin: 4px 0 0; font: 700 .78rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted) }
+.jr { border-radius: 10px; overflow: hidden; background: var(--code-bg); border: 1px solid color-mix(in srgb, var(--code-dim) 30%, transparent); min-width: 0 }
+.jr-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 7px 10px; border-bottom: 1px solid color-mix(in srgb, var(--code-dim) 25%, transparent) }
+.jr-title { margin-right: auto; color: var(--code-ink); font: 600 .82rem var(--mono); overflow-wrap: anywhere }
+.jr-title small { color: var(--code-dim); font-weight: 400; margin-left: .5em }
+.jr-head button { font: 600 .76rem var(--mono); color: var(--code-ink); background: transparent; border: 1px solid color-mix(in srgb, var(--code-dim) 45%, transparent); border-radius: 6px; padding: 4px 10px; min-height: 30px; cursor: pointer }
+.jr-head button:hover { border-color: var(--code-str) }
+.jr-head button.run { background: var(--code-str); border-color: var(--code-str); color: #0C1018 }
+.jr-head button:disabled { opacity: .55; cursor: progress }
+.jr-head button:focus-visible, .jr textarea:focus-visible { outline: 2px solid var(--code-str); outline-offset: 1px }
+.jr pre.jsrc, .jr textarea { display: block; width: 100%; margin: 0; padding: 12px 14px; background: transparent; color: var(--code-ink); font: 400 .84rem/1.6 var(--mono); tab-size: 4; white-space: pre; overflow-x: auto; border: 0 }
+.jr textarea { resize: vertical; min-height: 8em; background: color-mix(in srgb, var(--code-on) 55%, var(--code-bg)) }
+.jr .c { color: var(--code-dim) } .jr .k { color: var(--code-kw) } .jr .s { color: var(--code-str) }
+.jr-out { margin: 0; padding: 10px 14px; border-top: 1px dashed color-mix(in srgb, var(--code-dim) 40%, transparent); background: color-mix(in srgb, #000 22%, var(--code-bg)); color: #BFE8CF; font: 400 .82rem/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 340px; overflow: auto }
+.jr-out:empty { display: none }
+.jr-out.err { color: #FFB4A1 }
+.jr-out.wait { color: var(--code-dim) }
+.jr-out b { display: block; font-weight: 700; color: var(--code-dim); margin-bottom: 2px }
+.jr-note { font-size: .82rem; color: var(--muted) }
