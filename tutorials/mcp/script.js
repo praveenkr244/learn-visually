@@ -33,6 +33,18 @@ function hl(code) {
 }
 $$("pre.code").forEach(p => { if (!p.id) p.innerHTML = hl(p.textContent.replace(/^\n+|\s+$/g, "")); });
 
+/* ---------- YouTube: load the player only when asked (privacy-friendly domain) ---------- */
+const ytB = $("#ytPlay");
+if (ytB) ytB.addEventListener("click", () => {
+  const f = document.createElement("iframe");
+  f.src = "https://www.youtube-nocookie.com/embed/GeVCpohRU8Y?autoplay=1&rel=0";
+  f.title = "What is MCP? | Completely Explained in 20 Minutes (Apna College)";
+  f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+  f.allowFullscreen = true;
+  $("#yt").replaceChildren(f);
+  $("#ytNote").hidden = false;
+});
+
 /* ---------- chapter nav ---------- */
 const lessons = $$(".lesson");
 const nav = $("#chapters");

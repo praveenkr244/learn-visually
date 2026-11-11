@@ -28,8 +28,25 @@
     <li style="--c:var(--llm)">LLM</li>
     <li style="--c:var(--api)">External system</li>
   </ul>
-  <p class="hero-cta"><a class="btn pri" href="#flow">▶ Watch the end-to-end flow</a> <a class="btn" href="#build">Build a server</a> <a class="btn" href="#cheatsheet">Cheat sheet</a></p>
+  <p class="hero-cta"><a class="btn pri" href="#watch">▶ Watch the videos</a> <a class="btn" href="#flow">Interactive flow</a> <a class="btn" href="#build">Build a server</a> <a class="btn" href="#cheatsheet">Cheat sheet</a></p>
 </header>
+
+<section class="watch" id="watch" aria-label="Videos">
+  <figure class="vcard">
+    <video class="vid" controls preload="metadata" playsinline poster="poster.jpg" src="mcp-end-to-end.mp4"></video>
+    <figcaption><b>MCP end to end</b> · 1:27 · one question travels from the user to a weather API and back, message by message. Step through it yourself in <a href="#flow">section 04</a>.</figcaption>
+  </figure>
+  <figure class="vcard">
+    <div class="yt" id="yt">
+      <button type="button" class="yt-play" id="ytPlay" aria-label="Play the YouTube video What is MCP? Completely Explained in 20 Minutes">
+        <span class="yt-icon" aria-hidden="true">▶</span>
+        <span class="yt-title">What is MCP? | Completely Explained in 20 Minutes</span>
+        <small>Apna College · YouTube · 20 min</small>
+      </button>
+    </div>
+    <figcaption><b>The video this tutorial builds on</b> · <a href="https://www.youtube.com/watch?v=GeVCpohRU8Y" target="_blank" rel="noopener">Open on YouTube ↗</a><span class="yt-note" id="ytNote" hidden> · If the player stays blank, this viewer blocks embedded sites; use Open on YouTube.</span></figcaption>
+  </figure>
+</section>
 
 <!-- 1 -->
 <section class="lesson" id="what" data-title="What is MCP?">
@@ -121,9 +138,7 @@
   </div>
   <div class="pscenes" id="pScenes" role="group" aria-label="Jump to step"></div>
 </div>
-<h3>Prefer a video?</h3>
-<p>The same animation as an MP4 (1280×720, about 80 seconds), handy for presenting or sharing:</p>
-<video class="vid" controls preload="metadata" playsinline poster="poster.jpg" src="mcp-end-to-end.mp4"></video>
+<p class="note">Prefer a video? The same animation is at the <a href="#watch">top of the page</a> as an MP4 (1280×720, 1:27).</p>
 <div class="tbl"><table>
 <tr><th>#</th><th>Step</th><th>What happens</th><th>Message</th></tr>
 <tr><td>1</td><td>Configure</td><td>The host reads its server list and creates one client per server</td><td>config file</td></tr>
