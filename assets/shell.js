@@ -53,6 +53,11 @@
     store("lv-last-tab", t.id);
   }
 
+  /* if the tabs ever overflow, let a normal mouse wheel scroll them sideways */
+  tabs.addEventListener("wheel", function (e) {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && tabs.scrollWidth > tabs.clientWidth) { tabs.scrollLeft += e.deltaY; e.preventDefault(); }
+  }, { passive: false });
+
   tabs.addEventListener("keydown", function (e) {
     var i = list.findIndex(function (x) { return document.getElementById("tab-" + x.id) === document.activeElement; });
     if (i < 0) return;

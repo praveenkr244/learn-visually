@@ -48,7 +48,28 @@ if (ytB) ytB.addEventListener("click", () => {
 /* ---------- chapter nav ---------- */
 const lessons = $$(".lesson");
 const nav = $("#chapters");
-nav.innerHTML = `<a href="#top">Start</a>` + lessons.map(s => `<a href="#${s.id}" data-id="${s.id}">${esc(s.dataset.title || $("h2", s).textContent)}</a>`).join("");
+nav.innerHTML = `<button type="button" class="chev" data-dir="-1" aria-label="Show earlier chapters" hidden>‹</button><div class="chap-track" id="chapTrack"><a href="#top">Start</a>` +
+  lessons.map(s => `<a href="#${s.id}" data-id="${s.id}">${esc(s.dataset.title || $("h2", s).textContent)}</a>`).join("") +
+  `</div><button type="button" class="chev" data-dir="1" aria-label="Show more chapters" hidden>›</button>`;
+const track = $("#chapTrack"), [chevL, chevR] = $$(".chev", nav);
+function chevs() {
+  const max = track.scrollWidth - track.clientWidth;
+  chevL.hidden = track.scrollLeft <= 2; chevR.hidden = max <= 2 || track.scrollLeft >= max - 2;
+}
+track.addEventListener("scroll", chevs, { passive: true });
+addEventListener("resize", chevs);
+let chevTo = null, chevT;   // quick repeat clicks add up instead of restarting from mid-animation
+nav.addEventListener("click", e => {
+  const b = e.target.closest(".chev"); if (!b) return;
+  const max = track.scrollWidth - track.clientWidth;
+  chevTo = Math.max(0, Math.min(max, (chevTo ?? track.scrollLeft) + +b.dataset.dir * track.clientWidth * 0.7));
+  track.scrollTo({ left: chevTo, behavior: "smooth" });
+  clearTimeout(chevT); chevT = setTimeout(() => chevTo = null, 600);
+});
+track.addEventListener("wheel", e => {   // a normal mouse wheel scrolls the bar sideways
+  if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && track.scrollWidth > track.clientWidth) { track.scrollLeft += e.deltaY; e.preventDefault(); }
+}, { passive: false });
+chevs();
 if ("IntersectionObserver" in window) {
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (!e.isIntersecting) return;

@@ -39,9 +39,13 @@ code { font-family: var(--font-mono); font-size: .85em; background: var(--soft);
 button { font: inherit; cursor: pointer; }
 
 /* chapter nav */
-.chapters { position: sticky; top: 0; z-index: 20; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
-  padding: 10px clamp(16px, 4vw, 40px); background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-.chapters::-webkit-scrollbar { display: none; }
+.chapters { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 6px;
+  padding: 8px clamp(10px, 3vw, 32px); background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.chap-track { display: flex; gap: 6px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; }
+.chap-track::-webkit-scrollbar { display: none; }
+.chev { flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  font-size: 20px; line-height: 1; display: grid; place-items: center; padding: 0 0 2px; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+.chev:hover { border-color: var(--host); color: var(--host); }
 .chapters a { flex: none; font-size: .84rem; font-weight: 600; color: var(--muted); text-decoration: none; padding: 4px 10px; border-radius: 999px; border: 1px solid transparent; }
 .chapters a:hover { color: var(--ink); border-color: var(--line); }
 .chapters a.on { color: var(--surface); background: var(--ink); }
@@ -144,7 +148,7 @@ details.check summary { font-weight: 700; cursor: pointer; }
 .ptime { font: 600 .85rem var(--font-mono); color: #9aa4ba; min-width: 7.5em; }
 .pspeed { color: #9aa4ba; font-size: .85rem; display: flex; gap: 6px; align-items: center; }
 .pspeed select { background: #18203a; color: #e6ebf5; border: 1px solid #2a3556; border-radius: 6px; padding: 3px 6px; font: inherit; }
-.pscenes { display: flex; gap: 6px; padding: 0 12px 12px; background: #0d1220; overflow-x: auto; }
+.pscenes { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 12px; background: #0d1220; }
 .pscenes button { flex: none; background: #141b2f; color: #9aa4ba; border: 1px solid #263048; border-radius: 999px; padding: 4px 11px; font-size: .78rem; font-weight: 600; }
 .pscenes button.on { background: #2dd4bf; color: #04201d; border-color: #2dd4bf; }
 .vid { width: 100%; border-radius: 12px; background: #000; display: block; }
