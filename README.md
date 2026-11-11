@@ -7,6 +7,7 @@ Animated, interactive programming tutorials in one tabbed site:
 | Java Strings | `tutorials/java-strings/` | 18 `java.lang.String` interview questions with memory diagrams and a quiz |
 | Java Arrays | `tutorials/java-arrays/` | 16 Java array questions with heap diagrams and algorithm tracers |
 | Python | `tutorials/python/` | Python from beginner to advanced, with step-through animations, a cheat sheet and runnable code |
+| MCP | `tutorials/mcp/` | Model Context Protocol: architecture, an animated end-to-end flow (plus an MP4), building and connecting a server |
 
 No build step and no dependencies: it is plain HTML, CSS and JavaScript.
 
@@ -38,7 +39,8 @@ learn-visually/
 └── tutorials/
     ├── java-strings/  index.html · style.css · script.js
     ├── java-arrays/   index.html · style.css · script.js
-    └── python/        index.html · style.css · script.js
+    ├── python/        index.html · style.css · script.js
+    └── mcp/           index.html · style.css · script.js · mcp-end-to-end.mp4 · poster.jpg
 ```
 
 Each tutorial also works on its own: open `tutorials/python/index.html` directly.
@@ -87,6 +89,13 @@ This repo includes `.github/workflows/pages.yml`. After pushing:
 2. Under **Build and deployment → Source**, choose **GitHub Actions**.
 3. The next push (or **Actions → Deploy to GitHub Pages → Run workflow**) publishes the site at
    `https://<your-username>.github.io/learn-visually/`.
+
+## Re-record the MCP video
+
+The MCP flow animation is drawn by `tutorials/mcp/script.js` (see `SCENES`). Open
+`tutorials/mcp/index.html?film` to get just the 1280×720 stage; `window.__flow.renderAt(seconds)`
+draws any frame, which is how `mcp-end-to-end.mp4` was recorded (Playwright screenshots piped into ffmpeg at 30 fps).
+After editing scenes, either re-record or remove the `<video>` block from the page.
 
 ## Notes
 

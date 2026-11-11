@@ -25,5 +25,12 @@ window.TUTORIALS = [
     note: "Beginner → Advanced",
     path: "tutorials/python/index.html",
     color: "var(--t3)"
+  },
+  {
+    id: "mcp",
+    label: "MCP",
+    note: "Model Context Protocol",
+    path: "tutorials/mcp/index.html",
+    color: "var(--t4)"
   }
 ];

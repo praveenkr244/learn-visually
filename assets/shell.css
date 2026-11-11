@@ -5,6 +5,7 @@
   --t1: #4a3ec0;  /* Java Strings */
   --t2: #a35c06;  /* Java Arrays  */
   --t3: #2f6fb0;  /* Python       */
+  --t4: #0d9488;  /* MCP          */
   --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
   --bar-h: 58px;
@@ -13,12 +14,12 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0d121e; --surface: #151c2c; --ink: #e6ebf5; --muted: #9ba6bc; --line: #27314a;
-    --accent: #8c9bff; --t1: #a79cff; --t2: #f0a347; --t3: #6fb0f0; color-scheme: dark;
+    --accent: #8c9bff; --t1: #a79cff; --t2: #f0a347; --t3: #6fb0f0; --t4: #2dd4bf; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0d121e; --surface: #151c2c; --ink: #e6ebf5; --muted: #9ba6bc; --line: #27314a;
-  --accent: #8c9bff; --t1: #a79cff; --t2: #f0a347; --t3: #6fb0f0; color-scheme: dark;
+  --accent: #8c9bff; --t1: #a79cff; --t2: #f0a347; --t3: #6fb0f0; --t4: #2dd4bf; color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
