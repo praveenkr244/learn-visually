@@ -83,12 +83,14 @@ git push -u origin main
 
 ### Publish it as a website (GitHub Pages)
 
-This repo includes `.github/workflows/pages.yml`. After pushing:
+The site is plain static files, so GitHub Pages can serve it straight from the branch. After pushing:
 
 1. On GitHub open **Settings → Pages**.
-2. Under **Build and deployment → Source**, choose **GitHub Actions**.
-3. The next push (or **Actions → Deploy to GitHub Pages → Run workflow**) publishes the site at
-   `https://<your-username>.github.io/learn-visually/`.
+2. Under **Build and deployment → Source**, choose **Deploy from a branch**, then `main` and `/ (root)`.
+3. Every push to `main` then republishes the site at
+   `https://<your-username>.github.io/learn-visually/` within a minute or two.
+
+The empty `.nojekyll` file tells Pages to serve the files as they are, without running Jekyll.
 
 ## Re-record the MCP video
 
