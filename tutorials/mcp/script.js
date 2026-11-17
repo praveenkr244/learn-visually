@@ -66,14 +66,17 @@ nav.addEventListener("click", e => {
   track.scrollTo({ left: chevTo, behavior: "smooth" });
   clearTimeout(chevT); chevT = setTimeout(() => chevTo = null, 600);
 });
-track.addEventListener("wheel", e => {   // a normal mouse wheel scrolls the bar sideways
-  if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && track.scrollWidth > track.clientWidth) { track.scrollLeft += e.deltaY; e.preventDefault(); }
-}, { passive: false });
 chevs();
+// keep the current chapter visible in the bar; scroll only the bar, never the page (scrollIntoView would also move the page)
+function showInBar(a) {
+  const l = a.offsetLeft - track.offsetLeft, r = l + a.offsetWidth;
+  if (l < track.scrollLeft) track.scrollTo({ left: l - 8 });
+  else if (r > track.scrollLeft + track.clientWidth) track.scrollTo({ left: r - track.clientWidth + 8 });
+}
 if ("IntersectionObserver" in window) {
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (!e.isIntersecting) return;
-    $$("a", nav).forEach(a => { const on = a.dataset.id === e.target.id; a.classList.toggle("on", on); if (on) a.scrollIntoView({ block: "nearest", inline: "nearest" }); });
+    $$("a", nav).forEach(a => { const on = a.dataset.id === e.target.id; a.classList.toggle("on", on); if (on) showInBar(a); });
   }), { rootMargin: "-35% 0px -60% 0px" });
   lessons.forEach(s => io.observe(s));
 }
