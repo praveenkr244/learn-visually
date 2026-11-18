@@ -28,42 +28,6 @@ function hl(code) {
 }
 $$("pre.code").forEach(p => { p.innerHTML = hl(p.textContent.replace(/^\n+|\s+$/g, "")); });
 
-/* ---------- chapter nav ---------- */
-const lessons = $$(".lesson");
-const nav = $("#chapters");
-nav.innerHTML = `<button type="button" class="chev" data-dir="-1" aria-label="Show earlier chapters" hidden>‹</button><div class="chap-track" id="chapTrack"><a href="#top">Start</a>` +
-  lessons.map(s => `<a href="#${s.id}" data-id="${s.id}">${esc(s.dataset.title || $("h2", s).textContent)}</a>`).join("") +
-  `</div><button type="button" class="chev" data-dir="1" aria-label="Show more chapters" hidden>›</button>`;
-const track = $("#chapTrack"), [chevL, chevR] = $$(".chev", nav);
-function chevs() {
-  const max = track.scrollWidth - track.clientWidth;
-  chevL.hidden = track.scrollLeft <= 2; chevR.hidden = max <= 2 || track.scrollLeft >= max - 2;
-}
-track.addEventListener("scroll", chevs, { passive: true });
-addEventListener("resize", chevs);
-let chevTo = null, chevT;   // quick repeat clicks add up instead of restarting from mid-animation
-nav.addEventListener("click", e => {
-  const b = e.target.closest(".chev"); if (!b) return;
-  const max = track.scrollWidth - track.clientWidth;
-  chevTo = Math.max(0, Math.min(max, (chevTo ?? track.scrollLeft) + +b.dataset.dir * track.clientWidth * 0.7));
-  track.scrollTo({ left: chevTo, behavior: "smooth" });
-  clearTimeout(chevT); chevT = setTimeout(() => chevTo = null, 600);
-});
-chevs();
-// keep the current chapter visible in the bar; scroll only the bar, never the page (scrollIntoView would also move the page)
-function showInBar(a) {
-  const l = a.offsetLeft - track.offsetLeft, r = l + a.offsetWidth;
-  if (l < track.scrollLeft) track.scrollTo({ left: l - 8 });
-  else if (r > track.scrollLeft + track.clientWidth) track.scrollTo({ left: r - track.clientWidth + 8 });
-}
-if ("IntersectionObserver" in window) {
-  const io = new IntersectionObserver(es => es.forEach(e => {
-    if (!e.isIntersecting) return;
-    $$("a", nav).forEach(a => { const on = a.dataset.id === e.target.id; a.classList.toggle("on", on); if (on) showInBar(a); });
-  }), { rootMargin: "-35% 0px -60% 0px" });
-  lessons.forEach(s => io.observe(s));
-}
-
 /* A tiny step player shared by several widgets: Play/Back/Next + a note line. */
 function stepper(host, n, draw, { auto = 1600, loop = false } = {}) {
   const row = document.createElement("div"); row.className = "wrow";
@@ -612,16 +576,23 @@ W.cli = host => {
   host.innerHTML = `<input class="cli-find" type="search" placeholder="Filter commands…" aria-label="Filter commands"><div class="cli-count" aria-live="polite"></div>
     <div class="tbl"><table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody>${G.map(([g, rows]) =>
       `<tr class="grp"><td colspan="2">${g}</td></tr>` + rows.map(([c, d]) => `<tr data-q="${esc((c + " " + d + " " + g).toLowerCase())}"><td><code>${esc(c)}</code></td><td>${esc(d)}</td></tr>`).join("")).join("")}</tbody></table></div>`;
+  // one group at a time (tabs); typing searches every group
+  $(".cli-count", host).insertAdjacentHTML("afterend", `<div class="bpick cli-tabs" role="group" aria-label="Command group">${G.map(([name], k) => `<button type="button" aria-pressed="${k === 0}" data-g="${k}">${name}</button>`).join("")}</div>`);
+  let gi = -1;
+  $$("tbody tr", host).forEach(tr => { if (tr.classList.contains("grp")) gi++; tr.dataset.g = gi; });
   const input = $("input", host), count = $(".cli-count", host), all = G.reduce((n, [, r]) => n + r.length, 0);
+  let tab = 0;
   const filter = () => {
     const q = input.value.trim().toLowerCase(); let n = 0;
+    $$(".cli-tabs button", host).forEach(b => b.setAttribute("aria-pressed", !q && +b.dataset.g === tab));
     $$("tbody tr", host).forEach(tr => {
-      if (tr.classList.contains("grp")) return;
-      const hit = !q || tr.dataset.q.includes(q); tr.hidden = !hit; n += hit;
+      if (tr.classList.contains("grp")) { tr.hidden = !q; return; }
+      const hit = q ? tr.dataset.q.includes(q) : +tr.dataset.g === tab; tr.hidden = !hit; n += hit;
     });
-    $$("tbody tr.grp", host).forEach(g => { let s = g.nextElementSibling, any = false; while (s && !s.classList.contains("grp")) { any ||= !s.hidden; s = s.nextElementSibling; } g.hidden = !any; });
-    count.textContent = q ? `${n} of ${all} commands` : `${all} commands`;
+    if (q) $$("tbody tr.grp", host).forEach(gr => { let s = gr.nextElementSibling, any = false; while (s && !s.classList.contains("grp")) { any ||= !s.hidden; s = s.nextElementSibling; } gr.hidden = !any; });
+    count.textContent = q ? `${n} of ${all} commands match` : `${all} commands in ${G.length} groups · pick a group or type to search all`;
   };
+  host.addEventListener("click", e => { const b = e.target.closest("[data-g]"); if (b && b.tagName === "BUTTON") { tab = +b.dataset.g; input.value = ""; filter(); } });
   input.addEventListener("input", filter); filter();
 };
 
@@ -637,18 +608,245 @@ W.quiz = host => {
     ["Best way to make every test start logged in?", ["Log in inside beforeEach", "A setup project that saves storageState, used by the other projects", "page.waitForTimeout after login", "Disable auth on the test server"], 1, "Log in once, save cookies and storage, and reuse them in every context."],
     ["Which trace setting is the usual choice for CI?", ["'on'", "'off'", "'on-first-retry'", "'retain-on-success'"], 2, "Free on green runs; a full trace whenever a test needs a retry."]
   ];
-  let score = 0, done = 0;
-  host.innerHTML = `<div class="quiz">${Q.map(([q, o], i) => `<div class="q" data-i="${i}"><p>${i + 1}. ${esc(q)}</p><div class="opts">${o.map((x, k) => `<button type="button" data-k="${k}">${esc(x)}</button>`).join("")}</div><div class="why" hidden></div></div>`).join("")}<p class="score" aria-live="polite"></p></div>`;
+  // one question at a time, with a dot per question
+  let i = 0, score = 0;
+  const res = [];
+  const draw = () => {
+    if (i >= Q.length) {
+      host.innerHTML = `<div class="q quiz-end"><p class="big">${score === Q.length ? "🏆" : score >= 6 ? "🎉" : "💪"} ${score} / ${Q.length}</p>
+        <p>${score === Q.length ? "Perfect: you're ready to write real Playwright tests." : "Good work. Open the lessons behind the ✕ dots to revise them."}</p>
+        <div class="dots">${res.map((r, k) => `<i class="${r ? "ok" : "no"}" title="Question ${k + 1}"></i>`).join("")}</div>
+        <button type="button" class="btn pri" data-again>Try again</button></div>`;
+      markDone("quiz"); return;
+    }
+    const [q, o] = Q[i];
+    host.innerHTML = `<div class="q"><div class="dots">${Q.map((_, k) => `<i class="${k < i ? (res[k] ? "ok" : "no") : k === i ? "cur" : ""}"></i>`).join("")}</div>
+      <p class="qn">Question ${i + 1} of ${Q.length}</p><p>${esc(q)}</p><div class="opts">${o.map((x, k) => `<button type="button" data-k="${k}">${esc(x)}</button>`).join("")}</div>
+      <div class="why" hidden></div><div class="wrow" hidden><button type="button" class="btn pri" data-nextq>${i + 1 < Q.length ? "Next question ›" : "See my score"}</button></div></div>`;
+  };
   host.addEventListener("click", e => {
+    if (e.target.closest("[data-again]")) { i = 0; score = 0; res.length = 0; return draw(); }
+    if (e.target.closest("[data-nextq]")) { i++; return draw(); }
     const b = e.target.closest("button[data-k]"); if (!b) return;
-    const q = b.closest(".q"); if (q.dataset.done) return;
-    const [, , a, why] = Q[+q.dataset.i], k = +b.dataset.k;
-    q.dataset.done = 1; done++; if (k === a) score++;
-    $$("button", q).forEach((x, j) => { if (j === a) x.classList.add("right"); else if (j === k) x.classList.add("wrong"); });
+    const q = b.closest(".q"); if (q.dataset.answered) return;
+    const [, , a, why] = Q[i], k = +b.dataset.k;
+    q.dataset.answered = 1; res[i] = k === a; if (k === a) score++;
+    $$("button[data-k]", q).forEach((x, j) => { if (j === a) x.classList.add("right"); else if (j === k) x.classList.add("wrong"); });
     const w = $(".why", q); w.hidden = false; w.textContent = (k === a ? "Right. " : "Not quite. ") + why;
-    $(".score", host).textContent = `Score: ${score} / ${done}` + (done === Q.length ? (score === Q.length ? " · perfect!" : " · done") : "");
+    $(".wrow", q).hidden = false; $("[data-nextq]", q).focus();
   });
+  draw();
+};
+
+/* ---------- 3. fixture lifecycle ---------- */
+W.fixture = host => {
+  const BOX = [["browser", "worker", "var(--browser)"], ["context", "test", "var(--cfg)"], ["page", "test", "var(--runner)"], ["your test", "", "var(--assert)"]];
+  host.insertAdjacentHTML("beforeend", `<div class="svg-scroll"><svg class="svg" viewBox="0 0 640 196" role="img" aria-label="browser contains context contains page, which is handed to your test">
+    ${BOX.map(([n, s, c], k) => `<g class="fx" data-k="${k}"><rect x="${10 + k * 30}" y="${10 + k * 22}" width="${620 - k * 60}" height="${176 - k * 44}" rx="12" fill="color-mix(in srgb, ${c} 10%, var(--surface))" stroke="${c}" stroke-width="2.5"/>
+      <text x="${26 + k * 30}" y="${34 + k * 22}" class="t-b" fill="${c}">${n}</text>${s ? `<text x="${614 - k * 30}" y="${34 + k * 22}" text-anchor="end" class="t-m" fill="var(--muted)">scope: ${s}</text>` : ""}</g>`).join("")}
+  </svg></div>`);
+  const S = [
+    [[0], "<b>Worker starts:</b> one <code>browser</code> is launched and shared by every test in this worker."],
+    [[0, 1], "<b>Setup:</b> before the test, Playwright opens a fresh <code>context</code>: empty cookies and storage."],
+    [[0, 1, 2], "<b>Setup:</b> then a new <code>page</code> (tab) inside that context."],
+    [[0, 1, 2, 3], "<b>Use:</b> your test receives <code>{ page }</code> and runs."],
+    [[0], "<b>Teardown:</b> page and context are closed. The browser stays for the next test, which gets a new context and page."]
+  ];
+  stepper(host, S.length, i => { $$(".fx", host).forEach(g => { g.style.transition = "opacity .35s"; g.style.opacity = S[i][0].includes(+g.dataset.k) ? 1 : .08; }); return S[i][1]; }, { auto: 1700 });
+};
+
+/* ---------- 10. clickable priority pyramid ---------- */
+W.pyramid = host => {
+  const L = [
+    ["Role · Label", "var(--assert)", "page.getByRole('button', { name: 'Login' })", "What users and screen readers see. Survives restyling and restructuring."],
+    ["Text · Placeholder · Alt", "color-mix(in srgb, var(--assert) 65%, var(--cfg))", "page.getByText('Login')", "Visible text. Good for non-interactive elements; breaks if the copy changes."],
+    ["Test id", "var(--cfg)", "page.getByTestId('login-btn')", "A contract with developers. Very stable, but users can't see it."],
+    ["Stable CSS", "var(--loc)", "page.locator('#loginBtn')", "Fine when the id is meaningful and stable. Never generated classes."],
+    ["XPath · position", "var(--bad)", "page.locator('//div[2]/form/button[1]')", "Tied to the DOM tree: breaks when anything moves. Last resort."]
+  ];
+  host.innerHTML = `<div class="two"><svg class="svg" viewBox="0 0 400 280" role="group" aria-label="Locator priority pyramid">
+    ${L.map(([n, c], k) => { const t = 10 + k * 54, w0 = 30 + k * 66, w1 = 30 + (k + 1) * 66; return `<g class="pyr" data-k="${k}" tabindex="0" role="button" aria-label="${n}" style="cursor:pointer">
+      <path d="M${200 - w0} ${t} H${200 + w0} L${200 + w1} ${t + 50} H${200 - w1} Z" fill="${c}"/><text x="200" y="${t + 31}" text-anchor="middle" class="t-b" fill="#fff">${n}</text></g>`; }).join("")}
+    <text x="6" y="22" class="t-s">best</text><text x="394" y="272" text-anchor="end" class="t-s">worst</text></svg>
+    <div class="cfg-note" aria-live="polite"></div></div>`;
+  const note = $(".cfg-note", host);
+  const pick = k => { $$(".pyr", host).forEach(g => g.style.opacity = +g.dataset.k === k ? 1 : .45); note.innerHTML = `<b>${k + 1} · ${L[k][0]}</b><pre class="code" style="margin:6px 0">${hl(L[k][2])}</pre>${L[k][3]}<p class="note" style="margin:.5em 0 0">Same Login button every time. Click another layer.</p>`; };
+  host.addEventListener("click", e => { const g = e.target.closest(".pyr"); if (g) pick(+g.dataset.k); });
+  host.addEventListener("keydown", e => { const g = e.target.closest(".pyr"); if (g && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pick(+g.dataset.k); } });
+  pick(0);
+};
+
+/* ---------- 12. locator chain builder ---------- */
+W.chain = host => {
+  const ROWS = [["Asha Rao", "Admin"], ["John Doe", "Editor"], ["Mei Chen", "Viewer"]];
+  host.innerHTML = `<div class="two"><div class="tbl" style="margin:0"><table class="chain-t"><tr><th>Name</th><th>Role</th><th></th></tr>
+    ${ROWS.map(([n, r], k) => `<tr data-r="${k}"><td>${n}</td><td>${r}</td><td><button type="button" class="mbtn" tabindex="-1" data-b="${k}">Edit</button></td></tr>`).join("")}</table></div>
+    <div><pre class="code chain-code" style="margin:0"></pre><div class="stepnote chain-note" aria-live="polite"></div></div></div>`;
+  const S = [
+    ["page.getByRole('button', { name: 'Edit' })", { b: [0, 1, 2] }, "<b>3 matches.</b> Every row has an Edit button, so <code>.click()</code> would be a strict-mode error."],
+    ["page.getByRole('row', { name: /John Doe/ })", { r: [1] }, "<b>1 row.</b> Narrow to the row whose text contains John Doe, the way you'd describe it to a person."],
+    ["page.getByRole('row', { name: /John Doe/ })\n    .getByRole('button', { name: 'Edit' })", { r: [1], b: [1] }, "<b>1 button ✓</b> Search inside that row only. Re-ordering or adding rows can't break it."],
+    ["page.getByRole('row')\n    .filter({ hasText: 'Editor' })\n    .getByRole('button', { name: 'Edit' })", { r: [1], b: [1] }, "<b>Same result with <code>.filter()</code>.</b> Filter by text, or by a child locator with <code>{ has: … }</code>."]
+  ];
+  const code = $(".chain-code", host), note = $(".chain-note", host);
+  const wrap = document.createElement("div"); host.append(wrap);
+  stepper(wrap, S.length, i => {
+    const [c, m, t] = S[i];
+    code.innerHTML = hl("await " + c + (i ? ".click();" : ".click();  // ✕"));
+    $$("tr[data-r]", host).forEach(tr => tr.classList.toggle("hit-row", (m.r || []).includes(+tr.dataset.r)));
+    $$("[data-b]", host).forEach(b => b.classList.toggle("hit-btn", (m.b || []).includes(+b.dataset.b)));
+    note.innerHTML = t; return "";
+  }, { auto: 2200 });
+  $(".stepnote:not(.chain-note)", wrap).remove();
+};
+
+/* ---------- 16. retrying assertion demo ---------- */
+W.expect = host => {
+  const A = [
+    ["await expect(toast).toBeVisible()", true, "A “Saved” toast appears 1.2 s after clicking Save."],
+    ["await expect(toast).toHaveText('Saved')", true, "The toast first says “Saving…”, then “Saved”."],
+    ["await expect(items).toHaveCount(3)", true, "The list loads its third item late."],
+    ["expect(await toast.isVisible()).toBe(true)", false, "Checks once, immediately. No retry."]
+  ];
+  host.innerHTML = `<div class="bpick" role="group" aria-label="Assertion">${A.map(([c], k) => `<button type="button" aria-pressed="false" data-k="${k}"><code>${esc(c.replace(/^await /, ""))}</code></button>`).join("")}</div>
+    <div class="two"><div class="mock exp-stage"></div><div><div class="exp-polls" aria-live="polite"></div><div class="stepnote exp-note"></div></div></div>`;
+  let id = 0;
+  const go = async k => {
+    const my = ++id, [c, retry, story] = A[k], stage = $(".exp-stage", host), polls = $(".exp-polls", host), note = $(".exp-note", host);
+    $$(".bpick button", host).forEach(b => b.setAttribute("aria-pressed", +b.dataset.k === k));
+    const draw = t => {
+      const ready = t >= 1200;
+      stage.innerHTML = k === 2 ? `<b>Cart</b><ul style="margin:6px 0 0;padding-left:1.2em"><li>Mug</li><li>Lamp</li>${ready ? '<li class="enter">Plant</li>' : ""}</ul>`
+        : `<button type="button" class="mbtn primary" tabindex="-1">Save</button>${k === 1 ? `<div class="toast">${ready ? "Saved ✓" : "Saving…"}</div>` : ready ? '<div class="toast enter">Saved ✓</div>' : ""}`;
+    };
+    polls.innerHTML = `<pre class="code" style="margin:0 0 8px">${hl(c)}</pre>`; note.textContent = story; draw(0);
+    const times = retry ? [0, 100, 250, 500, 1000, 1500] : [0];
+    let t0 = 0;
+    for (const t of times) {
+      if (!REDUCED) await sleep(t - t0); t0 = t;
+      if (my !== id) return;
+      const ok = t >= 1200; draw(t);
+      polls.insertAdjacentHTML("beforeend", `<span class="poll ${ok ? "ok" : retry ? "" : "bad"}">${t} ms ${ok ? "✓" : "✕"}</span> `);
+      if (ok) { note.innerHTML = `<b style="color:var(--assert)">Passed at ${t} ms.</b> It kept checking until the page caught up.`; return; }
+    }
+    if (!retry) { note.innerHTML = `<b style="color:var(--bad)">Failed at 0 ms.</b> The toast arrived later, but this check never looked again. Use <code>await expect(toast).toBeVisible()</code>.`; if (!REDUCED) await sleep(1200); if (my === id) draw(1200); }
+  };
+  host.addEventListener("click", e => { const b = e.target.closest(".bpick button"); if (b) go(+b.dataset.k); });
+  go(0);
+};
+
+/* ---------- 17. which tool when ---------- */
+W.tools = host => {
+  const T = {
+    "Codegen": ["npx playwright codegen https://example.com", "You click around a real browser; the Inspector writes the test, with role-based locators.", "Starting a new test, or learning which locator to use", "🎥"],
+    "UI mode": ["npx playwright test --ui", "A test explorer with watch mode, a time-travel timeline, DOM snapshots and Pick locator.", "Writing and fixing tests every day", "🧭"],
+    "Debug": ["npx playwright test --debug", "Opens a headed browser and the Inspector, paused before the first action. Step over actions one at a time.", "One failing test you need to step through", "🐞"],
+    "Headed": ["npx playwright test --headed", "Normal run, but you can see the browser windows.", "Just watching what happens", "👀"],
+    "VS Code": ["Playwright Test for VS Code extension", "Run and debug tests from the editor with breakpoints, record new tests, pick locators.", "If you live in VS Code", "🧩"]
+  };
+  host.innerHTML = `<div class="bpick" role="group" aria-label="Tool">${Object.keys(T).map(k => `<button type="button" aria-pressed="false">${k}</button>`).join("")}</div><div class="tool-card"></div>`;
+  const show = k => {
+    const [cmd, what, when, ico] = T[k];
+    $$(".bpick button", host).forEach(b => b.setAttribute("aria-pressed", b.textContent === k));
+    $(".tool-card", host).innerHTML = `<div class="tool-ico" aria-hidden="true">${ico}</div><div><b>${k}</b><p>${what}</p><p><span class="verdict ok">Use it for</span> ${when}</p><pre class="code" style="margin:6px 0 0">${hl(cmd)}</pre></div>`;
+  };
+  host.addEventListener("click", e => { const b = e.target.closest(".bpick button"); if (b) show(b.textContent); });
+  show("UI mode");
 };
 
 $$(".widget").forEach(h => { const f = W[h.dataset.w]; if (f) f(h); });
+
+/* ---------- course: one lesson per screen, progress, quick checks ---------- */
+const PARTS = { 1: ["Test runner", "var(--runner)"], 2: ["Locators", "var(--loc)"], 3: ["Assertions", "var(--assert)"], 4: ["Tools & CI", "var(--tool)"], 5: ["Finish", "var(--cfg)"] };
+const lessons = $$(".lesson"), N = lessons.length;
+const store = (k, v) => { try { if (v === undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return null; } };
+const done = new Set(store("pw-done") || []);
+const markDone = id => { if (done.has(id)) return; done.add(id); store("pw-done", [...done]); paint(); };
+
+// the bar at the top
+const bar = document.createElement("div"); bar.className = "course";
+bar.innerHTML = `<button type="button" class="btn menu" aria-expanded="false" aria-controls="drawer">☰ <span>Lessons</span></button>
+  <a class="where" href="#top"></a>
+  <div class="prog" role="progressbar" aria-label="Lessons done" aria-valuemin="0" aria-valuemax="${N}"><i></i></div>
+  <button type="button" class="btn nav-b" data-go="-1" aria-label="Previous lesson">‹</button><button type="button" class="btn pri nav-b" data-go="1" aria-label="Next lesson">›</button>`;
+document.body.prepend(bar);
+const drawer = document.createElement("nav"); drawer.className = "drawer"; drawer.id = "drawer"; drawer.hidden = true; drawer.setAttribute("aria-label", "All lessons");
+document.body.append(drawer);
+const menuBtn = $(".menu", bar);
+const openDrawer = open => { drawer.hidden = !open; menuBtn.setAttribute("aria-expanded", open); if (open) $("a.cur, a", drawer)?.focus(); };
+menuBtn.addEventListener("click", () => openDrawer(drawer.hidden));
+document.addEventListener("click", e => { if (!drawer.hidden && !drawer.contains(e.target) && !menuBtn.contains(e.target)) openDrawer(false); });
+
+// per-lesson header, quick check and footer
+lessons.forEach((s, i) => {
+  const [pn, pc] = PARTS[s.dataset.part];
+  s.style.setProperty("--pc", pc);
+  s.insertAdjacentHTML("afterbegin", `<p class="crumb"><span class="pill">${pn}</span> Lesson ${i + 1} of ${N} · ~${s.dataset.min} min</p><div class="emoji" aria-hidden="true">${s.dataset.emoji}</div>`);
+  const ck = $(".check", s);
+  if (ck) {
+    const q = JSON.parse(ck.dataset.q);
+    ck.innerHTML = `<p class="check-h">Quick check</p><p class="check-q">${esc(q.q)}</p><div class="opts">${q.o.map((o, k) => `<button type="button" data-k="${k}">${esc(o)}</button>`).join("")}</div><p class="why" hidden></p>`;
+    ck.addEventListener("click", e => {
+      const b = e.target.closest("button[data-k]"); if (!b || ck.dataset.answered) return;
+      const k = +b.dataset.k, ok = k === q.a;
+      if (ok) ck.dataset.answered = 1;
+      $$("button", ck).forEach((x, j) => x.classList.toggle(j === q.a && ok ? "right" : "wrong", j === k));
+      const w = $(".why", ck); w.hidden = false; w.innerHTML = ok ? `✓ ${esc(q.why)}` : "Not quite. Try another answer.";
+      if (ok) { markDone(s.id); ck.classList.add("passed"); }
+    });
+  }
+  const prev = lessons[i - 1], next = lessons[i + 1];
+  s.insertAdjacentHTML("beforeend", `<div class="foot">${prev ? `<a class="btn" href="#${prev.id}">‹ ${esc(prev.dataset.title)}</a>` : `<a class="btn" href="#top">‹ Home</a>`}
+    ${next ? `<a class="btn pri" href="#${next.id}" data-done="${s.id}">Next: ${esc(next.dataset.title)} ›</a>` : `<a class="btn pri" href="#top" data-done="${s.id}">Finish 🎉</a>`}</div>`);
+});
+document.addEventListener("click", e => { const a = e.target.closest("[data-done]"); if (a) markDone(a.dataset.done); });
+
+// home: part cards + continue
+function paint() {
+  const cur = location.hash.slice(1);
+  $(".prog i", bar).style.width = `${done.size / N * 100}%`;
+  $(".prog", bar).setAttribute("aria-valuenow", done.size);
+  $(".prog", bar).title = `${done.size} of ${N} lessons done`;
+  drawer.innerHTML = `<a href="#top" class="home-l">🏠 Home · ${done.size}/${N} done</a>` + Object.entries(PARTS).map(([p, [pn, pc]]) => {
+    const ls = lessons.filter(s => s.dataset.part === p);
+    return `<p class="d-part" style="--pc:${pc}">${pn}</p>` + ls.map(s => `<a href="#${s.id}" class="${s.id === cur ? "cur" : ""}">${done.has(s.id) ? "✓" : s.dataset.emoji} <span>${lessons.indexOf(s) + 1}. ${esc(s.dataset.title)}</span></a>`).join("");
+  }).join("") + `<div class="d-tools"><button type="button" class="btn" data-all>${document.body.classList.contains("all") ? "One lesson at a time" : "Show all on one page"}</button><button type="button" class="btn" data-reset>Reset progress</button></div>`;
+  $("#parts").innerHTML = Object.entries(PARTS).map(([p, [pn, pc]]) => {
+    const ls = lessons.filter(s => s.dataset.part === p), n = ls.filter(s => done.has(s.id)).length, first = ls.find(s => !done.has(s.id)) || ls[0];
+    return `<a class="part-card" href="#${first.id}" style="--pc:${pc}"><span class="pc-n">Part ${p}</span><b>${pn}</b><span class="pc-e">${ls.map(s => `<i class="${done.has(s.id) ? "d" : ""}" title="${esc(s.dataset.title)}">${s.dataset.emoji}</i>`).join("")}</span><span class="pc-p">${n}/${ls.length} done</span></a>`;
+  }).join("");
+  const last = store("pw-last"), nextUp = lessons.find(s => !done.has(s.id));
+  $("#heroCta").innerHTML = last && lessons.some(s => s.id === last)
+    ? `<a class="btn pri" href="#${last}">Continue: ${esc($("#" + last).dataset.title)} →</a> <a class="btn" href="#${(nextUp || lessons[0]).id}">${nextUp ? "First unfinished lesson" : "Start again"}</a>`
+    : `<a class="btn pri" href="#runner">Start lesson 1 →</a> <a class="btn" href="#playground">Jump to the locator playground</a>`;
+}
+drawer.addEventListener("click", e => {
+  if (e.target.closest("[data-all]")) { document.body.classList.toggle("all"); route(); return; }
+  if (e.target.closest("[data-reset]")) { done.clear(); store("pw-done", []); store("pw-last", ""); $$(".check").forEach(c => { delete c.dataset.answered; c.classList.remove("passed"); $$("button", c).forEach(b => b.className = ""); $(".why", c).hidden = true; }); paint(); return; }
+  if (e.target.closest("a")) openDrawer(false);
+});
+
+function route() {
+  const id = location.hash.slice(1), i = lessons.findIndex(s => s.id === id), all = document.body.classList.contains("all");
+  lessons.forEach((s, k) => s.classList.toggle("cur", k === i));
+  document.body.dataset.view = i < 0 ? "home" : "lesson";
+  const s = lessons[i];
+  $(".where", bar).innerHTML = s ? `<span class="pill" style="--pc:${PARTS[s.dataset.part][1]}">${PARTS[s.dataset.part][0]}</span> <b>${i + 1}/${N}</b> <span class="wt">${esc(s.dataset.title)}</span>` : `<b>Playwright, visually</b>`;
+  $$(".nav-b", bar).forEach(b => b.disabled = (b.dataset.go === "-1" && i < 0) || (b.dataset.go === "1" && i === N - 1));
+  if (s) store("pw-last", s.id);
+  paint();
+  if (!all || i < 0) { document.documentElement.style.scrollBehavior = "auto"; scrollTo(0, 0); document.documentElement.style.scrollBehavior = ""; }
+  else s.scrollIntoView();
+  if (s && !all) $("h2", s).focus({ preventScroll: true });
+}
+lessons.forEach(s => $("h2", s).tabIndex = -1);
+const step = d => { const i = lessons.findIndex(s => s.id === location.hash.slice(1)); const j = i < 0 ? (d > 0 ? 0 : -1) : i + d; if (d > 0 && i >= 0) markDone(lessons[i].id); location.hash = j < 0 ? "top" : lessons[Math.min(N - 1, j)].id; };
+bar.addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) step(+b.dataset.go); });
+addEventListener("keydown", e => {
+  if (e.key === "Escape") return openDrawer(false);
+  if (e.altKey || e.ctrlKey || e.metaKey || /input|select|textarea/i.test(e.target.tagName) || e.target.isContentEditable) return;
+  if (e.key === "ArrowRight") step(1); else if (e.key === "ArrowLeft") step(-1);
+});
+addEventListener("hashchange", route);
+route();
 })();
