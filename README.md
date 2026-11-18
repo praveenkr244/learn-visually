@@ -36,11 +36,12 @@ learn-visually/
 │   ├── palettes.css        # Sepia / Ocean / Forest color themes
 │   ├── theme.css           # ← YOUR global style overrides (loaded last everywhere)
 │   ├── embed.js            # lets the shell set each page's theme
+│   ├── course.js/.css      # course mode: one lesson per screen, progress, practice, quick checks
 │   └── java-runner.js/.css # Edit/Run boxes for the Java examples
 └── tutorials/
-    ├── java-strings/  index.html · style.css · script.js
-    ├── java-arrays/   index.html · style.css · script.js
-    ├── python/        index.html · style.css · script.js
+    ├── java-strings/  index.html · style.css · script.js · course-data.js
+    ├── java-arrays/   index.html · style.css · script.js · course-data.js
+    ├── python/        index.html · style.css · script.js · course-data.js
     └── mcp/           index.html · style.css · script.js · mcp-end-to-end.mp4 · poster.jpg
 ```
 
@@ -50,6 +51,7 @@ Each tutorial also works on its own: open `tutorials/python/index.html` directly
 
 - **Text and code examples**: edit the tutorial's `index.html`. Lessons are `<section>` blocks; code examples are `<pre class="code">` blocks. In the Python page, add `data-run` to a `<pre class="code">` to give it a **Run** button. In the Java pages, a runnable example is `<pre class="jrun" data-title="…">` holding a full program with a non-public `class Main`; it gets **Edit**, **Reset** and **Run** buttons (`assets/java-runner.js`). Inside code, write `<` as `&lt;` and `&` as `&amp;`.
 - **Animations and widgets**: edit the tutorial's `script.js`. In the Python page each widget is a function in the `W` object (for example `W.slicer`), mounted by `<div class="widget" data-w="slicer"></div>`.
+- **Lesson notes and practice** (Java Strings, Java Arrays, Python): edit the tutorial's `course-data.js`. Each lesson id has an emoji `e`, a key idea `k`, three Remember points `r`, a quick check `q: [question, [options], answerIndex, why]` and practice exercises `p: [{ t: task, c: starter code, s: solution, o: expected output }]`. `assets/course.js` turns the page into one lesson per screen with a lesson menu, ← → keys and saved progress.
 - **Tabs**: edit `assets/tutorials.js`. Each entry has an `id` (used in the URL, e.g. `index.html#python`), a `label`, a `note`, the page `path` and a tab `color`.
 
 ### Add a new tutorial tab

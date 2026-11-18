@@ -172,3 +172,6 @@ footer { padding-block: 40px 48px; color: var(--muted); font-size: .92rem; displ
   .enter, .wire.enter, .head.enter, .flash { animation: none }
   .cl b, .blk b { transition: none }
 }
+
+/* course mode (assets/course.css) */
+body.course { --c-acc: var(--stack); --c-good: var(--pool); --c-bad: var(--hot); }

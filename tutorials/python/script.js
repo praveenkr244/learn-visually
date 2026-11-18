@@ -101,10 +101,22 @@ document.addEventListener("click", async e => {
     catch (err) { const r = document.createRange(); r.selectNodeContents(pre); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = "Selected, press Ctrl+C"; }
     setTimeout(() => { b.textContent = "Copy"; }, 1600);
   } else if (b.dataset.a === "edit") {
-    $("#playCode").value = src; $("#playOut").textContent = "";
-    $("#playground").scrollIntoView({ behavior: "smooth" }); $("#playCode").focus({ preventScroll: true });
+    // edit in place (the playground is only on the home screen)
+    let ta = $("textarea.edit", wrap);
+    if (!ta) {
+      ta = document.createElement("textarea"); ta.className = "edit"; ta.spellcheck = false; ta.value = src; ta.hidden = true;
+      ta.setAttribute("aria-label", "Edit this code");
+      ta.addEventListener("keydown", ev => {
+        if (ev.key === "Tab" && !ev.shiftKey) { ev.preventDefault(); ta.setRangeText("    ", ta.selectionStart, ta.selectionEnd, "end"); }
+        if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); $("[data-a=run]", wrap).click(); }
+      });
+      pre.after(ta);
+    }
+    if (ta.hidden) { ta.hidden = false; pre.hidden = true; ta.rows = Math.min(28, ta.value.split("\n").length + 1); ta.focus(); b.textContent = "Done"; }
+    else { pre.dataset.src = ta.value; pre.innerHTML = hl(ta.value); ta.hidden = true; pre.hidden = false; b.textContent = "Edit"; }
   } else if (b.dataset.a === "run") {
-    b.disabled = true; await runPy(src, $(".out", wrap)); b.disabled = false;
+    const ta = $("textarea.edit", wrap), code = ta && !ta.hidden ? ta.value : src;
+    b.disabled = true; await runPy(code, $(".out", wrap)); b.disabled = false;
   }
 });
 $("#playOut").dataset.base = "console";
@@ -596,53 +608,19 @@ W.bigo = host => {
 
 $$(".widget").forEach(w => { const f = W[w.dataset.w]; if (f) f(w); });
 
-/* ---------- table of contents, progress, filters ---------- */
+/* ---------- search (course mode lives in assets/course.js) ---------- */
 const lessons = $$(".lesson");
-const toc = $("#toc");
-let html = "", grp = "";
-lessons.forEach((s, k) => {
-  if (s.dataset.group !== grp) { grp = s.dataset.group; html += `<h4>${grp}</h4>`; }
-  html += `<a href="#${s.id}" data-id="${s.id}"><span class="n">${String(k + 1).padStart(2, "0")}</span>${$("h2", s).textContent}</a>`;
-});
-toc.innerHTML = `<a href="#top" data-id="top" style="font-weight:600"><span class="n">▶</span>Playground</a>` + html;
-
-let done = new Set(store.get("pyvis-done", []));
-const countable = lessons.filter(s => s.id !== "cheatsheet");
-function paintDone() {
-  $$(".toc a").forEach(a => a.classList.toggle("done", done.has(a.dataset.id)));
-  $("#prog").style.width = (countable.filter(s => done.has(s.id)).length / countable.length * 100) + "%";
-}
-countable.forEach(s => {
-  const row = document.createElement("div"); row.className = "done-row";
-  row.innerHTML = `<button class="done-btn" type="button" aria-pressed="${done.has(s.id)}">${done.has(s.id) ? "✓ Done" : "Mark lesson as done"}</button>`;
-  s.append(row);
-  row.firstChild.addEventListener("click", e => {
-    const on = !done.has(s.id); on ? done.add(s.id) : done.delete(s.id);
-    e.target.setAttribute("aria-pressed", on); e.target.textContent = on ? "✓ Done" : "Mark lesson as done";
-    store.set("pyvis-done", [...done]); paintDone();
-  });
-});
-paintDone();
-
-const io = new IntersectionObserver(ents => {
-  ents.forEach(en => { if (en.isIntersecting) $$(".toc a").forEach(a => a.classList.toggle("on", a.dataset.id === en.target.id)); });
-}, { rootMargin: "-30% 0px -60% 0px" });
-lessons.forEach(s => io.observe(s));
-
-const menuBtn = $("#menuBtn"), scrim = $("#scrim");
-const setMenu = open => { toc.classList.toggle("open", open); scrim.classList.toggle("on", open); menuBtn.setAttribute("aria-expanded", open); };
-menuBtn.addEventListener("click", () => setMenu(!toc.classList.contains("open")));
-scrim.addEventListener("click", () => setMenu(false));
-toc.addEventListener("click", e => { if (e.target.closest("a")) setMenu(false); });
-
-let level = "all";
 const empty = document.createElement("p"); empty.className = "empty-msg"; empty.textContent = "No lessons match. Try a shorter search term."; $("#main").insertBefore(empty, $("footer"));
+let searchOpened = false;
 function applyFilter() {
   const q = $("#q").value.trim().toLowerCase();
+  // searching shows every matching lesson on one page; clearing the box goes back to one lesson at a time
+  if (q && !document.body.classList.contains("all")) { searchOpened = true; window.course && course.setAll(true); }
+  if (!q && searchOpened) { searchOpened = false; window.course && course.setAll(false); }
   let shown = 0;
   lessons.forEach(s => {
-    let vis = level === "all" || s.dataset.level === level || s.dataset.level === "ref";
-    if (vis && q) {
+    let vis = true;
+    if (q) {
       if (s.id === "cheatsheet") {
         let any = false;
         $$(".cc", s).forEach(c => { const m = c.textContent.toLowerCase().includes(q); c.hidden = !m; any = any || m; });
@@ -650,16 +628,11 @@ function applyFilter() {
       } else vis = s.textContent.toLowerCase().includes(q);
     } else if (s.id === "cheatsheet") $$(".cc", s).forEach(c => { c.hidden = false; });
     s.hidden = !vis; if (vis && s.id !== "cheatsheet") shown++;
-    const a = $(`.toc a[data-id="${s.id}"]`); if (a) a.hidden = !vis;
   });
   empty.style.display = shown || !$("#cheatsheet").hidden ? "none" : "block";
-  $$(".toc h4").forEach(h => { let n = h.nextElementSibling, any = false; while (n && n.tagName === "A") { any = any || !n.hidden; n = n.nextElementSibling; } h.hidden = !any; });
   setTimeout(redrawAll, 30);
 }
 let qt; $("#q").addEventListener("input", () => { clearTimeout(qt); qt = setTimeout(applyFilter, 150); });
-$$(".chip[data-f]").forEach(c => c.addEventListener("click", () => {
-  level = c.dataset.f; $$(".chip[data-f]").forEach(x => x.setAttribute("aria-pressed", x === c)); applyFilter();
-  const first = lessons.find(s => !s.hidden); if (first && level !== "all") first.scrollIntoView({ behavior: "smooth" });
-}));
+addEventListener("course:show", () => setTimeout(redrawAll, 30));
 document.fonts && document.fonts.ready.then(redrawAll);
 })();
