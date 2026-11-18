@@ -6,6 +6,7 @@
   --t2: #a35c06;  /* Java Arrays  */
   --t3: #2f6fb0;  /* Python       */
   --t4: #0d9488;  /* MCP          */
+  --t5: #c0263f;  /* Playwright   */
   --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
   --bar-h: 58px;
@@ -14,12 +15,12 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0d121e; --surface: #151c2c; --ink: #e6ebf5; --muted: #9ba6bc; --line: #27314a;
-    --accent: #8c9bff; --t1: #a79cff; --t2: #f0a347; --t3: #6fb0f0; --t4: #2dd4bf; color-scheme: dark;
+    --accent: #8c9bff; --t1: #a79cff; --t2: #f0a347; --t3: #6fb0f0; --t4: #2dd4bf; --t5: #fb7185; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0d121e; --surface: #151c2c; --ink: #e6ebf5; --muted: #9ba6bc; --line: #27314a;
-  --accent: #8c9bff; --t1: #a79cff; --t2: #f0a347; --t3: #6fb0f0; --t4: #2dd4bf; color-scheme: dark;
+  --accent: #8c9bff; --t1: #a79cff; --t2: #f0a347; --t3: #6fb0f0; --t4: #2dd4bf; --t5: #fb7185; color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -84,7 +85,7 @@ main { flex: 1; min-height: 0; position: relative; }
   .tools { order: 2; }
   .newtab { display: none; }
   .tabs { order: 3; flex-basis: 100%; margin: 4px -12px 0; padding: 0 4px; }
-  .tabs { gap: 0; }
+  .tabs { gap: 0; flex-wrap: wrap; overflow: visible; }   /* every tab stays visible: wrap to a second row instead of scrolling */
   .tab { padding: 6px 8px 8px; }
   .tab b { font-size: .86rem; gap: 5px; }
   .tab small { display: none; }

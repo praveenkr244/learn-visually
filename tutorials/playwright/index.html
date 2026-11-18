@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playwright, Visually</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../assets/palettes.css">
+<link rel="stylesheet" href="../../assets/theme.css">
+<script src="../../assets/embed.js"></script>
+</head>
+<body>
+<nav class="chapters" id="chapters" aria-label="Chapters"></nav>
+<main>
+
+<header class="hero" id="top">
+  <div>
+    <p class="eyebrow">Playwright Test · TypeScript</p>
+    <h1>Playwright, <span>visually</span></h1>
+    <p class="lede">Notes for end-to-end testing with <code>@playwright/test</code>, in the order you need them: the test runner and its config, browsers and projects, locators that don't flake, assertions, then the debugging and CI tools. Colour always means a role:</p>
+    <ul class="legend">
+      <li style="--c:var(--runner)">Test runner</li>
+      <li style="--c:var(--browser)">Browser</li>
+      <li style="--c:var(--loc)">Locator</li>
+      <li style="--c:var(--assert)">Assertion / pass</li>
+      <li style="--c:var(--cfg)">Config</li>
+      <li style="--c:var(--tool)">Tools</li>
+      <li style="--c:var(--bad)">Failure</li>
+    </ul>
+    <p class="hero-cta"><a class="btn pri" href="#runner">Start at step 1</a> <a class="btn" href="#playground">Locator playground</a> <a class="btn" href="#flaky">Flaky locators</a> <a class="btn" href="#cli">CLI reference</a></p>
+  </div>
+  <figure class="hero-art" aria-label="One test file runs in three browsers at once">
+    <div class="widget" data-w="hero"></div>
+  </figure>
+</header>
+
+<div class="part" style="--c:var(--runner)"><h2>Part 1 · The test runner</h2><p>What <code>npx playwright test</code> gives you before you write a single locator.</p></div>
+
+<!-- 1 -->
+<section class="lesson" id="runner" data-title="1 · Why the test runner">
+<p class="num">01</p>
+<h2>Why <code>@playwright/test</code>?</h2>
+<p>Playwright comes in two parts: the <b>library</b> that drives browsers, and <b>Playwright Test</b>, a full test runner built around it. The runner is TypeScript-first and needs no Jest, Mocha or TestNG: fixtures, parallel runs, retries, projects, reporters, screenshots, traces and sharding are all built in.</p>
+<div class="tiles">
+  <div class="tile" style="--c:var(--runner)"><span class="ico">🧩</span><b>Fixtures</b><p>Each test gets a fresh, isolated <code>page</code> and <code>context</code>. Nothing leaks between tests.</p></div>
+  <div class="tile" style="--c:var(--browser)"><span class="ico">⚡</span><b>Parallel by default</b><p>Test files are spread across worker processes. Scale with <code>--workers</code>.</p></div>
+  <div class="tile" style="--c:var(--cfg)"><span class="ico">🗂️</span><b>Projects</b><p>Run the same tests in Chromium, Firefox, WebKit and mobile viewports from one command.</p></div>
+  <div class="tile" style="--c:var(--tool)"><span class="ico">📊</span><b>Reporters</b><p>HTML, list, dot, line, JSON, JUnit, blob, plus custom ones. Ready for CI.</p></div>
+</div>
+<h3>Install and run</h3>
+<pre class="code">npm init playwright@latest      # creates playwright.config.ts, tests/, an example test
+npx playwright test             # run every test, headless, in parallel
+npx playwright show-report      # open the HTML report</pre>
+</section>
+
+<!-- 2 -->
+<section class="lesson" id="structure" data-title="2 · Tests & hooks">
+<p class="num">02</p>
+<h2>Test structure, hooks and annotations</h2>
+<p>A spec file groups tests with <code>test.describe</code>. Hooks run around them: <code>beforeAll</code>/<code>afterAll</code> once per worker for the file or group, <code>beforeEach</code>/<code>afterEach</code> around every test.</p>
+<pre class="code">import { test, expect } from '@playwright/test';
+
+test.describe('Login module', () => {
+  test.beforeAll(async () => { /* runs once */ });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/login');
+  });
+
+  test('valid login', async ({ page }) => {
+    await page.getByLabel('Email').fill('admin@test.com');
+    await page.getByLabel('Password').fill('pass123');
+    await page.getByRole('button', { name: 'Login' }).click();
+    await expect(page).toHaveURL(/dashboard/);
+  });
+
+  test.afterEach(async ({ page }) => { /* cleanup */ });
+  test.afterAll(async () => { /* runs once */ });
+});</pre>
+<figure class="viz" style="--c:var(--runner)">
+  <div class="viz-title">Watch the order hooks run in</div>
+  <div class="widget" data-w="lifecycle"></div>
+</figure>
+<h3>Annotations</h3>
+<div class="tbl"><table>
+<tr><th>Annotation</th><th>What it does</th></tr>
+<tr><td><code>test.skip()</code> · <code>test.skip(cond, 'why')</code></td><td>Skip always, or only when the condition is true (e.g. one browser)</td></tr>
+<tr><td><code>test.only()</code></td><td>Run only this test. Guard CI with <code>--forbid-only</code></td></tr>
+<tr><td><code>test.fixme()</code></td><td>Known broken: skipped and marked “fixme”</td></tr>
+<tr><td><code>test.fail()</code></td><td>Expected to fail; the run fails if it passes</td></tr>
+<tr><td><code>test.slow()</code></td><td>Triples this test's timeout</td></tr>
+<tr><td><code>test.describe.configure({ mode: 'serial' })</code></td><td>Tests in the group run in order; one failure skips the rest</td></tr>
+<tr><td><code>test.describe.configure({ mode: 'parallel' })</code></td><td>Tests inside this one file run in parallel too</td></tr>
+</table></div>
+</section>
+
+<!-- 3 -->
+<section class="lesson" id="fixtures" data-title="3 · Fixtures">
+<p class="num">03</p>
+<h2>Fixtures: what <code>{ page }</code> really is</h2>
+<p>The object your test destructures is a set of <b>fixtures</b>. Playwright sets each one up just before the test, hands it over, and tears it down afterwards, so every test starts clean.</p>
+<div class="tbl"><table>
+<tr><th>Fixture</th><th>Scope</th><th>What you get</th></tr>
+<tr><td><code>page</code></td><td>per test</td><td>A new tab in a new browser context</td></tr>
+<tr><td><code>context</code></td><td>per test</td><td>An isolated <code>BrowserContext</code>: its own cookies and storage, like an incognito window</td></tr>
+<tr><td><code>browser</code></td><td>per worker</td><td>One browser instance shared by all tests in that worker</td></tr>
+<tr><td><code>browserName</code></td><td>per project</td><td><code>'chromium'</code>, <code>'firefox'</code> or <code>'webkit'</code></td></tr>
+<tr><td><code>request</code></td><td>per test</td><td>An <code>APIRequestContext</code> for API calls without a page</td></tr>
+</table></div>
+<h3>Your own fixtures: page objects for free</h3>
+<p>Extend <code>test</code> once, and every test can ask for a ready-made page object by name. Code before <code>use()</code> is setup; code after it is teardown.</p>
+<pre class="code">// fixtures/base.ts
+import { test as base } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
+
+type MyFixtures = { loginPage: LoginPage };
+
+export const test = base.extend&lt;MyFixtures&gt;({
+  loginPage: async ({ page }, use) => {
+    const loginPage = new LoginPage(page);   // setup
+    await use(loginPage);                    // the test runs here
+    // teardown (optional)
+  },
+});
+export { expect } from '@playwright/test';
+
+// tests/login.spec.ts
+import { test, expect } from '../fixtures/base';
+test('login', async ({ loginPage }) => {
+  await loginPage.login('admin@test.com', 'pass123');
+});</pre>
+</section>
+
+<!-- 4 -->
+<section class="lesson" id="config" data-title="4 · playwright.config.ts">
+<p class="num">04</p>
+<h2><code>playwright.config.ts</code>: the control panel</h2>
+<p>One file decides where tests live, how long they may take, how many run at once, which browsers they use and what gets recorded. <b>Click any line</b> to see what it does.</p>
+<figure class="viz" style="--c:var(--cfg)">
+  <div class="viz-title">Config explorer</div>
+  <div class="widget" data-w="config"></div>
+</figure>
+<div class="callout tip"><b>Tip: one config per need</b><p>Keep <code>playwright.config.ts</code> for local runs and add e.g. <code>playwright.ci.config.ts</code> or <code>playwright.staging.config.ts</code>. Pick one with <code>npx playwright test --config=playwright.ci.config.ts</code>.</p></div>
+</section>
+
+<!-- 5 -->
+<section class="lesson" id="browsers" data-title="5 · Browsers & channels">
+<p class="num">05</p>
+<h2>Which browsers can Playwright drive?</h2>
+<p>In one line: Playwright can use your <b>installed Chrome and Edge</b>, but uses its <b>own patched builds</b> of Firefox and WebKit, and <b>cannot drive Safari</b> at all. Pick a browser to see how to configure it and why.</p>
+<figure class="viz" style="--c:var(--browser)">
+  <div class="viz-title">Browser picker</div>
+  <div class="widget" data-w="browsers"></div>
+</figure>
+<div class="tbl"><table>
+<tr><th>Browser</th><th>Out of the box?</th><th>How to configure</th><th>Uses your installed copy?</th></tr>
+<tr><td>Chromium</td><td class="yes">Yes</td><td><code>...devices['Desktop Chrome']</code></td><td>No, Playwright's bundled build</td></tr>
+<tr><td>Google Chrome</td><td class="yes">Yes</td><td><code>channel: 'chrome'</code></td><td class="yes">Yes</td></tr>
+<tr><td>Microsoft Edge</td><td class="yes">Yes</td><td><code>channel: 'msedge'</code></td><td class="yes">Yes</td></tr>
+<tr><td>Firefox</td><td class="yes">Yes</td><td><code>...devices['Desktop Firefox']</code></td><td class="no">No, patched build only</td></tr>
+<tr><td>WebKit</td><td class="yes">Yes</td><td><code>...devices['Desktop Safari']</code></td><td>No, patched build (Safari's engine)</td></tr>
+<tr><td>Safari</td><td class="no">No</td><td>Not possible</td><td class="no">Use WebKit as a proxy</td></tr>
+<tr><td>Opera, Brave</td><td class="meh">Unofficial</td><td><code>launchOptions.executablePath</code></td><td class="meh">Yes, Chromium-based, not officially supported</td></tr>
+</table></div>
+<p>Channels for Chromium-based browsers: <code>chrome</code>, <code>chrome-beta</code>, <code>chrome-dev</code>, <code>chrome-canary</code>, <code>msedge</code>, <code>msedge-beta</code>, <code>msedge-dev</code>, <code>msedge-canary</code>. Use beta/dev/canary to catch upcoming browser changes before they reach stable.</p>
+<h3>Why the difference?</h3>
+<div class="tiles">
+  <div class="tile" style="--c:var(--browser)"><b>Chrome works as installed</b><p>Chromium is open source and speaks the <b>Chrome DevTools Protocol (CDP)</b> natively, so any stable Chromium build can be driven without patches.</p></div>
+  <div class="tile" style="--c:var(--cfg)"><b>Firefox needs a patched build</b><p>Stock Firefox lacks automation APIs Playwright needs (auto-wait internals, network interception, request routing), so Playwright ships its own fork. There is no <code>channel: 'firefox'</code>.</p></div>
+  <div class="tile" style="--c:var(--bad)"><b>Safari is closed</b><p>Safari is closed source with no protocol Playwright can use. WebKit is open source, so Playwright ships a patched WebKit: close to Safari's rendering and JS, but <b>not</b> Safari.</p></div>
+</div>
+<details class="check"><summary>Interview angle: “Can Playwright automate Safari?”</summary>
+<p class="ans">No. It automates <b>WebKit</b>, the engine Safari uses, which covers most CSS, JavaScript and rendering behaviour but not Safari-only features (extensions, Keychain, autofill). For real Safari, use Selenium with SafariDriver or a cloud grid with real Safari machines.</p></details>
+<details class="check"><summary>Check what is really being launched</summary>
+<pre class="code">DEBUG=pw:browser npx playwright test</pre>
+<p class="ans">The log shows the executable path: Playwright's own cache (<code>ms-playwright/firefox-…</code>) for bundled browsers, or your system Chrome path when you use <code>channel: 'chrome'</code>.</p></details>
+<h3>When to use what</h3>
+<ul>
+  <li><b>Everyday development</b> → <code>chromium</code> (bundled, fast, consistent)</li>
+  <li><b>Chrome-specific bug</b> → <code>channel: 'chrome'</code>; <b>enterprise Edge</b> → <code>channel: 'msedge'</code></li>
+  <li><b>Cross-browser CI</b> → three projects: <code>chromium</code>, <code>firefox</code>, <code>webkit</code></li>
+  <li><b>Real Safari</b> → a cloud provider with real Safari machines</li>
+</ul>
+</section>
+
+<!-- 6 -->
+<section class="lesson" id="projects" data-title="6 · Projects & auth">
+<p class="num">06</p>
+<h2>Projects: same tests, many browsers</h2>
+<p>Each entry in <code>projects</code> is one named configuration. Playwright runs <b>every test once per project</b>, in parallel, and reports results per project.</p>
+<pre class="code">projects: [
+  { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+  { name: 'Google Chrome', use: { ...devices['Desktop Chrome'], channel: 'chrome' } },
+  { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+  { name: 'webkit',  use: { ...devices['Desktop Safari'] } },
+  { name: 'mobile-safari', use: { ...devices['iPhone 15'] } },
+  // Brave: Chromium-based, not officially supported, needs its path
+  { name: 'brave', use: { browserName: 'chromium',
+      launchOptions: { executablePath: '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser' } } },
+],</pre>
+<pre class="code">npx playwright test                                  # all projects
+npx playwright test --project="Google Chrome"        # one project
+npx playwright test --project=chromium --project=firefox</pre>
+<h3>Log in once: a setup project + <code>storageState</code></h3>
+<p>Logging in through the UI in every test is slow. Instead, a <b>setup project</b> logs in once and saves cookies and local storage to a JSON file. Every browser project <b>depends on</b> it and starts already signed in. This is the login pattern the Playwright docs recommend.</p>
+<figure class="viz" style="--c:var(--cfg)">
+  <div class="viz-title">Auth setup flow</div>
+  <div class="widget" data-w="auth"></div>
+</figure>
+<div class="two">
+<pre class="code">// tests/auth.setup.ts
+import { test as setup } from '@playwright/test';
+const authFile = 'playwright/.auth/user.json';
+
+setup('authenticate', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByLabel('Email').fill('admin@test.com');
+  await page.getByLabel('Password').fill('pass123');
+  await page.getByRole('button', { name: 'Login' }).click();
+  await page.waitForURL('**/dashboard');
+  await page.context().storageState({ path: authFile });
+});</pre>
+<pre class="code">// playwright.config.ts
+projects: [
+  { name: 'setup', testMatch: /.*\.setup\.ts/ },
+  { name: 'chromium',
+    use: { ...devices['Desktop Chrome'],
+           storageState: 'playwright/.auth/user.json' },
+    dependencies: ['setup'] },
+  { name: 'firefox',
+    use: { ...devices['Desktop Firefox'],
+           storageState: 'playwright/.auth/user.json' },
+    dependencies: ['setup'] },
+],</pre>
+</div>
+<div class="callout warn"><b>Keep the auth file out of git</b><p>It holds real session cookies. Add <code>playwright/.auth</code> to <code>.gitignore</code>.</p></div>
+</section>
+
+<!-- 7 -->
+<section class="lesson" id="parallel" data-title="7 · Parallelism & retries">
+<p class="num">07</p>
+<h2>Workers, parallelism and retries</h2>
+<p>Each <b>worker</b> is a separate OS process with its own browser. By default, <b>files</b> run in parallel across workers, while tests <b>inside one file</b> run in order in the same worker. <code>fullyParallel: true</code> lets individual tests spread across workers too.</p>
+<figure class="viz" style="--c:var(--runner)">
+  <div class="viz-title">Parallel run simulator</div>
+  <div class="widget" data-w="lanes"></div>
+</figure>
+<div class="tbl"><table>
+<tr><th>Option (config / CLI)</th><th>What it does</th><th>Default</th></tr>
+<tr><td><code>workers: 4</code> · <code>--workers=4</code></td><td>Number of parallel worker processes</td><td>Half the CPU cores</td></tr>
+<tr><td><code>fullyParallel: true</code> · <code>--fully-parallel</code></td><td>Run tests inside a file in parallel too</td><td><code>false</code></td></tr>
+<tr><td><code>retries: 2</code> · <code>--retries=2</code></td><td>Re-run a failed test up to N more times</td><td><code>0</code></td></tr>
+<tr><td><code>maxFailures: 5</code> · <code>-x</code> (stop at first)</td><td>Stop the whole run after N failures</td><td>no limit</td></tr>
+<tr><td><code>--repeat-each=3</code></td><td>Run every test N times: great for hunting flakes</td><td>1</td></tr>
+<tr><td><code>--last-failed</code></td><td>Re-run only the tests that failed last time</td><td>–</td></tr>
+</table></div>
+<p>A test that fails and then passes on retry is reported as <b>flaky</b>, not passed. Treat flaky as a bug to fix, not a result to accept. The usual setup is <code>retries: process.env.CI ? 2 : 0</code> so flakes don't hide on your own machine.</p>
+</section>
+
+<!-- 8 -->
+<section class="lesson" id="timeouts" data-title="8 · Timeouts & auto-wait">
+<p class="num">08</p>
+<h2>Timeouts and auto-waiting</h2>
+<p>Before every action Playwright <b>waits automatically</b> until the element is ready. Step through what happens inside one <code>click()</code> while the page is still loading.</p>
+<figure class="viz" style="--c:var(--loc)">
+  <div class="viz-title">Inside <code>locator.click()</code></div>
+  <div class="widget" data-w="autowait"></div>
+</figure>
+<div class="tbl"><table>
+<tr><th>What</th><th>Default in Playwright Test</th><th>Change it</th></tr>
+<tr><td>Whole test (incl. hooks and fixtures)</td><td>30 s</td><td><code>timeout</code> in config, <code>test.setTimeout(ms)</code>, <code>test.slow()</code></td></tr>
+<tr><td><code>expect(…)</code> web-first assertions</td><td>5 s, retrying</td><td><code>expect: { timeout }</code>, or <code>{ timeout }</code> on one assertion</td></tr>
+<tr><td>Actions: <code>click()</code>, <code>fill()</code>, …</td><td>no own limit, capped by the test timeout</td><td><code>use: { actionTimeout }</code> or <code>{ timeout }</code></td></tr>
+<tr><td><code>page.goto()</code>, <code>waitForURL()</code></td><td>no own limit, capped by the test timeout</td><td><code>use: { navigationTimeout }</code> or <code>{ timeout }</code></td></tr>
+<tr><td>Whole run</td><td>no limit</td><td><code>globalTimeout</code>, <code>--global-timeout</code></td></tr>
+</table></div>
+<div class="two">
+  <div class="card good"><b>Prefer</b><ul><li><code>await expect(locator).toBeVisible()</code></li><li><code>await locator.waitFor()</code> (all locator types)</li><li><code>await page.waitForURL('**/dashboard')</code></li><li><code>await page.waitForResponse('**/api/cart')</code></li></ul></div>
+  <div class="card bad"><b>Avoid</b><ul><li><code>page.waitForTimeout(5000)</code>: a hard sleep, slow and still flaky</li><li><code>page.waitForSelector()</code>: CSS/XPath only; locators already wait</li><li><code>waitForLoadState('networkidle')</code> as a habit</li></ul></div>
+</div>
+</section>
+
+<div class="part" style="--c:var(--loc)"><h2>Part 2 · Locators</h2><p>How Playwright finds elements, and how to choose locators that survive the next redesign.</p></div>
+
+<!-- 9 -->
+<section class="lesson" id="locators" data-title="9 · What a locator is">
+<p class="num">09</p>
+<h2>What a locator is</h2>
+<div class="tiles">
+  <div class="tile" style="--c:var(--loc)"><b>A strategy, not an element</b><p><code>page.getByRole('button')</code> only describes how to find something. Nothing is searched yet.</p></div>
+  <div class="tile" style="--c:var(--browser)"><b>Lazy</b><p>The search happens fresh each time you act or assert, so it always sees the current page.</p></div>
+  <div class="tile" style="--c:var(--assert)"><b>Auto-waiting</b><p>Actions and assertions retry until the element is ready or the timeout hits.</p></div>
+  <div class="tile" style="--c:var(--bad)"><b>Strict</b><p>An action fails if the locator matches <b>more than one</b> element, instead of silently clicking the first.</p></div>
+</div>
+<figure class="viz" style="--c:var(--loc)">
+  <div class="viz-title">Selenium-style lookup vs a Playwright locator</div>
+  <div class="widget" data-w="lazy"></div>
+</figure>
+</section>
+
+<!-- 10 -->
+<section class="lesson" id="roles" data-title="10 · Priority & roles">
+<p class="num">10</p>
+<h2>The locator priority and <code>getByRole</code></h2>
+<p>The golden rule: <b>test like a user interacts, not like a developer implements.</b> Users see buttons, labels and text; they never see CSS classes or how deep a <code>&lt;div&gt;</code> is nested.</p>
+<figure class="viz" style="--c:var(--loc)">
+  <div class="viz-title">Locator priority: best at the top</div>
+  <svg class="svg" viewBox="0 0 720 300" role="img" aria-label="Priority pyramid: role and label first, then text and placeholder, then test id, then stable CSS, XPath last">
+    <g font-family="var(--font-body)">
+      <path d="M360 10 L430 66 H290 Z" fill="var(--assert)"/><text x="360" y="54" text-anchor="middle" fill="#fff" class="t-b">Role · Label</text>
+      <path d="M286 70 H434 L496 120 H224 Z" fill="color-mix(in srgb, var(--assert) 70%, var(--cfg))"/><text x="360" y="101" text-anchor="middle" fill="#fff" class="t-b">Text · Placeholder · Alt · Title</text>
+      <path d="M220 124 H500 L562 174 H158 Z" fill="var(--cfg)"/><text x="360" y="155" text-anchor="middle" fill="#fff" class="t-b">Test id (data-testid)</text>
+      <path d="M154 178 H566 L628 228 H92 Z" fill="var(--loc)"/><text x="360" y="209" text-anchor="middle" fill="#fff" class="t-b">Stable CSS (#id, real attributes)</text>
+      <path d="M88 232 H632 L694 282 H26 Z" fill="var(--bad)"/><text x="360" y="263" text-anchor="middle" fill="#fff" class="t-b">XPath · positional CSS (last resort)</text>
+      <text x="20" y="40" class="t-s">BEST</text><text x="20" y="22" class="t-s" font-size="12">what the user sees</text>
+      <text x="700" y="268" text-anchor="end" class="t-s">WORST</text>
+    </g>
+  </svg>
+</figure>
+<h3>Implicit roles: which HTML gives which role</h3>
+<div class="tbl"><table>
+<tr><th>HTML</th><th>Role</th><th>Accessible name comes from</th></tr>
+<tr><td><code>&lt;button&gt;</code>, <code>&lt;input type="submit"&gt;</code></td><td><code>button</code></td><td>Its visible text</td></tr>
+<tr><td><code>&lt;a href="…"&gt;</code></td><td><code>link</code></td><td>Its text (needs <code>href</code>)</td></tr>
+<tr><td><code>&lt;h1&gt;</code>…<code>&lt;h6&gt;</code></td><td><code>heading</code></td><td>Its text; filter with <code>level: 1</code>…<code>6</code></td></tr>
+<tr><td><code>&lt;input type="text|email|password"&gt;</code>, <code>&lt;textarea&gt;</code></td><td><code>textbox</code></td><td><code>&lt;label&gt;</code> or <code>aria-label</code></td></tr>
+<tr><td><code>&lt;input type="checkbox"&gt;</code> / <code>"radio"</code></td><td><code>checkbox</code> / <code>radio</code></td><td>Its label</td></tr>
+<tr><td><code>&lt;input type="number"&gt;</code></td><td><code>spinbutton</code></td><td>Its label</td></tr>
+<tr><td><code>&lt;select&gt;</code></td><td><code>combobox</code></td><td>Its label</td></tr>
+<tr><td><code>&lt;img alt="…"&gt;</code></td><td><code>img</code></td><td>The <code>alt</code> text</td></tr>
+<tr><td><code>&lt;ul&gt;</code>/<code>&lt;ol&gt;</code>, <code>&lt;li&gt;</code></td><td><code>list</code>, <code>listitem</code></td><td>–</td></tr>
+<tr><td><code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;th&gt;</code>, <code>&lt;td&gt;</code></td><td><code>table</code>, <code>row</code>, <code>columnheader</code>, <code>cell</code></td><td>Row: its text</td></tr>
+<tr><td><code>&lt;div&gt;</code>, <code>&lt;span&gt;</code>, <code>&lt;p&gt;</code></td><td class="no">none</td><td>Use <code>getByText()</code> or <code>locator()</code></td></tr>
+</table></div>
+<pre class="code">await page.getByRole('button', { name: 'Submit' }).click();
+await page.getByRole('link', { name: 'Forgot Password?' }).click();
+await page.getByRole('heading', { name: 'Register Account', level: 1 });
+await page.getByRole('textbox', { name: 'Email' }).fill('test@test.com');
+await page.getByRole('checkbox', { name: 'Privacy Policy' }).check();
+await page.getByRole('radio', { name: 'Male' }).check();
+await page.getByRole('combobox').selectOption('India');
+await page.getByRole('img', { name: 'Logo' });</pre>
+</section>
+
+<!-- 11 -->
+<section class="lesson" id="playground" data-title="11 · getBy* playground">
+<p class="num">11</p>
+<h2>The <code>getBy*</code> family, hands-on</h2>
+<p>This is the sample login form used in the locator guide. <b>Click any part of it</b> to see every way to locate it, best first. Then try the strict-mode trap.</p>
+<figure class="viz" style="--c:var(--loc)">
+  <div class="viz-title">Locator playground</div>
+  <div class="widget" data-w="playground"></div>
+</figure>
+<h3>Matching rules worth remembering</h3>
+<div class="tbl"><table>
+<tr><th>Method</th><th>Finds by</th><th>Matching</th></tr>
+<tr><td><code>getByRole(role, { name })</code></td><td>ARIA role + accessible name</td><td><code>name</code>: case-insensitive substring; add <code>exact: true</code> for a whole, case-sensitive match</td></tr>
+<tr><td><code>getByLabel('Email')</code></td><td><code>&lt;label&gt;</code>, <code>aria-label</code>, <code>aria-labelledby</code></td><td>Substring, case-insensitive; <code>exact</code> available</td></tr>
+<tr><td><code>getByPlaceholder('Enter email')</code></td><td><code>placeholder</code> attribute</td><td>Substring, case-insensitive</td></tr>
+<tr><td><code>getByText('Forgot')</code></td><td>Visible text (non-interactive content)</td><td>Substring, case-insensitive, whitespace normalised; also takes a regex like <code>/log.*in/i</code></td></tr>
+<tr><td><code>getByAltText('Company Logo')</code></td><td><code>alt</code> on images</td><td>Substring, case-insensitive</td></tr>
+<tr><td><code>getByTitle('Help text')</code></td><td><code>title</code> attribute</td><td>Substring, case-insensitive</td></tr>
+<tr><td><code>getByTestId('email-input')</code></td><td><code>data-testid</code> (configurable)</td><td>Exact</td></tr>
+</table></div>
+<p class="note">Change the test-id attribute with <code>use: { testIdAttribute: 'data-qa' }</code> in the config.</p>
+</section>
+
+<!-- 12 -->
+<section class="lesson" id="css-xpath" data-title="12 · CSS & XPath">
+<p class="num">12</p>
+<h2>CSS and XPath: when they are fine</h2>
+<p><code>page.locator()</code> takes CSS (the default) or XPath (starting with <code>//</code> or <code>xpath=</code>). Both are fast and powerful, but they describe <b>how the page is built</b>, so they break when the structure changes.</p>
+<div class="two">
+  <div class="card good"><b>Good CSS: stable attributes</b>
+<pre class="code">page.locator('#email')
+page.locator('[type="email"]')
+page.locator('[data-testid="login-btn"]')
+page.locator('button:has-text("Submit")')
+page.locator('.btn.primary')   // only if classes are meaningful</pre></div>
+  <div class="card bad"><b>Brittle CSS: structure and position</b>
+<pre class="code">page.locator('div > span > a')
+page.locator('button:nth-child(1)')
+page.locator('li:nth-of-type(3)')
+page.locator('.container .row .col button')
+page.locator('.css-1x2y3z4-MuiButton-root')  // generated</pre></div>
+</div>
+<div class="two">
+  <div class="card good"><b>XPath only when nothing else works</b>
+<pre class="code">// relative navigation to a parent or sibling
+page.locator('//input[@id="email"]/parent::form')
+page.locator('//label[text()="Email"]/following-sibling::input')
+page.locator('//a[contains(text(), "Forgot")]')</pre></div>
+  <div class="card bad"><b>Never</b>
+<pre class="code">page.locator('/html/body/div[1]/div/main/section/button')
+page.locator('//div[1]/div[2]/span[3]/button')
+page.locator('//div/div/div/div/button')</pre></div>
+</div>
+<p>The same Login button, five ways, from best to last resort:</p>
+<pre class="code">// &lt;button id="loginBtn" class="primary" data-testid="loginBtn"&gt;Login&lt;/button&gt;
+page.getByRole('button', { name: 'Login' })   // 1 best
+page.getByText('Login')                       // 2
+page.getByTestId('loginBtn')                  // 3
+page.locator('#loginBtn')                     // 4
+page.locator('//button[@id="loginBtn"]')      // 5 last resort</pre>
+</section>
+
+<!-- 13 -->
+<section class="lesson" id="chaining" data-title="13 · Chaining & lists">
+<p class="num">13</p>
+<h2>Chaining, filtering and lists</h2>
+<p>Narrow a locator step by step, the way you'd describe an element to a person: “the <i>Edit</i> button in the row for <i>John Doe</i>”.</p>
+<pre class="code">// scope: search only inside the form
+const form = page.locator('#login-form');
+await form.getByLabel('Email').fill('test@test.com');
+await form.getByRole('button', { name: 'Login' }).click();
+
+// filter by text, or by a child locator
+await page.getByRole('listitem').filter({ hasText: 'Product 2' }).getByRole('button', { name: 'Add to cart' }).click();
+await page.locator('article').filter({ has: page.getByRole('heading', { name: 'News' }) }).click();
+
+// a table row by its content, then a button in it
+await page.getByRole('row', { name: /John Doe/ }).getByRole('button', { name: 'Edit' }).click();
+
+// position: only when order really matters
+await page.getByRole('button').first().click();
+await page.getByRole('button').last().click();
+await page.getByRole('button').nth(1).click();          // 2nd one (0-based)</pre>
+<h3>Working with many elements</h3>
+<pre class="code">const buttons = page.getByRole('button');
+const count = await buttons.count();
+for (let i = 0; i &lt; count; i++) {
+  console.log(await buttons.nth(i).textContent());
+}
+const texts = await buttons.allTextContents();      // all at once
+await expect(buttons).toHaveCount(2);                // assert, with retry</pre>
+<div class="callout warn"><b>Common mistakes</b>
+<p>❌ <code>page.locator('button')</code>: too generic, will hit strict mode → ✅ <code>getByRole('button', { name: 'Submit' })</code></p>
+<p>❌ <code>page.locator('button').click()</code> without <code>await</code>: the test moves on before the click happens → ✅ <code>await …click()</code></p>
+<p>❌ Styling classes like <code>.btn-blue</code>: they change with every redesign → ✅ semantic locators</p></div>
+</section>
+
+<!-- 14 -->
+<section class="lesson" id="flaky" data-title="14 · Flaky locators">
+<p class="num">14</p>
+<h2>Flaky locators: it's not the code</h2>
+<p>Most “random” test failures come from <b>locator choices</b>, not from Playwright or the app. The classic story: CI is green on Monday; on Friday someone adds a promo banner <code>&lt;div&gt;</code>, and a position-based locator now points at nothing.</p>
+<figure class="viz" style="--c:var(--bad)">
+  <div class="viz-title">One banner, two locators</div>
+  <div class="widget" data-w="flaky"></div>
+</figure>
+<h3>Why it happens</h3>
+<div class="tiles">
+  <div class="tile" style="--c:var(--cfg)"><b>Old habits</b><p>Tutorials start with <code>findElement(By.xpath(…))</code>, and that habit sticks.</p></div>
+  <div class="tile" style="--c:var(--loc)"><b>DevTools makes it easy</b><p>Right-click → Copy XPath gives <code>//div[@id='app']/div/div[2]/div[1]/button</code>: precise-looking, but a time bomb.</p></div>
+  <div class="tile" style="--c:var(--bad)"><b>It works… at first</b><p>The test passes today. The pain arrives two sprints later, when the UI changes.</p></div>
+</div>
+<h3>Red flags in code review</h3>
+<div class="tbl"><table>
+<tr><th>Red flag</th><th>Example</th></tr>
+<tr><td><code>nth-child</code> / <code>nth-of-type</code></td><td><code>'div:nth-child(3) &gt; span:nth-of-type(2)'</code></td></tr>
+<tr><td>Auto-generated class names</td><td><code>'.css-1x2y3z4-MuiButton-root'</code></td></tr>
+<tr><td>Long XPath chains</td><td><code>'//div/div/div/div/button'</code></td></tr>
+<tr><td>Absolute paths from <code>/html</code></td><td><code>'/html/body/div[1]/div/main/…'</code></td></tr>
+<tr><td>Vague <code>contains()</code> text</td><td><code>'//button[contains(text(), "Click")]'</code></td></tr>
+<tr><td>Stacked partial attribute checks</td><td><code>'[class*="btn"][class*="primary"]'</code></td></tr>
+</table></div>
+<h3>From brittle to resilient</h3>
+<div class="two">
+  <div class="card bad"><b>Fragile</b>
+<pre class="code">// login form
+await page.locator('#root > div > div:nth-child(1) > input').fill('u@test.com');
+await page.locator('#root > div > button.submit-btn').click();
+// navigation
+await page.locator('nav > ul > li:nth-child(3) > a').click();
+// data table
+await page.locator('table tbody tr:nth-child(2) td:nth-child(4) button').click();</pre></div>
+  <div class="card good"><b>Resilient</b>
+<pre class="code">// login form
+await page.getByLabel('Email').fill('u@test.com');
+await page.getByRole('button', { name: 'Login' }).click();
+// navigation
+await page.getByRole('navigation').getByRole('link', { name: 'Products' }).click();
+// data table
+await page.getByRole('row', { name: /John Doe/ }).getByRole('button', { name: 'Edit' }).click();</pre></div>
+</div>
+<p>“Your test scripts should read like a user manual, not a DOM tree.”</p>
+</section>
+
+<!-- 15 -->
+<section class="lesson" id="pick" data-title="15 · Picking a locator">
+<p class="num">15</p>
+<h2>Picking the right locator, every time</h2>
+<p>Answer the questions top to bottom. Stop at the first <b>yes</b>.</p>
+<figure class="viz" style="--c:var(--loc)">
+  <div class="viz-title">Locator decision flow</div>
+  <div class="widget" data-w="flow"></div>
+</figure>
+<h3>The <code>data-testid</code> contract</h3>
+<p>When the accessible name isn't unique (a list where every item has an <b>Edit</b> button), ask a developer for a test hook. It takes them seconds and saves you hours of debugging.</p>
+<div class="two">
+<pre class="code">&lt;!-- developer adds --&gt;
+&lt;button data-testid="checkout-submit"&gt;Submit&lt;/button&gt;
+&lt;button data-testid="newsletter-submit"&gt;Submit&lt;/button&gt;</pre>
+<pre class="code">// your test is now unambiguous
+await page.getByTestId('checkout-submit').click();</pre>
+</div>
+<ul>
+  <li>Use meaningful names: <code>user-profile-edit-btn</code>, not <code>btn-123</code>.</li>
+  <li>Make it a team standard: put it in the pull-request checklist.</li>
+  <li>Use it sparingly: accessibility locators still come first.</li>
+</ul>
+<div class="callout tip"><b>Let Playwright suggest the locator</b><p>The <b>Pick locator</b> button in codegen, UI mode and the VS Code extension hovers an element and gives you the role-based locator Playwright itself would use.</p></div>
+<h3>Making it stick in a team</h3>
+<div class="two">
+  <div class="card"><b>“Developers won't add test attributes.”</b><p>Show the flaky-test numbers, add it to the definition of done, and lead by example on new features. Accessible labels also help screen-reader users.</p></div>
+  <div class="card"><b>“It takes too long to refactor everything.”</b><p>Don't boil the ocean: write new tests the right way, fix old ones as they break, and audit your five flakiest tests first.</p></div>
+</div>
+</section>
+
+<div class="part" style="--c:var(--assert)"><h2>Part 3 · Assertions</h2><p>Checking results with web-first assertions that wait and retry.</p></div>
+
+<!-- 16 -->
+<section class="lesson" id="assertions" data-title="16 · Assertions">
+<p class="num">16</p>
+<h2>Assertions with <code>expect</code></h2>
+<p>Web-first assertions take a locator or page and <b>retry</b> until the condition is true or the timeout (5 s by default) runs out. Always <code>await</code> them.</p>
+<div class="tbl"><table>
+<tr><th>Group</th><th>Assertion</th><th>Passes when</th></tr>
+<tr class="grp"><td colspan="3">Visibility</td></tr>
+<tr><td></td><td><code>toBeVisible()</code></td><td>The element is visible</td></tr>
+<tr><td></td><td><code>toBeHidden()</code></td><td>Hidden, or not in the DOM</td></tr>
+<tr><td></td><td><code>toBeAttached()</code></td><td>In the DOM, visible or not</td></tr>
+<tr class="grp"><td colspan="3">Text and value</td></tr>
+<tr><td></td><td><code>toHaveText('Welcome')</code></td><td>Full text matches (string or regex; an array for a list)</td></tr>
+<tr><td></td><td><code>toContainText('Welcome')</code></td><td>Text contains the substring</td></tr>
+<tr><td></td><td><code>toHaveValue('a@b.com')</code></td><td>Input has this value</td></tr>
+<tr class="grp"><td colspan="3">State</td></tr>
+<tr><td></td><td><code>toBeEnabled()</code> · <code>toBeDisabled()</code></td><td>Enabled / disabled</td></tr>
+<tr><td></td><td><code>toBeChecked()</code></td><td>Checkbox or radio is checked</td></tr>
+<tr><td></td><td><code>toBeEditable()</code> · <code>toBeFocused()</code> · <code>toBeEmpty()</code></td><td>Editable / has focus / no text or value</td></tr>
+<tr class="grp"><td colspan="3">Attributes</td></tr>
+<tr><td></td><td><code>toHaveAttribute('type', 'submit')</code></td><td>Attribute has this value</td></tr>
+<tr><td></td><td><code>toHaveClass(/primary/)</code> · <code>toHaveId('submit-form')</code></td><td>Class / id matches</td></tr>
+<tr><td></td><td><code>toHaveCSS('color', 'rgb(255, 0, 0)')</code></td><td>Computed style matches</td></tr>
+<tr><td></td><td><code>toHaveCount(5)</code></td><td>The locator matches exactly N elements</td></tr>
+<tr class="grp"><td colspan="3">Page</td></tr>
+<tr><td></td><td><code>expect(page).toHaveTitle(/dashboard/i)</code></td><td>Title matches</td></tr>
+<tr><td></td><td><code>expect(page).toHaveURL(/.*dashboard/)</code></td><td>URL matches</td></tr>
+</table></div>
+<h3>Modifiers</h3>
+<pre class="code">await expect(locator).not.toBeVisible();                     // negate
+await expect.soft(locator).toHaveText('Hi');                 // keep going; fail the test at the end
+await expect(locator).toBeVisible({ timeout: 15000 });       // longer wait for this one check</pre>
+<div class="callout warn"><b>Don't assert on a snapshot of the page</b><p><code>expect(await locator.isVisible()).toBe(true)</code> checks once and never retries. <code>await expect(locator).toBeVisible()</code> waits for the page to catch up.</p></div>
+</section>
+
+<div class="part" style="--c:var(--tool)"><h2>Part 4 · Tools, debugging and CI</h2><p>Record tests, step through them, replay failures, and run them fast in CI.</p></div>
+
+<!-- 17 -->
+<section class="lesson" id="codegen" data-title="17 · Codegen">
+<p class="num">17</p>
+<h2>Codegen: record a test from the browser</h2>
+<p>Codegen opens a browser and the Playwright Inspector. Click around and it writes the test for you, already using role-based locators. Great for learning locators and drafting tests; always review what it records.</p>
+<pre class="code">npx playwright codegen https://demo.playwright.dev/todomvc
+npx playwright codegen --viewport-size="1280,720" https://example.com
+npx playwright codegen --device="iPhone 13" https://example.com
+npx playwright codegen --target=python https://example.com      # other languages
+npx playwright codegen -o tests/recorded.spec.ts https://example.com
+npx playwright codegen --save-storage=auth.json https://example.com   # save login
+npx playwright codegen --load-storage=auth.json https://example.com   # reuse it</pre>
+<div class="callout tip"><b>Practice</b><p>On <a href="https://demo.playwright.dev/todomvc/" target="_blank" rel="noopener">demo.playwright.dev/todomvc</a>: add a todo with <code>getByPlaceholder()</code>, complete it with <code>getByLabel()</code>, delete it with <code>getByRole('button')</code>, count todos with <code>toHaveCount()</code>, and check the “All” filter with <code>toHaveClass()</code>.</p></div>
+</section>
+
+<!-- 18 -->
+<section class="lesson" id="debug" data-title="18 · UI mode & debug">
+<p class="num">18</p>
+<h2>UI mode, headed and debug mode</h2>
+<div class="tbl"><table>
+<tr><th>Command</th><th>You get</th><th>Use it for</th></tr>
+<tr><td><code>npx playwright test --ui</code></td><td>Test explorer: run single tests, watch mode, a time-travel timeline, DOM snapshots, Pick locator</td><td>Writing and fixing tests day to day</td></tr>
+<tr><td><code>npx playwright test --debug</code></td><td>Headed browser + Playwright Inspector, paused before the first action; step over actions one by one</td><td>Stepping through one failing test</td></tr>
+<tr><td><code>PWDEBUG=1 npx playwright test</code></td><td>The same Inspector via an environment variable</td><td>When you can't change the command</td></tr>
+<tr><td><code>await page.pause()</code></td><td>Pauses at that line and opens the Inspector</td><td>Stopping at an exact point</td></tr>
+<tr><td><code>npx playwright test --headed</code></td><td>Visible browser windows, runs at full speed</td><td>Watching what happens</td></tr>
+<tr><td>(default)</td><td>Headless: no window, fastest</td><td>CI pipelines</td></tr>
+</table></div>
+<p>Combine them: <code>npx playwright test tests/login.spec.ts:15 --debug</code> debugs just the test on line 15.</p>
+</section>
+
+<!-- 19 -->
+<section class="lesson" id="trace" data-title="19 · Trace viewer">
+<p class="num">19</p>
+<h2>Trace viewer: replay a failure</h2>
+<p>A trace records every action with DOM snapshots before and after, network calls, console messages, the source line and screenshots. Open it after a CI failure and see exactly what the test saw. <b>Click the actions</b> in this mock-up.</p>
+<figure class="viz" style="--c:var(--tool)">
+  <div class="viz-title">Trace viewer (mock-up)</div>
+  <div class="widget" data-w="trace"></div>
+</figure>
+<pre class="code">npx playwright test --trace on                   # record every test (heavy)
+npx playwright test --trace retain-on-failure    # keep traces of failures only
+npx playwright show-trace test-results/…/trace.zip
+npx playwright show-report                       # traces are linked from the HTML report</pre>
+<p>In the config, <code>trace: 'on-first-retry'</code> is the common CI choice: no cost on green runs, full detail when a test flakes. Traces can also be opened at <a href="https://trace.playwright.dev" target="_blank" rel="noopener">trace.playwright.dev</a>; the file stays in your browser.</p>
+</section>
+
+<!-- 20 -->
+<section class="lesson" id="media" data-title="20 · Screenshots & video">
+<p class="num">20</p>
+<h2>Screenshots and videos</h2>
+<div class="two">
+<pre class="code">// one element
+await page.getByRole('button', { name: 'Login' })
+  .screenshot({ path: 'screenshots/login-btn.png' });
+
+// what is visible in the viewport
+await page.screenshot({ path: 'screenshots/viewport.png' });
+
+// the whole scrollable page
+await page.screenshot({ path: 'screenshots/full.png', fullPage: true });</pre>
+<pre class="code">// playwright.config.ts: automatic capture
+use: {
+  screenshot: 'only-on-failure',   // 'on' | 'off' | 'only-on-failure'
+  video: 'retain-on-failure',      // 'on' | 'off' | 'retain-on-failure' | 'on-first-retry'
+  trace: 'on-first-retry',
+},</pre>
+</div>
+<p>Automatic screenshots and videos land in <code>test-results/</code> (one folder per test, set by <code>outputDir</code>) and are attached to the HTML report. Videos are <code>.webm</code> files you can open in any browser.</p>
+<h3>Attach your own screenshot to the report</h3>
+<pre class="code">test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status !== testInfo.expectedStatus) {
+    await testInfo.attach('screenshot', {
+      body: await page.screenshot({ fullPage: true }),
+      contentType: 'image/png',
+    });
+  }
+});</pre>
+<p class="note">Use unique names (e.g. with <code>Date.now()</code> or the test title) when you save files yourself, so runs don't overwrite each other.</p>
+</section>
+
+<!-- 21 -->
+<section class="lesson" id="reporters" data-title="21 · Reporters">
+<p class="num">21</p>
+<h2>Reporters</h2>
+<div class="tbl"><table>
+<tr><th>Reporter</th><th>Output</th><th>Best for</th></tr>
+<tr><td><code>list</code></td><td>One line per test with status</td><td>Default when running locally</td></tr>
+<tr><td><code>dot</code></td><td>One character per test</td><td>Default on CI; huge suites</td></tr>
+<tr><td><code>line</code></td><td>A single updating line</td><td>Compact terminal output</td></tr>
+<tr><td><code>html</code></td><td>Interactive report with screenshots, videos, traces</td><td>Humans investigating failures (the <code>init</code> template's choice)</td></tr>
+<tr><td><code>json</code></td><td>Machine-readable results</td><td>Dashboards, custom tooling</td></tr>
+<tr><td><code>junit</code></td><td>JUnit XML</td><td>Jenkins, Azure DevOps, GitLab</td></tr>
+<tr><td><code>blob</code></td><td>Mergeable raw results</td><td>Sharded runs, merged later</td></tr>
+<tr><td><code>allure-playwright</code></td><td>Allure results (npm package)</td><td>Allure dashboards</td></tr>
+</table></div>
+<pre class="code">reporter: [
+  ['list'],
+  ['html', { open: 'never' }],
+  ['junit', { outputFile: 'results/junit.xml' }],
+  ['json', { outputFile: 'results/report.json' }],
+],</pre>
+<pre class="code">npx playwright test --reporter=list,html</pre>
+</section>
+
+<!-- 22 -->
+<section class="lesson" id="filter" data-title="22 · Tags & filtering">
+<p class="num">22</p>
+<h2>Tags, grep and picking which tests run</h2>
+<pre class="code">test('login works', { tag: '@smoke' }, async ({ page }) => { /* … */ });
+test('payment flow', { tag: ['@critical', '@regression'] }, async ({ page }) => { /* … */ });
+test.describe('checkout', { tag: '@e2e' }, () => { /* … */ });
+test('add to cart @regression', async ({ page }) => { /* a tag in the title works too */ });</pre>
+<div class="tbl"><table>
+<tr><th>Command</th><th>Runs</th></tr>
+<tr><td><code>npx playwright test tests/login.spec.ts</code></td><td>One file</td></tr>
+<tr><td><code>npx playwright test tests/login.spec.ts:15</code></td><td>The test at line 15</td></tr>
+<tr><td><code>npx playwright test tests/api/</code></td><td>One folder</td></tr>
+<tr><td><code>npx playwright test -g "valid login"</code></td><td>Tests whose title matches</td></tr>
+<tr><td><code>npx playwright test --grep @smoke</code></td><td>Tests tagged <code>@smoke</code></td></tr>
+<tr><td><code>npx playwright test --grep-invert @slow</code></td><td>Everything except <code>@slow</code></td></tr>
+<tr><td><code>npx playwright test --grep "login|cart"</code></td><td>A regex: either word</td></tr>
+<tr><td><code>npx playwright test --list</code></td><td>Nothing: just lists what would run</td></tr>
+</table></div>
+<p>In the config, <code>grep: /@smoke/</code> and <code>grepInvert: /@manual/</code> do the same per project, e.g. <code>grep: process.env.CI ? /@smoke/ : undefined</code>.</p>
+</section>
+
+<!-- 23 -->
+<section class="lesson" id="ci" data-title="23 · Sharding & CI">
+<p class="num">23</p>
+<h2>Sharding and CI</h2>
+<p><b>Workers</b> split tests across CPU cores on one machine; <b>shards</b> split them across several machines. Each shard writes a <code>blob</code> report, and one final step merges them into a single HTML report.</p>
+<figure class="viz" style="--c:var(--runner)">
+  <div class="viz-title">12 tests, 3 machines</div>
+  <div class="widget" data-w="shards"></div>
+</figure>
+<pre class="code">npx playwright test --shard=1/3 --reporter=blob   # on machine 1
+npx playwright test --shard=2/3 --reporter=blob   # on machine 2
+npx playwright test --shard=3/3 --reporter=blob   # on machine 3
+npx playwright merge-reports --reporter=html ./all-blob-reports</pre>
+<h3>GitHub Actions, sharded</h3>
+<pre class="code"># .github/workflows/playwright.yml
+name: Playwright Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1/4, 2/4, 3/4, 4/4]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npx playwright test --shard=${{ matrix.shard }} --reporter=blob
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: blob-report-${{ strategy.job-index }}
+          path: blob-report</pre>
+<h3>Parameterised tests</h3>
+<pre class="code">const users = [
+  { email: 'admin@test.com', role: 'admin' },
+  { email: 'guest@test.com', role: 'guest' },
+];
+for (const { email, role } of users) {
+  test(`login as ${role}`, async ({ page }) => {
+    await page.goto('/login');
+    await page.getByLabel('Email').fill(email);
+    // …
+  });
+}</pre>
+<p class="note">Each generated test needs a unique title, or Playwright reports a duplicate.</p>
+</section>
+
+<!-- 24 -->
+<section class="lesson" id="cli" data-title="24 · CLI reference">
+<p class="num">24</p>
+<h2>CLI reference</h2>
+<p>Every command from the CLI cheat sheet, grouped. Type to filter (try <code>shard</code>, <code>trace</code> or <code>install</code>).</p>
+<div class="widget" data-w="cli"></div>
+</section>
+
+<!-- 25 -->
+<section class="lesson" id="quiz" data-title="Quiz">
+<p class="num">25</p>
+<h2>Check yourself</h2>
+<div class="widget" data-w="quiz"></div>
+</section>
+
+<!-- 26 -->
+<section class="lesson" id="sources" data-title="Sources">
+<p class="num">26</p>
+<h2>Sources</h2>
+<p>These notes reorganise five cheat sheets by Naveen Automation Labs (test runner, <code>playwright.config.ts</code>, projects, codegen and debugging, screenshots and videos, browsers, CLI commands, the locators guide and “The Flaky Locators”), checked against the official documentation. Where a cheat sheet and the docs disagreed, the docs won.</p>
+<ul class="sources">
+<li><a href="https://playwright.dev/docs/intro" target="_blank" rel="noopener">Playwright docs: getting started</a></li>
+<li><a href="https://playwright.dev/docs/test-configuration" target="_blank" rel="noopener">Test configuration</a> · <a href="https://playwright.dev/docs/test-projects" target="_blank" rel="noopener">Projects</a> · <a href="https://playwright.dev/docs/auth" target="_blank" rel="noopener">Authentication</a></li>
+<li><a href="https://playwright.dev/docs/browsers" target="_blank" rel="noopener">Browsers and channels</a></li>
+<li><a href="https://playwright.dev/docs/locators" target="_blank" rel="noopener">Locators</a> · <a href="https://playwright.dev/docs/best-practices" target="_blank" rel="noopener">Best practices</a></li>
+<li><a href="https://playwright.dev/docs/test-assertions" target="_blank" rel="noopener">Assertions</a> · <a href="https://playwright.dev/docs/test-timeouts" target="_blank" rel="noopener">Timeouts</a> · <a href="https://playwright.dev/docs/actionability" target="_blank" rel="noopener">Auto-waiting</a></li>
+<li><a href="https://playwright.dev/docs/test-parallel" target="_blank" rel="noopener">Parallelism</a> · <a href="https://playwright.dev/docs/test-sharding" target="_blank" rel="noopener">Sharding</a> · <a href="https://playwright.dev/docs/test-reporters" target="_blank" rel="noopener">Reporters</a></li>
+<li><a href="https://playwright.dev/docs/trace-viewer" target="_blank" rel="noopener">Trace viewer</a> · <a href="https://playwright.dev/docs/test-ui-mode" target="_blank" rel="noopener">UI mode</a> · <a href="https://playwright.dev/docs/codegen" target="_blank" rel="noopener">Codegen</a> · <a href="https://playwright.dev/docs/test-cli" target="_blank" rel="noopener">Command line</a></li>
+</ul>
+</section>
+
+</main>
+<script src="script.js"></script>
+</body>
+</html>

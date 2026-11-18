@@ -32,5 +32,12 @@ window.TUTORIALS = [
     note: "Model Context Protocol",
     path: "tutorials/mcp/index.html",
     color: "var(--t4)"
+  },
+  {
+    id: "playwright",
+    label: "Playwright",
+    note: "Testing with Playwright",
+    path: "tutorials/playwright/index.html",
+    color: "var(--t5)"
   }
 ];

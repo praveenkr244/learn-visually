@@ -8,6 +8,7 @@ Animated, interactive programming tutorials in one tabbed site:
 | Java Arrays | `tutorials/java-arrays/` | 16 Java array questions with heap diagrams and algorithm tracers |
 | Python | `tutorials/python/` | Python from beginner to advanced, with step-through animations, a cheat sheet and runnable code |
 | MCP | `tutorials/mcp/` | Model Context Protocol: architecture, an animated end-to-end flow (plus an MP4), building and connecting a server |
+| Playwright | `tutorials/playwright/` | Playwright Test with TypeScript: runner, config, browsers and projects, locators and flaky locators, assertions, debugging, CI, plus a searchable CLI reference |
 
 No build step and no dependencies: it is plain HTML, CSS and JavaScript.
 
