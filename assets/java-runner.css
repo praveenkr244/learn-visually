@@ -19,3 +19,19 @@
 .jr-out.wait { color: var(--code-dim) }
 .jr-out b { display: block; font-weight: 700; color: var(--code-dim); margin-bottom: 2px }
 .jr-note { font-size: .82rem; color: var(--muted) }
+
+/* "Programs from your Java repo" lessons */
+.repo-sum { display: flex; flex-wrap: wrap; gap: 8px; }
+.rb { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: .8rem; font-weight: 700; white-space: nowrap;
+  background: color-mix(in srgb, var(--rc) 15%, var(--surface)); color: var(--ink); border: 1px solid color-mix(in srgb, var(--rc) 45%, var(--line)); }
+.rb.ok, .repo-p.ok { --rc: var(--pool); }
+.rb.err, .repo-p.err { --rc: var(--hot); }
+.rb.bug, .repo-p.bug { --rc: var(--heap); }
+.repo-p { border: 1px solid var(--line); border-left: 4px solid var(--rc); border-radius: 12px; background: var(--surface); padding: 0 14px; min-width: 0; }
+.repo-p > summary { cursor: pointer; padding: 11px 0; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
+.repo-p > summary small { color: var(--muted); flex-basis: 100%; }
+.repo-p[open] { padding-bottom: 12px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.repo-p p { margin: 0; }
+.repo-problem { padding: 8px 12px; border-radius: 8px; background: color-mix(in srgb, var(--rc) 10%, var(--surface)); }
+.repo-note { color: var(--muted); }
+.repo-link a { font-size: .9rem; }

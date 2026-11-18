@@ -693,6 +693,680 @@ class Main {
 }</pre>
     </div>
   </article>
+
+<article class="q" id="repo">
+  <h3><span class="n">Repo</span>Programs from your Java repo</h3>
+  <p>The array programs from <a href="https://github.com/praveenkr244/java/tree/main/src/main/java/com/arrays" target="_blank" rel="noopener">praveenkr244/java · com/arrays</a>. Every one was run exactly as written. To run here, the <code>package</code> line is removed and the class is renamed <code>Main</code>; nothing else changes.</p>
+  <p class="repo-sum"><span class="rb ok">✅ 8 run fine</span><span class="rb err">❌ 3 throw an error</span><span class="rb bug">⚠️ 3 give a wrong result</span></p>
+  <details class="repo-p err">
+    <summary><span class="rb err">❌ Throws an error</span><b>AdditionOfMatrix.java</b><small>Adds two matrices read from the keyboard</small></summary>
+    <p class="repo-problem"><b>What happened:</b> Throws <code>java.util.NoSuchElementException</code> at the first <code>sc.nextInt()</code></p>
+    <p class="repo-note">It waits for keyboard input, and the online runner (and any run without typing numbers) has none. Also note it reads <b>cols before rows</b>, and prints every number on its own line. The fixed version reads the same numbers from a String and prints one row per line.</p>
+    <pre class="jrun" data-title="AdditionOfMatrix.java, as in the repo">import java.util.Scanner;
+
+class Main {
+    public static void main(String arg[]){
+
+        Scanner sc=new Scanner(System.in);
+        int cols=sc.nextInt();
+        int rows=sc.nextInt();
+
+        int a[][]=new int[rows][cols];
+        int b[][]=new int[rows][cols];
+        int c[][]=new int[rows][cols];
+
+        for(int i=0;i&lt;rows;i++) {
+            for (int j = 0; j &lt; cols; j++) {
+                a[i][j] = sc.nextInt();
+            }
+        }
+            for (int i = 0; i &lt; rows; i++) {
+                for (int j = 0; j &lt; cols; j++) {
+                    b[i][j] = sc.nextInt();
+                }
+            }
+                for (int i = 0; i &lt; rows; i++) {
+                    for (int j = 0; j &lt; cols; j++) {
+                        c[i][j] = a[i][j] + b[i][j];
+                    }}
+                    for (int i = 0; i &lt; rows; i++) {
+                        for (int j = 0; j &lt; cols; j++) {
+                            System.out.println(c[i][j]);
+                        }
+
+                    }
+                }
+            }</pre>
+    <pre class="jrun" data-title="AdditionOfMatrix.java, fixed">import java.util.Scanner;
+
+class Main {
+    public static void main(String[] args) {
+        // The online runner has no keyboard, so the input is given as text:
+        // rows, cols, then matrix a, then matrix b
+        Scanner sc = new Scanner(&quot;2 2  1 2 3 4  5 6 7 8&quot;);
+        int rows = sc.nextInt();
+        int cols = sc.nextInt();
+
+        int[][] a = new int[rows][cols];
+        int[][] b = new int[rows][cols];
+        int[][] c = new int[rows][cols];
+
+        for (int i = 0; i &lt; rows; i++)
+            for (int j = 0; j &lt; cols; j++)
+                a[i][j] = sc.nextInt();
+        for (int i = 0; i &lt; rows; i++)
+            for (int j = 0; j &lt; cols; j++)
+                b[i][j] = sc.nextInt();
+
+        for (int i = 0; i &lt; rows; i++)
+            for (int j = 0; j &lt; cols; j++)
+                c[i][j] = a[i][j] + b[i][j];
+
+        // print one row per line
+        for (int[] row : c) {
+            StringBuilder line = new StringBuilder();
+            for (int x : row) line.append(x).append(&#x27; &#x27;);
+            System.out.println(line.toString().trim());
+        }
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/AdditionOfMatrix.java" target="_blank" rel="noopener">View AdditionOfMatrix.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>ArrayListCompare.java</b><small>Compares ArrayLists with sort + equals, removeAll and retainAll</small></summary>
+    <p class="repo-note">Works. <code>removeAll</code> gives the extra elements, <code>retainAll</code> the common ones. Both change the list they are called on.</p>
+    <pre class="jrun" data-title="ArrayListCompare.java">import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
+class Main {
+
+    public static void main(String[] args){
+        //sort and euqals
+        ArrayList&lt;String&gt; l1=new ArrayList&lt;&gt;(Arrays.asList(&quot;a&quot;,&quot;f&quot;,&quot;r&quot;,&quot;t&quot;));
+        ArrayList&lt;String&gt; l2=new ArrayList&lt;&gt;(Arrays.asList(&quot;a&quot;,&quot;f&quot;,&quot;r&quot;,&quot;b&quot;));
+        ArrayList&lt;String&gt; l3=new ArrayList&lt;&gt;(Arrays.asList(&quot;a&quot;,&quot;f&quot;,&quot;r&quot;,&quot;t&quot;));
+
+        Collections.sort(l1);
+        Collections.sort(l2);
+        Collections.sort(l3);
+
+        System.out.println(l1.equals(l2));
+        System.out.println(l1.equals(l3));
+        System.out.println(l2.equals(l3));
+
+        // Compare and find out additional elements
+        ArrayList&lt;String&gt; l4=new ArrayList&lt;&gt;(Arrays.asList(&quot;a&quot;,&quot;f&quot;,&quot;r&quot;,&quot;t&quot;));
+        ArrayList&lt;String&gt; l5=new ArrayList&lt;&gt;(Arrays.asList(&quot;a&quot;,&quot;f&quot;,&quot;r&quot;,&quot;e&quot;));
+        ArrayList&lt;String&gt; l6=new ArrayList&lt;&gt;(Arrays.asList(&quot;a&quot;,&quot;f&quot;,&quot;r&quot;,&quot;t&quot;));
+
+        Collections.sort(l4);
+        Collections.sort(l5);
+        Collections.sort(l6);
+         l4.removeAll(l5);
+        System.out.println(l4);
+
+        //missing Elements
+        l6.removeAll(l5);
+        System.out.println(l6);
+
+        //common element
+        ArrayList&lt;String&gt; l7=new ArrayList&lt;&gt;(Arrays.asList(&quot;a&quot;,&quot;f&quot;,&quot;r&quot;,&quot;e&quot;));
+        ArrayList&lt;String&gt; l8=new ArrayList&lt;&gt;(Arrays.asList(&quot;a&quot;,&quot;f&quot;,&quot;r&quot;,&quot;t&quot;));
+        l7.retainAll(l8);
+        System.out.println(l7);
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/ArrayListCompare.java" target="_blank" rel="noopener">View ArrayListCompare.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p err">
+    <summary><span class="rb err">❌ Throws an error</span><b>AverageMarks.java</b><small>Average of marks read from the keyboard</small></summary>
+    <p class="repo-problem"><b>What happened:</b> Throws <code>java.util.NoSuchElementException</code> at <code>sc.nextInt()</code></p>
+    <p class="repo-note">No keyboard input in the runner. There is also a logic bug: <code>average</code> is an <code>int</code>, so 323 / 4 gives <b>80</b>, not 80.75, and 0 students would divide by zero. The fixed version reads from a String and divides as a <code>double</code>.</p>
+    <pre class="jrun" data-title="AverageMarks.java, as in the repo">import java.util.Scanner;
+
+class Main {
+
+    public static void main(String arg[]){
+
+        Scanner sc=new Scanner(System.in);
+        int noOfStudent=sc.nextInt();
+        int marks[]=new int[noOfStudent];
+
+        for(int i=0;i&lt;noOfStudent;i++){
+            marks[i]=sc.nextInt();
+
+        }
+          int average=0;
+        for(int i=0;i&lt;noOfStudent;i++){
+           average +=marks[i];
+        }
+      average /=noOfStudent;
+
+        System.out.println(average);
+    }
+}</pre>
+    <pre class="jrun" data-title="AverageMarks.java, fixed">import java.util.Scanner;
+
+class Main {
+
+    public static void main(String[] args) {
+        // The online runner has no keyboard: number of students, then their marks
+        Scanner sc = new Scanner(&quot;4  70 85 90 78&quot;);
+        int noOfStudent = sc.nextInt();
+        int[] marks = new int[noOfStudent];
+
+        for (int i = 0; i &lt; noOfStudent; i++) {
+            marks[i] = sc.nextInt();
+        }
+
+        int total = 0;
+        for (int m : marks) {
+            total += m;
+        }
+        // divide as double, otherwise 323 / 4 gives 80 instead of 80.75
+        double average = noOfStudent == 0 ? 0 : (double) total / noOfStudent;
+
+        System.out.println(average);
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/AverageMarks.java" target="_blank" rel="noopener">View AverageMarks.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>BasicBubbleSort.java</b><small>Bubble sort with an early exit</small></summary>
+    <p class="repo-note">Works, and the <code>sorted</code> flag stops it as soon as a pass makes no swaps (see Q14).</p>
+    <pre class="jrun" data-title="BasicBubbleSort.java">class Main {
+
+    public static void main(String arg[]){
+        //will take max (n-1) iteration to sort
+
+        int arr[]={2,0,-2,-6,4,67};
+        int n=arr.length;
+        for(int i=0;i&lt;n-1;i++){
+            boolean sorted=true;
+            for(int j=0;j&lt;n-1-i;j++){
+                if(arr[j+1]&lt;arr[j]){
+
+                    int temp=arr[j+1];
+                     arr[j+1]=arr[j];
+                      arr[j]=temp;
+                    sorted=false;
+                }
+            }
+            if(sorted) break;
+        }
+        for(int item:arr){
+            System.out.print(item + &quot; &quot;);
+        }
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/BasicBubbleSort.java" target="_blank" rel="noopener">View BasicBubbleSort.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>CommonElementInThreeArray.java</b><small>Common elements of three sorted arrays, with three pointers</small></summary>
+    <p class="repo-note">Works: prints 2, 6, 6, 8. Each step moves the pointer at the smallest value. The arrays must be sorted.</p>
+    <pre class="jrun" data-title="CommonElementInThreeArray.java">class Main {
+    public void findcommon(int arr1[],int[] arr2,int[] arr3) {
+
+        int i=0,j=0,k=0;
+
+        while(i&lt;arr1.length &amp;&amp;j&lt;arr2.length &amp;&amp; k&lt;arr3.length) {
+
+            if(arr1[i]== arr2[j] &amp;&amp; arr2[j]==arr3[k])
+            {
+                System.out.println(arr1[i]);
+                i++;
+                j++;
+                k++;
+            }
+    else if(arr1[i]&lt;arr2[j])
+
+                i++;
+
+            else if(arr2[j]&lt;arr3[k])
+                j++;
+            else
+                k++;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int[] a= {2,6,6,7,8,9,10};
+
+        int[] b= {1,2,3,4,5,6,6,7,8};
+
+        int[] c= {1,2,3,4,5,6,6,8};
+
+        Main intterview= new Main();
+
+        intterview.findcommon(a, b, c);
+
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/CommonElementInThreeArray.java" target="_blank" rel="noopener">View CommonElementInThreeArray.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p err">
+    <summary><span class="rb err">❌ Throws an error</span><b>MissingInteger.java</b><small>Finds the missing number, reading from the keyboard</small></summary>
+    <p class="repo-problem"><b>What happened:</b> Throws <code>java.util.NoSuchElementException</code> at <code>sc.nextInt()</code></p>
+    <p class="repo-note">No keyboard input in the runner. The formula is also wrong: <code>n*((n+1)/2)</code> does the integer division first (for n = 6 it gives 18, not 21), the subtraction is the wrong way round, and the sum should be for <b>n + 1</b> numbers when one of them is missing. The fixed version uses <code>n * (n + 1) / 2</code>.</p>
+    <pre class="jrun" data-title="MissingInteger.java, as in the repo">import java.util.Arrays;
+import java.util.Scanner;
+
+class Main {
+
+    public static void main(String[] arg){
+
+        Scanner sc= new Scanner(System.in);
+         int n=sc.nextInt();
+         int asum=0;
+         int[] arr= new int[n];
+         for(int i=0;i&lt;n;i++){
+             arr[i]= sc.nextInt();
+         }
+   for(int sum:arr){
+       asum +=sum;
+   }
+       int actualSum=n*((n+1)/2);
+
+       int missing =asum-actualSum;
+        System.out.println(missing);
+
+    }
+}</pre>
+    <pre class="jrun" data-title="MissingInteger.java, fixed">class Main {
+
+    public static void main(String[] args) {
+        // The numbers 1..n with exactly one missing (no keyboard input in the online runner)
+        int[] arr = {1, 2, 4, 5, 6};
+        int n = arr.length + 1;              // 6 numbers should be there
+
+        int actualSum = 0;
+        for (int x : arr) {
+            actualSum += x;
+        }
+        int expectedSum = n * (n + 1) / 2;   // multiply first: (n + 1) / 2 alone loses the .5
+
+        int missing = expectedSum - actualSum;
+        System.out.println(missing);
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/MissingInteger.java" target="_blank" rel="noopener">View MissingInteger.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p bug">
+    <summary><span class="rb bug">⚠️ Wrong result</span><b>PracticeProgramme.java</b><small>Sum of two, max/min and k-th highest</small></summary>
+    <p class="repo-problem"><b>What happened:</b> Runs, but <code>kthhigest</code> returns the k-th <b>smallest</b></p>
+    <p class="repo-note">With k = 6 it happens to print 7, the 2nd highest. <code>Arrays.sort</code> also reorders the caller's array. <code>maxmin</code> starts <code>min</code> at <code>arr[1]</code> and only fills the result when a later element wins, so it can return 0s; <code>sumoftwo</code> moves both pointers every step and needs sorted input. The fixed version corrects all three and leaves the input alone.</p>
+    <pre class="jrun" data-title="PracticeProgramme.java, as in the repo">import java.util.Arrays;
+
+class Main {
+
+    public static int[] sumoftwo(int a[],int s){
+
+        int i=0;
+        int j=a.length-1;
+        int[] out = new int[2];
+        while(i&lt;j){
+
+            if(a[i]+a[j]==s){
+                 out[0]=a[i];
+                out[1]=a[j];
+
+            }i++;j--;
+
+        }
+
+            return out;
+
+    }
+
+    public static int[] maxmin(int arr[]){
+        int max=arr[0];
+        int min=arr[1];
+        int [] out=new int[2];
+        for (int i=2;i&lt;arr.length;i++){
+            if (arr[i]&gt;max){
+                max=arr[i];
+                out[0]=max;
+
+            }
+            else if (arr[i]&lt;min){
+                min =arr[i];
+                out[1]=min;
+            }
+
+        }
+        return out;
+    }
+
+    public static int kthhigest(int arr[],int k){
+        Arrays.sort(arr);
+      System.out.println(Arrays.toString(arr));
+        return arr[k-1];
+    }
+    public static void main(String arg[]){
+        int[] arr={2,4,7,9,1,4,3};
+      // System.out.println( Arrays.toString(Main.sumoftwo(arr,5)));
+        //System.out.println( Arrays.toString(Main.maxmin(arr)));
+        System.out.println( Main.kthhigest(arr,6));
+    }
+}</pre>
+    <pre class="jrun" data-title="PracticeProgramme.java, fixed">import java.util.Arrays;
+
+class Main {
+
+    // two numbers that add up to s, or [] if none
+    public static int[] sumoftwo(int[] a, int s) {
+        int[] sorted = a.clone();          // two pointers need sorted data; don&#x27;t change the caller&#x27;s array
+        Arrays.sort(sorted);
+        int i = 0, j = sorted.length - 1;
+        while (i &lt; j) {
+            int sum = sorted[i] + sorted[j];
+            if (sum == s) return new int[]{sorted[i], sorted[j]};
+            if (sum &lt; s) i++; else j--;    // move only one pointer
+        }
+        return new int[0];
+    }
+
+    // [max, min]
+    public static int[] maxmin(int[] arr) {
+        int max = arr[0], min = arr[0];    // start both from the first element
+        for (int i = 1; i &lt; arr.length; i++) {
+            if (arr[i] &gt; max) max = arr[i];
+            if (arr[i] &lt; min) min = arr[i];
+        }
+        return new int[]{max, min};
+    }
+
+    // k-th highest: after an ascending sort it sits k places from the end
+    public static int kthHighest(int[] arr, int k) {
+        int[] sorted = arr.clone();
+        Arrays.sort(sorted);
+        return sorted[sorted.length - k];
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {2, 4, 7, 9, 1, 4, 3};
+        System.out.println(Arrays.toString(sumoftwo(arr, 5)));
+        System.out.println(Arrays.toString(maxmin(arr)));
+        System.out.println(kthHighest(arr, 2));
+        System.out.println(Arrays.toString(arr));   // unchanged
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/PracticeProgramme.java" target="_blank" rel="noopener">View PracticeProgramme.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>Removingduplicate.java</b><small>Removes duplicates with a LinkedHashSet</small></summary>
+    <p class="repo-note">Works and keeps the original order. The compiler warns about <b>raw types</b>: write <code>LinkedHashSet&lt;Integer&gt;</code> and <code>Iterator&lt;Integer&gt;</code>. The first loop prints without spaces or a newline, so the output runs together: <code>12345[1, 2, 3, 4, 5]</code>.</p>
+    <pre class="jrun" data-title="Removingduplicate.java">import java.util.*;
+
+class Main {
+    public static void main (String[] arg){
+        Integer[ ] arr={1,2,2,3,4,5};
+
+       LinkedHashSet s= new LinkedHashSet(Arrays.asList(arr));
+//         Integer[] arr1=s.toArray(new Integer[6]);
+//          System.out.println(arr1);
+        Iterator  it=s.iterator();
+        while (it.hasNext()){
+                System.out.print(it.next());
+        }
+      System.out.println(s);
+
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/Removingduplicate.java" target="_blank" rel="noopener">View Removingduplicate.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p bug">
+    <summary><span class="rb bug">⚠️ Wrong result</span><b>ReverseArray.java</b><small>Reverses an array</small></summary>
+    <p class="repo-problem"><b>What happened:</b> Runs, but prints 6 5 4 4 5 6 instead of 6 5 4 3 2 1</p>
+    <p class="repo-note">It copies the mirror element into <code>a[i]</code> but never puts <code>temp</code> back, and it loops over the whole array, so the second half reads values that were already overwritten. Swap both ends and stop at the middle.</p>
+    <pre class="jrun" data-title="ReverseArray.java, as in the repo">import java.util.Arrays;
+import java.util.Objects;
+
+class Main {
+
+    public static void revreseArray(int[] a){
+
+        for (int i=0;i&lt;a.length;i++){
+            int temp=a[i];
+            a[i]= a[a.length-i-1];
+
+          System.out.println(a[i]);
+
+        }
+
+    }
+    public static void main(String arg[]){
+        int[] arr={1,2,3,4,5,6};
+        Main.revreseArray(arr);
+
+    }
+}</pre>
+    <pre class="jrun" data-title="ReverseArray.java, fixed">import java.util.Arrays;
+
+class Main {
+
+    public static void reverseArray(int[] a) {
+        // swap the two ends and walk inwards; stop at the middle
+        for (int i = 0; i &lt; a.length / 2; i++) {
+            int temp = a[i];
+            a[i] = a[a.length - i - 1];
+            a[a.length - i - 1] = temp;
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5, 6};
+        reverseArray(arr);
+        System.out.println(Arrays.toString(arr));
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/ReverseArray.java" target="_blank" rel="noopener">View ReverseArray.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>SampleArray.java</b><small>Declares and prints a double[]</small></summary>
+    <p class="repo-note">Works. The ints 23 and 7 are stored as 23.0 and 7.0 because the array is <code>double[]</code>.</p>
+    <pre class="jrun" data-title="SampleArray.java">class Main {
+
+    public static void main(String arg[]){
+
+        //int[] arr=new int[5];
+
+       // int  sampleArray[]=new int[5];
+
+        double marks[]={23.33,23,5.6,7,98.70};
+
+     //System.out.println(marks[4]);
+
+     for(int i=0;i&lt;marks.length;i++)
+        System.out.println(marks[i]);
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/SampleArray.java" target="_blank" rel="noopener">View SampleArray.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>SelectionSort.java</b><small>Selection sort</small></summary>
+    <p class="repo-note">Works. The inner loop can start at <code>i + 1</code>, since <code>a[i]</code> is already the current minimum.</p>
+    <pre class="jrun" data-title="SelectionSort.java">class Main {
+    public static void main(String arg[]){
+
+        int a[]={1,-4,0,4,43,-9};
+        int n=a.length;
+
+        for(int i=0;i&lt;n-1;i++){
+            int minindex=i;
+            for(int j=i;j&lt;n;j++){
+
+                if(a[j]&lt;a[minindex]){
+              minindex=j;
+                }
+            }
+            int temp=a[i];
+            a[i]=a[minindex];
+            a[minindex]=temp;
+
+        }
+        for(int item:a){
+            System.out.print(item +&quot; &quot;);
+        }
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/SelectionSort.java" target="_blank" rel="noopener">View SelectionSort.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>SumOfTwoElemnts.java</b><small>Two numbers that add up to a target, with two pointers</small></summary>
+    <p class="repo-note">Works: prints 0, 4, true. It sorts the caller's array as a side effect (see Q16).</p>
+    <pre class="jrun" data-title="SumOfTwoElemnts.java">import java.util.Arrays;
+
+class Main {
+
+    public static boolean twosum(int arr[], int s) {
+
+        Arrays.sort(arr);
+
+        int j = arr.length - 1;
+        int i = 0;
+
+        while (i &lt; j) {
+            if (arr[i] + arr[j] &gt; s) {
+                j--;
+            } else if (arr[i] + arr[j] &lt; s) {
+                i++;
+            } else {
+                System.out.println(arr[i]);
+                System.out.println(arr[j]);
+               return true;
+            }
+        }
+        return false;
+    }
+        public static void main (String arg[]){
+          int[] inArr= {1, 0, 4, 2, -2, -1, 1};
+
+            System.out.println(twosum(inArr,4));
+        }
+
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/SumOfTwoElemnts.java" target="_blank" rel="noopener">View SumOfTwoElemnts.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p bug">
+    <summary><span class="rb bug">⚠️ Wrong result</span><b>SumThree.java</b><small>Do three numbers add up to 0?</small></summary>
+    <p class="repo-problem"><b>What happened:</b> Runs, but always returns <code>true</code></p>
+    <p class="repo-note">There is a stray semicolon: <code>if(twosum(a,-a[i],i+1));{</code>. The <code>;</code> ends the if, so the block after it runs every time. Change the input to <code>{1,2,3}</code> and it still prints true. The fixed version prints true, then false for {1, 2, 3}.</p>
+    <pre class="jrun" data-title="SumThree.java, as in the repo">import java.util.Arrays;
+
+class Main {
+    public static boolean twosum(int arr[], int s,int i) {
+
+        int j = arr.length - 1;
+        while (i &lt; j) {
+            if (arr[i] + arr[j] &gt; s) {
+                j--;
+            } else if (arr[i] + arr[j] &lt; s) {
+                i++;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean  sumthree(int a[]){
+         Arrays.sort(a);
+
+        for(int i=0;i&lt;a.length-2;i++){
+            if(twosum(a,-a[i],i+1));{
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void main (String arg[]){{
+        int inarr[]={-1,-2,-4,-3,0,1,2,3,4};
+        System.out.println(sumthree(inarr));
+    }}
+
+}</pre>
+    <pre class="jrun" data-title="SumThree.java, fixed">import java.util.Arrays;
+
+class Main {
+    // is there a pair in arr[i..] that adds up to s? (arr must be sorted)
+    public static boolean twosum(int[] arr, int s, int i) {
+        int j = arr.length - 1;
+        while (i &lt; j) {
+            if (arr[i] + arr[j] &gt; s) {
+                j--;
+            } else if (arr[i] + arr[j] &lt; s) {
+                i++;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // do any three numbers add up to 0?
+    public static boolean sumthree(int[] a) {
+        Arrays.sort(a);
+        for (int i = 0; i &lt; a.length - 2; i++) {
+            if (twosum(a, -a[i], i + 1)) {   // no &#x27;;&#x27; after the if
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        int[] inarr = {-1, -2, -4, -3, 0, 1, 2, 3, 4};
+        System.out.println(sumthree(inarr));              // true: -1 + 0 + 1
+        System.out.println(sumthree(new int[]{1, 2, 3})); // false: no triple sums to 0
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/SumThree.java" target="_blank" rel="noopener">View SumThree.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>Zigzagarray.java</b><small>Rearranges into a &lt; b &gt; c &lt; d … order</small></summary>
+    <p class="repo-note">Works in one pass: even positions must be smaller than the next element, odd positions larger.</p>
+    <pre class="jrun" data-title="Zigzagarray.java">import java.util.Arrays;
+
+class Main {
+
+    public static int[] zigZag(int arr[], int n) {
+
+        for(int i=0;i&lt;n-1;i++){
+            if(i%2==0){
+                if(arr[i]&gt;arr[i+1]){
+                    int temp=arr[i];
+                    arr[i]=arr[i+1];
+                    arr[i+1]=temp;
+                }
+            }
+            else{
+                if(arr[i]&lt;arr[i+1]){
+                    int temp=arr[i];
+                    arr[i]=arr[i+1];
+                    arr[i+1]=temp;
+                }
+            }
+
+        }
+        //System.out.println(arr);
+        return arr;
+    }
+
+    public static void main(String arg[]){
+
+        int ar[]={2,-1,3,5,1,0,3,5};
+        System.out.println(Arrays.toString(zigZag(ar,8)));
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/arrays/Zigzagarray.java" target="_blank" rel="noopener">View Zigzagarray.java on GitHub ↗</a></p>
+  </details>
+  <p class="repo-note">Not included: GitTest (no main method). Those files have no code to run yet.</p>
+</article>
 </section>
 
 <section class="topic" id="quiz">

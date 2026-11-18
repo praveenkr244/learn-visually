@@ -25,7 +25,7 @@ window.COURSE = {
       sec.dataset.wrap = ""; sec.firstElementChild.dataset.onlyAll = "";
       sec.querySelectorAll("article.q").forEach(a => {
         const h = a.querySelector("h3"), t = h.cloneNode(true); t.querySelector(".n")?.remove();
-        a.id = "q" + (++n); a.dataset.lesson = ""; a.dataset.part = p; a.dataset.title = t.textContent.trim();
+        if (!a.id) a.id = "q" + (++n); a.dataset.lesson = ""; a.dataset.part = p; a.dataset.title = t.textContent.trim();
         h.dataset.head = "";
       });
       p++;
@@ -498,6 +498,9 @@ class Main {
         System.out.println(n + " " + Arrays.toString(Arrays.copyOf(a, n)));
     }
 }`, o: "4 [1, 2, 3, 4]" }] },
+repo: { e: "🗂️", k: "Your own programs from GitHub, ready to run. Open one, press <b>Run</b>, then compare it with the fixed version: three throw errors as written and three give wrong results.",
+  r: ["Programs that read the keyboard throw <code>NoSuchElementException</code> when no input is given.", "A <code>;</code> right after <code>if (...)</code> makes the next block run every time.", "Do integer division last: <code>n * (n + 1) / 2</code>."],
+  q: ["SumThree always prints true. Why?", ["Arrays.sort is wrong", "A stray ; after the if", "twosum never returns false", "The array has duplicates"], 1, "if (cond); ends the if, so the { return true; } block always runs."] },
 quiz: { e: "🎯", k: "Predict first, then click. Every wrong guess shows you which memory rule you missed." },
 quick: { e: "⚡", k: "Short answers to the follow-up questions interviewers like to add at the end." }
   }

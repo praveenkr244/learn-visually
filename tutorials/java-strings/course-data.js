@@ -26,7 +26,7 @@ window.COURSE = {
       sec.dataset.wrap = ""; sec.firstElementChild.dataset.onlyAll = "";
       sec.querySelectorAll("article.q").forEach(a => {
         const h = a.querySelector("h3"), t = h.cloneNode(true); t.querySelector(".n")?.remove();
-        a.id = "q" + (++n); a.dataset.lesson = ""; a.dataset.part = p; a.dataset.title = t.textContent.trim();
+        if (!a.id) a.id = "q" + (++n); a.dataset.lesson = ""; a.dataset.part = p; a.dataset.title = t.textContent.trim();
         h.dataset.head = "";
       });
     });
@@ -477,6 +477,9 @@ q18: { e: "🔤", k: "Two words are anagrams when every letter appears the <b>sa
         System.out.println(firstUnique("swiss"));
     }
 }`, o: "w" }] },
+repo: { e: "🗂️", k: "Your own programs from GitHub, ready to run. Open one, press <b>Run</b>, then read the note: one throws an error as written, and each has a tip.",
+  r: ["A hard-coded path like <code>/Users/…/Desktop</code> only works on one machine.", "<code>hm.merge(ch, 1, Integer::sum)</code> counts in one line.", "Check what <code>true</code> means before trusting a regex result."],
+  q: ["Why does CountWordInFile fail when run here?", ["A syntax error", "The file path only exists on one Mac", "split() throws", "BufferedReader is deprecated"], 1, "FileReader can't find /Users/praveen/Desktop/word.txt, so it throws FileNotFoundException."] },
 quiz: { e: "🎯", k: "Predict first, then click. Every wrong guess shows you which memory rule you missed." },
 quick: { e: "⚡", k: "Short answers to the follow-up questions interviewers like to add at the end." }
   }

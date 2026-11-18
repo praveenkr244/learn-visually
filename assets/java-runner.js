@@ -1,7 +1,7 @@
 /* Runnable Java examples for the Java tutorials.
    Markup: <pre class="jrun" data-title="What it shows">class Main { ... }</pre>
-   Each block gets Edit / Reset / Run buttons. Run sends the code to the free Wandbox
-   compiler (https://wandbox.org), which compiles and runs it with a real JDK. */
+   Each block gets Edit / Reset / Run buttons. Run sends the code to a free online compiler
+   (Compiler Explorer at https://godbolt.org, or https://wandbox.org if that fails), which runs it with a real JDK 21. */
 (() => {
 "use strict";
 const API = "https://wandbox.org/api/compile.json";
@@ -23,31 +23,61 @@ function hl(code) {
   return out + esc(code.slice(last));
 }
 
+/* Two free online compilers; each returns { compile, compiled, stdout, stderr, exit }.
+   Compiler Explorer (godbolt.org) runs first; if it can't be reached, Wandbox is tried. */
+const CE = "https://godbolt.org/api/compiler/java2102/compile";   // JDK 21.0.2
+const lines = a => (a || []).map(x => x.text).join("\n");
+async function viaGodbolt(src, signal) {
+  const res = await fetch(CE, {
+    method: "POST", signal, headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ source: src, lang: "java", options: { userArguments: "", executeParameters: { args: [], stdin: "" },
+      compilerOptions: { executorRequest: true }, filters: { execute: true }, tools: [], libraries: [] } })
+  });
+  if (!res.ok) throw new Error("godbolt.org answered " + res.status);
+  const r = await res.json(), b = r.buildResult || {};
+  const compiled = (b.code ?? 0) === 0 && r.didExecute !== false;
+  return { compile: lines(b.stderr) || (compiled ? "" : lines(r.stderr)), compiled, stdout: compiled ? lines(r.stdout) : "",
+    stderr: compiled ? lines(r.stderr) : "", exit: compiled ? String(r.code ?? 0) : String(b.code ?? 1), host: "godbolt.org" };
+}
+async function viaWandbox(src, signal) {
+  const res = await fetch(API, { method: "POST", signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ compiler: JDK, code: src }) });
+  if (!res.ok) throw new Error("wandbox.org answered " + res.status);
+  const r = await res.json(), exit = String(r.status ?? "0");
+  const compiled = !r.compiler_error || !!(r.program_output || r.program_error) || exit === "0";
+  return { compile: r.compiler_error || "", compiled, stdout: r.program_output || "",
+    stderr: (r.program_error || "") + (r.signal ? "\nStopped by " + r.signal + " (time or memory limit)" : ""), exit, host: "wandbox.org" };
+}
+
 async function runJava(src, out) {
   out.className = "jr-out wait";
-  out.textContent = "Compiling and running on wandbox.org…";
-  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 30000);
+  out.textContent = "Compiling and running…";
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 40000);
+  let r, why = [], noThreads = null;
   try {
-    const res = await fetch(API, {
-      method: "POST", signal: ctl.signal,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ compiler: JDK, code: src })
-    });
-    if (!res.ok) throw new Error("the compiler service answered " + res.status);
-    const r = await res.json();
+    for (const run of [viaGodbolt, viaWandbox]) {
+      try {
+        r = await run(src, ctl.signal);
+        // godbolt.org's sandbox can't start threads; try Wandbox for those programs
+        if (r.host === "godbolt.org" && /unable to create native thread/.test(r.stderr)) { noThreads = r; r = null; continue; }
+        break;
+      }
+      catch (e) { if (e.name === "AbortError") throw e; why.push(e.message); }
+    }
+    if (!r && noThreads) { r = noThreads; r.stderr += "\n\nThis example starts threads, which the godbolt.org sandbox doesn't allow, and the backup compiler (wandbox.org) couldn't be reached. Run it with: java Main.java"; }
+    if (!r) throw new Error(why.join("; "));
     const parts = [];
-    if (r.compiler_error) parts.push(["Compile error", r.compiler_error]);
-    if (r.program_output) parts.push(["", r.program_output]);
-    if (r.program_error) parts.push(["Error", r.program_error]);
-    if (r.signal) parts.push(["", "Stopped by " + r.signal + " (time or memory limit)"]);
-    out.className = "jr-out" + (r.status !== "0" || r.compiler_error ? " err" : "");
+    if (r.compile) parts.push([r.compiled ? "Compiler warning" : "Compile error", r.compile]);
+    if (r.stdout) parts.push(["", r.stdout]);
+    if (r.stderr) parts.push(["Error", r.stderr]);
+    out.className = "jr-out" + (r.exit !== "0" || !r.compiled ? " err" : "");
     out.innerHTML = parts.length
       ? parts.map(([h, t]) => (h ? `<b>${h}</b>` : "") + esc(t.replace(/\s+$/, ""))).join("\n")
       : "(no output)";
-    if (r.status && r.status !== "0" && !r.compiler_error) out.insertAdjacentHTML("beforeend", `\n<b>exit code ${esc(r.status)}</b>`);
+    if (r.compiled && r.exit !== "0") out.insertAdjacentHTML("beforeend", `\n<b>exit code ${esc(r.exit)}</b>`);
+    out.title = "Ran on " + r.host;
   } catch (e) {
     out.className = "jr-out err";
-    out.textContent = (e.name === "AbortError" ? "The compiler took too long to answer." : "Couldn't reach the online compiler (" + e.message + ").") +
+    out.textContent = (e.name === "AbortError" ? "The online compiler took too long to answer." : "Couldn't reach an online compiler (" + e.message + ").") +
       "\nCheck your internet connection, or copy the code into Main.java and run: java Main.java";
   } finally { clearTimeout(timer); }
 }

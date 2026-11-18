@@ -729,6 +729,251 @@ class Main {
 }</pre>
     </div>
   </article>
+
+<article class="q" id="repo">
+  <h3><span class="n">Repo</span>Programs from your Java repo</h3>
+  <p>The String programs from <a href="https://github.com/praveenkr244/java/tree/main/src/main/java/com/string" target="_blank" rel="noopener">praveenkr244/java · com/string</a>. Every one was run exactly as written. To run here, the <code>package</code> line is removed and the class is renamed <code>Main</code>; nothing else changes.</p>
+  <p class="repo-sum"><span class="rb ok">✅ 6 run fine</span><span class="rb err">❌ 1 throw an error</span></p>
+  <details class="repo-p err">
+    <summary><span class="rb err">❌ Throws an error</span><b>CountWordInFile.java</b><small>Counts the words in a text file</small></summary>
+    <p class="repo-problem"><b>What happened:</b> Throws <code>java.io.FileNotFoundException: /Users/praveen/Desktop/word.txt</code></p>
+    <p class="repo-note">The path points at a file on your own Mac's Desktop, so it fails everywhere else (and on your Mac too if the file is gone). Two smaller issues: the reader is never closed, and an empty line counts as one word because <code>"".split(" ")</code> returns <code>[""]</code>. The fixed version creates <code>word.txt</code> first, uses try-with-resources and skips blank lines.</p>
+    <pre class="jrun" data-title="CountWordInFile.java, as in the repo">import java.io.*;
+
+class Main {
+
+    public static void main(String arg[]) throws IOException {
+
+      //  File f=new File(&quot;/Users/praveen/Desktop/Praveen_cv_8yrs_exp.docx&quot;);
+        BufferedReader br=new BufferedReader(new FileReader(&quot;/Users/praveen/Desktop/word.txt&quot;));
+        String line=br.readLine();
+        int s =0;
+        while (line!=null){
+
+            String[] word1=line.split(&quot; &quot;);
+            s=s+word1.length;
+
+            line= br.readLine();
+
+        }
+        System.out.println(s);
+
+    }
+}</pre>
+    <pre class="jrun" data-title="CountWordInFile.java, fixed">import java.io.*;
+import java.nio.file.*;
+import java.util.List;
+
+class Main {
+
+    public static void main(String[] args) throws IOException {
+        // Create the file first, so the program works on any machine
+        Path file = Paths.get(&quot;word.txt&quot;);
+        Files.write(file, List.of(&quot;Java strings are immutable&quot;, &quot;StringBuilder is mutable&quot;, &quot;&quot;, &quot;Count every word&quot;));
+
+        int count = 0;
+        // try-with-resources closes the reader for you
+        try (BufferedReader br = new BufferedReader(new FileReader(file.toFile()))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;          // &quot;&quot;.split(&quot; &quot;) would count 1 word
+                count += line.split(&quot;\\s+&quot;).length;    // one or more spaces between words
+            }
+        }
+        System.out.println(count);
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/string/CountWordInFile.java" target="_blank" rel="noopener">View CountWordInFile.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>DuplicateCharacter.java</b><small>Prints the characters that repeat, using a HashMap</small></summary>
+    <p class="repo-note">Works. Notes: the <code>Scanner</code> is created but never used, the space is counted as a character, and a HashMap doesn't promise any order. <code>hm.merge(ch, 1, Integer::sum)</code> does the containsKey/put dance in one line.</p>
+    <pre class="jrun" data-title="DuplicateCharacter.java">import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+
+class Main {
+
+    public static void duplicatechar(String str){
+
+       char[] strarray=str.toCharArray();
+        Map&lt;Character, Integer&gt; hm=new HashMap&lt;&gt;();
+        for(char ch: strarray) {
+
+            if (hm.containsKey(ch)) {
+                hm.put(ch, hm.get(ch) + 1);
+            } else {
+                hm.put(ch, 1);
+            }
+
+        }
+
+            Set&lt;Map.Entry&lt;Character,Integer&gt;&gt; enteryset=hm.entrySet();
+         for(Map.Entry&lt;Character,Integer&gt; entry: hm.entrySet()){
+             if(entry.getValue()&gt;1) {
+                 System.out.println(entry.getKey() + &quot;:&quot; + entry.getValue());
+             }
+         }
+       // to print all character count
+
+        System.out.println(hm.entrySet());
+
+    }
+
+    public static void main(String arg[]){
+        Scanner scc=new Scanner(System.in);
+
+        Main.duplicatechar(&quot;praveen kumar praveen&quot;);
+
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/string/DuplicateCharacter.java" target="_blank" rel="noopener">View DuplicateCharacter.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>FindIntInString.java</b><small>Regex check on each string</small></summary>
+    <p class="repo-note">Works, but read the output carefully: the pattern <code>.*[^0-9].*</code> matches strings that contain <b>a non-digit</b>, so <code>true</code> means "not all digits". To test "only digits", use <code>\\d+</code> instead.</p>
+    <pre class="jrun" data-title="FindIntInString.java">import java.util.regex.Pattern;
+
+class Main {
+
+    public static void main(String arg[]){
+
+        String[] input={&quot;2234&quot;,&quot;kumar4434&quot;,&quot;123&quot;,&quot;pk1&quot;};
+       // Pattern patrn=Pattern.compile(&quot;\\d{6}&quot;); //Digits should be 6 digit
+
+        Pattern patrn=Pattern.compile(&quot;.*[^0-9].*&quot;);
+
+        for(String s:input){
+            System.out.println(patrn.matcher(s).matches());
+        }
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/string/FindIntInString.java" target="_blank" rel="noopener">View FindIntInString.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>OccuranceOdChr.java</b><small>Counts every character in "Praveen kumar"</small></summary>
+    <p class="repo-note">Works. <code>'P'</code> and <code>'p'</code> are counted separately; call <code>Character.toLowerCase(c)</code> first to merge them. The <code>count</code> variable is unused.</p>
+    <pre class="jrun" data-title="OccuranceOdChr.java">import java.util.HashMap;
+import java.util.Map;
+
+class Main {
+
+    public static void main(String arg[]){
+        String str=&quot;Praveen kumar&quot;;
+        char[] sh=str.toCharArray();
+        Map&lt;Character,Integer&gt; hm=new HashMap&lt;&gt;();
+        int count=0;
+       for(char c:sh){
+           if(hm.containsKey(c)){
+               hm.put(c,hm.get(c)+1);
+
+           }
+           else
+           {
+               hm.put(c,1);
+           }
+
+       }
+
+        System.out.println(hm.entrySet());
+
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/string/OccuranceOdChr.java" target="_blank" rel="noopener">View OccuranceOdChr.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>Palindrome.java</b><small>Reverses the String and compares, ignoring case</small></summary>
+    <p class="repo-note">Works: "Praveen" is not a palindrome. Try changing it to "Madam". Comparing from both ends (Q17) avoids building the reversed copy.</p>
+    <pre class="jrun" data-title="Palindrome.java">class Main {
+
+    public static void main(String arg[]){
+
+        String str=&quot;Praveen&quot;;
+        char[] chararr=str.toCharArray();
+       StringBuilder sb =new StringBuilder(str.length());
+        for(int i=str.length()-1;i&gt;=0;i--){
+           sb.append(chararr[i]);
+
+        }
+           if(str.equalsIgnoreCase(String.valueOf(sb))){
+               System.out.println(&quot;palindrome&quot;);
+           }
+           else{
+               System.out.println(&quot;Not a palindrome&quot;);
+           }
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/string/Palindrome.java" target="_blank" rel="noopener">View Palindrome.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>PermutaionString.java</b><small>Prints every permutation of "12398" with recursion</small></summary>
+    <p class="repo-note">Works: 5 characters give 5! = 120 lines. Each call removes one character and adds it to <code>ans</code>; the recursion stops when nothing is left. Try a 3-letter string to follow it by hand.</p>
+    <pre class="jrun" data-title="PermutaionString.java">class Main {
+
+    public static void permut(String str, String ans){
+        if(str.length()==0){
+            System.out.println(ans+&quot;&quot;);
+        }
+        else{
+            for(int i=0;i&lt;str.length();i++){
+                char ch=str.charAt(i);
+
+                String ss=str.substring(0,i)+
+                          str.substring(i+1);
+
+                permut(ss,ans+ch);
+
+            }
+        }
+
+    }
+
+    public static void main(String arg[]) {
+        Main.permut(&quot;12398&quot;,&quot;&quot;);
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/string/PermutaionString.java" target="_blank" rel="noopener">View PermutaionString.java on GitHub ↗</a></p>
+  </details>
+  <details class="repo-p ok">
+    <summary><span class="rb ok">✅ Runs</span><b>ReverseWordInString.java</b><small>Reverses the order of the words</small></summary>
+    <p class="repo-note">Works. The output ends with an extra space; <code>String.join(" ", word)</code> after <code>Collections.reverse</code> avoids that.</p>
+    <pre class="jrun" data-title="ReverseWordInString.java">import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+class Main {
+
+    public static void main(String arg[]){
+        String str=&quot;My name is praveen kumar&quot;;
+
+        List&lt;String&gt; word= Arrays.asList(str.split(&quot;\\s&quot;));
+          Collections.reverse(word);
+          StringBuilder sb=new StringBuilder(str.length());
+          for(int i=0;i&lt;=word.size()-1;i++){
+
+              sb.append(word.get(i));
+              sb.append(&#x27; &#x27;);
+
+          }
+
+    /*    for(int i=word.size()-1;i&gt;=0;i--) {
+
+            sb.append(word.get(i));
+            sb.append(&#x27; &#x27;);
+
+        }*/
+          System.out.println(sb.toString());
+
+    }
+}</pre>
+    <p class="repo-link"><a href="https://github.com/praveenkr244/java/blob/main/src/main/java/com/string/ReverseWordInString.java" target="_blank" rel="noopener">View ReverseWordInString.java on GitHub ↗</a></p>
+  </details>
+  <p class="repo-note">Not included: MaximunPalindromeString (empty main), StringIntro (no main method). Those files have no code to run yet.</p>
+</article>
 </section>
 
 <section class="topic" id="quiz">

@@ -105,6 +105,6 @@ After editing scenes, either re-record or remove the `<video>` block from the pa
 ## Notes
 
 - The Python page's **Run** buttons load [Pyodide](https://pyodide.org) (CPython in WebAssembly, about 10 MB) from the jsDelivr CDN the first time you press Run, so they need an internet connection.
-- The Java pages' **Run** buttons send the example's code to the free [Wandbox](https://wandbox.org) online compiler (OpenJDK 21) and show its output, so they also need an internet connection.
+- The Java pages' **Run** buttons send the example's code to a free online compiler, [Compiler Explorer](https://godbolt.org) (JDK 21), falling back to [Wandbox](https://wandbox.org), and show its output, so they also need an internet connection.
 - Fonts come from Google Fonts; without internet the pages fall back to system fonts.
 - Lesson progress and the chosen theme are saved in the browser's `localStorage`.
