@@ -1,0 +1,26 @@
+/* JavaScript, Visually — page tokens. The layout is shared with the TypeScript page in /assets/jsts.css;
+   shared overrides live in /assets/theme.css. JavaScript yellow on warm ink. */
+:root{
+  --bg:#f8f6ef; --surface:#ffffff; --ink:#1f1d17; --muted:#625c4c; --line:#e3ddcb;
+  --accent:#8a5a00; --accent-ink:#ffffff; --accent2:#f7df1e; --soft:#f6efd6;
+  --code-bg:#17150f; --code-ink:#ece7d8; --code-line:#2c281d;
+  --good:#1f8a5b; --warn:#b7791f; --bad:#c2410c; --adv:#7a4fd1; --proj:#c0267a;
+  --font-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius:10px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12110d; --surface:#1b1a14; --ink:#efeadb; --muted:#a8a08b; --line:#332f24;
+    --accent:#f7df1e; --accent-ink:#17150f; --accent2:#f7df1e; --soft:#29261b;
+    --code-bg:#0c0b08; --code-ink:#ece7d8; --code-line:#29261b;
+    --good:#4cc38a; --warn:#e3a73a; --bad:#ff7a45; --adv:#a98bff; --proj:#ff6fb5; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12110d; --surface:#1b1a14; --ink:#efeadb; --muted:#a8a08b; --line:#332f24;
+  --accent:#f7df1e; --accent-ink:#17150f; --accent2:#f7df1e; --soft:#29261b;
+  --code-bg:#0c0b08; --code-ink:#ece7d8; --code-line:#29261b;
+  --good:#4cc38a; --warn:#e3a73a; --bad:#ff7a45; --adv:#a98bff; --proj:#ff6fb5; color-scheme:dark;
+}

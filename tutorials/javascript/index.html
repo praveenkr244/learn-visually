@@ -1,0 +1,3745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript, Visually</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/jsts.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../assets/course.css">
+<link rel="stylesheet" href="../../assets/palettes.css">
+<link rel="stylesheet" href="../../assets/theme.css">
+<script src="../../assets/embed.js"></script>
+</head>
+<body data-lang="js">
+<div class="top">
+  <div class="top-in">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="4" fill="#f7df1e"/><path d="M9.6 25.4l2.2-1.3c.4.8.8 1.4 1.7 1.4.9 0 1.4-.3 1.4-1.7V14h2.7v9.9c0 2.9-1.7 4.2-4.2 4.2-2.2 0-3.5-1.2-4.1-2.6zm9.4-.3l2.2-1.3c.6.9 1.3 1.6 2.6 1.6 1.1 0 1.8-.5 1.8-1.3 0-.9-.7-1.2-1.9-1.8l-.7-.3c-1.9-.8-3.1-1.8-3.1-3.9 0-1.9 1.5-3.4 3.8-3.4 1.6 0 2.8.6 3.6 2.1l-2 1.3c-.4-.8-.9-1.1-1.6-1.1-.7 0-1.2.5-1.2 1.1 0 .8.5 1.1 1.6 1.6l.7.3c2.2 1 3.4 1.9 3.4 4 0 2.3-1.8 3.6-4.3 3.6-2.4 0-3.9-1.1-4.7-2.6z" fill="#1f1d17"/></svg>
+      JavaScript, Visually
+    </div>
+    <div class="search"><input id="q" type="search" placeholder="Search lessons and cheat sheet… (try “map”, “promise”, “closure”)" aria-label="Search lessons"></div>
+    <div class="rtstat" title="Console code runs in a Web Worker in your browser; page examples run in a sandboxed frame"><span class="dot ok" id="rtDot"></span><span id="rtText">Runs in your browser</span></div>
+  </div>
+</div>
+<div class="shell">
+<main id="main">
+
+<section class="hero" id="top">
+  <h1>Learn JavaScript by <span>watching it run</span></h1>
+  <p>A complete path from your first <code>console.log()</code> to promises, the event loop and the DOM, ending with <b>six small projects</b> you build step by step. Lessons have diagrams or step-through animations, and almost every code block has a <b>Run</b> button: console examples print below the code, page examples show a live preview. Go one lesson at a time (your progress is saved), or use the search box as a quick reference.</p>
+  <div class="road">
+    <a href="#start" style="--c:var(--good)"><b>1 · Beginner</b><small>Variables, types, operators, strings, control flow, arrays, objects, functions, errors</small></a>
+    <a href="#arraymethods" style="--c:var(--warn)"><b>2 · Intermediate</b><small>map/filter/reduce, destructuring, closures, classes, prototypes, this, Map/Set</small></a>
+    <a href="#eventloop" style="--c:var(--adv)"><b>3 · Advanced</b><small>Event loop, promises, async/await, fetch, DOM, events, regex, patterns</small></a>
+    <a href="#p-tip" style="--c:var(--proj)"><b>4 · Projects</b><small>Tip splitter, to-do list, quiz, expense tracker, weather app, memory game</small></a>
+  </div>
+  <figure class="viz play" id="playground" style="margin-top:22px">
+    <div class="viz-title">Playground: edit and run any JavaScript</div>
+    <textarea id="playCode" spellcheck="false" aria-label="JavaScript code">const name = "World";
+for (let i = 1; i <= 3; i++) {
+  console.log(`Hello, ${name}! #${i}`);
+}
+
+const squares = [1, 2, 3, 4, 5].map(n => n * n);
+console.log(squares);</textarea>
+    <div class="ctrl"><button class="btn pri" id="playRun">▶ Run</button><button class="btn" id="playClear">Clear output</button><span class="stp-count">Tip: Ctrl/⌘ + Enter runs. Every code block has its own Edit and Run buttons.</span></div>
+    <pre class="console" id="playOut"></pre>
+  </figure>
+</section>
+
+<!-- ===================== BEGINNER ===================== -->
+<section class="lesson" id="start" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Getting started</h2>
+<p class="lede">JavaScript is the language of the web. Every browser runs it, and with Node.js it also runs servers, command-line tools and build scripts. You write plain text (in a <code>.js</code> file or a <code>&lt;script&gt;</code> tag) and a JavaScript <b>engine</b> runs it.</p></header>
+
+<h3>Where JavaScript runs</h3>
+<ol>
+<li><b>In this page.</b> Press <b>Run</b> on any block. Console examples run in a background worker; page examples run in a small sandboxed preview.</li>
+<li><b>In any browser.</b> Open the developer tools (F12, or ⌥⌘I on a Mac), choose the <b>Console</b> tab and type <code>2 + 3</code>.</li>
+<li><b>With Node.js.</b> Install the LTS version from <a href="https://nodejs.org">nodejs.org</a>, save code in <code>hello.js</code> and run <code>node hello.js</code>. Type <code>node</code> alone for an interactive prompt.</li>
+<li><b>In a web page.</b> Put <code>&lt;script src="app.js" defer&gt;&lt;/script&gt;</code> in your HTML.</li>
+</ol>
+
+<figure class="viz">
+<div class="viz-title">What happens when you run a script</div>
+<div class="pipe">
+  <div class="st lit"><b>app.js</b><small>your source text</small><code>console.log("Hi")</code></div><div class="ar"></div>
+  <div class="st lit" style="animation-delay:1.6s"><b>Parser</b><small>text → syntax tree</small></div><div class="ar"></div>
+  <div class="st lit" style="animation-delay:3.2s"><b>Interpreter</b><small>runs bytecode right away</small></div><div class="ar"></div>
+  <div class="st lit" style="animation-delay:4.8s"><b>JIT compiler</b><small>hot code → fast machine code</small></div><div class="ar"></div>
+  <div class="st"><b>Output</b><small>Hi</small></div>
+</div>
+<figcaption>Engines such as V8 (Chrome, Node.js), SpiderMonkey (Firefox) and JavaScriptCore (Safari) parse your code, start running it immediately, and compile the parts that run often into fast machine code while the program is running.</figcaption>
+</figure>
+
+<h3>Your first program</h3>
+<pre class="code" data-run>// Lines starting with // are comments: the engine ignores them
+console.log("Hello, world!");
+console.log("2 + 3 =", 2 + 3);
+
+/* Curly braces { } group statements into a block.
+   Indentation is only for humans, but always indent! */
+if (2 + 3 === 5) {
+  console.log("Math still works");
+  console.log("Same block");
+}
+console.log("Back outside the block");</pre>
+
+<div class="callout"><b>Rules of the road</b>
+<p>JavaScript is case-sensitive (<code>Name</code> ≠ <code>name</code>). Statements end with a semicolon <code>;</code>. The engine can insert missing ones, but writing them avoids rare surprises. Strings use <code>"double"</code>, <code>'single'</code> or <code>`backtick`</code> quotes.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What prints text to the console? <span class="ans">— <code>console.log(...)</code></span></li>
+<li>Which program runs JavaScript outside a browser? <span class="ans">— Node.js (also Deno and Bun).</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Example: a tiny receipt
+const item = "Coffee";
+const price = 3.5;
+const qty = 2;
+console.log("Item:", item);
+console.log("Total:", price * qty);
+console.log("-".repeat(20));
+console.log("Thanks!", "Come again.");</pre>
+
+<pre class="code" data-run>// Example: console has more than log
+console.info("info: for general messages");
+console.warn("warn: something looks odd");
+console.error("error: something went wrong");
+console.table([{ name: "Ada", age: 36 }, { name: "Linus", age: 54 }]);</pre>
+</section>
+
+<section class="lesson" id="variables" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Variables: let, const and references</h2>
+<p class="lede">A variable is a <b>name</b> for a value. Declare it with <code>const</code> when the name will always point at the same value, or <code>let</code> when you will reassign it. The old <code>var</code> still works but has confusing scoping rules, so avoid it.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Step through: primitives are copied, objects are shared</div>
+<div class="widget" data-w="vars"></div>
+<figcaption>Numbers, strings and booleans are <b>primitive values</b>: assigning one copies it. Objects and arrays live in memory once and variables hold a <b>reference</b> to them, so <code>b = a</code> makes two names for the same array.</figcaption>
+</figure>
+
+<pre class="code" data-run>let age = 30;          // can be reassigned
+const name = "Ada";    // cannot be reassigned
+age = age + 1;
+console.log(name, age);
+
+// const means "this name always points here", not "frozen":
+const scores = [90, 85];
+scores.push(70);       // fine: we changed the array, not the name
+console.log(scores);
+
+try {
+  name = "Grace";      // TypeError: Assignment to constant variable
+} catch (e) {
+  console.log("Error:", e.message);
+}</pre>
+
+<div class="tbl"><table>
+<tr><th>Keyword</th><th>Reassign?</th><th>Scope</th><th>Use it</th></tr>
+<tr><td><code>const</code></td><td>No</td><td>Block <code>{ }</code></td><td>By default, for most variables</td></tr>
+<tr><td><code>let</code></td><td>Yes</td><td>Block <code>{ }</code></td><td>Counters, values that change</td></tr>
+<tr><td><code>var</code></td><td>Yes</td><td>Whole function</td><td>Old code only</td></tr>
+</table></div>
+
+<div class="callout tip"><b>Naming</b>
+<p>Use <code>camelCase</code> for variables and functions (<code>totalPrice</code>), <code>PascalCase</code> for classes (<code>ShoppingCart</code>) and <code>UPPER_SNAKE</code> for fixed settings (<code>MAX_SIZE</code>). Names can contain letters, digits, <code>_</code> and <code>$</code> but cannot start with a digit.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Can you <code>push</code> into a <code>const</code> array? <span class="ans">— Yes. const stops reassignment of the name, not changes to the object.</span></li>
+<li>After <code>let a = [1]; let b = a; b.push(2);</code> what is <code>a</code>? <span class="ans">— <code>[1, 2]</code>: both names point at the same array.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Swapping two variables with destructuring
+let left = "L", right = "R";
+[left, right] = [right, left];
+console.log(left, right);
+
+// Primitives are copied
+let x = 10;
+let y = x;
+x = 99;
+console.log(x, y);   // y is still 10</pre>
+
+<pre class="code" data-run>// Objects are shared until you copy them
+const original = { title: "Draft", tags: ["a"] };
+const alias = original;
+const copy = { ...original };   // a new object (shallow copy)
+
+alias.title = "Final";
+console.log(original.title);   // Final: same object
+console.log(copy.title);       // Draft: different object
+console.log(original === alias, original === copy);</pre>
+</section>
+
+<section class="lesson" id="types" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Types of values</h2>
+<p class="lede">JavaScript has seven <b>primitive</b> types (<code>number</code>, <code>string</code>, <code>boolean</code>, <code>undefined</code>, <code>null</code>, <code>bigint</code>, <code>symbol</code>) and one structural type: <b>object</b>, which includes arrays, functions, dates and everything else. Variables don't have types; values do.</p></header>
+
+<pre class="code" data-run>console.log(typeof 42);          // number (integers and decimals share one type)
+console.log(typeof 3.14);        // number
+console.log(typeof "hi");        // string
+console.log(typeof true);        // boolean
+console.log(typeof undefined);   // undefined: "no value assigned yet"
+console.log(typeof null);        // object  ← a famous historical bug!
+console.log(typeof 10n);         // bigint: whole numbers of any size
+console.log(typeof Symbol("id"));// symbol: a unique key
+console.log(typeof {});          // object
+console.log(typeof []);          // object (use Array.isArray to check)
+console.log(typeof function () {}); // function (a callable object)
+console.log(Array.isArray([]));  // true</pre>
+
+<div class="two">
+<div class="callout"><b>undefined vs null</b><p><code>undefined</code> means a value was never set: a missing property, a parameter nobody passed. <code>null</code> means "intentionally empty", set by you.</p></div>
+<div class="callout warn"><b>Numbers are floating point</b><p><code>0.1 + 0.2</code> is <code>0.30000000000000004</code>. Round for display with <code>toFixed(2)</code>, and count money in cents.</p></div>
+</div>
+
+<pre class="code" data-run>// Converting between types
+console.log(Number("42"), Number("4.5"), Number("abc"));   // 42 4.5 NaN
+console.log(parseInt("42px"), parseFloat("3.5kg"));        // 42 3.5
+console.log(String(99), (99).toString(2));                 // "99" "1100011"
+console.log(Boolean(""), Boolean("0"), Boolean(0));        // false true false
+
+// NaN ("not a number") is a number that is not equal to itself
+console.log(NaN === NaN, Number.isNaN(Number("abc")));
+console.log(0.1 + 0.2, (0.1 + 0.2).toFixed(2));
+console.log(Number.MAX_SAFE_INTEGER, 2n ** 64n);</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What is <code>typeof null</code>? <span class="ans">— <code>"object"</code>, a bug kept for compatibility. Check with <code>x === null</code>.</span></li>
+<li>How do you test whether a value is NaN? <span class="ans">— <code>Number.isNaN(x)</code>; <code>x === NaN</code> is always false.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// A helper that describes any value
+function describe(v) {
+  if (v === null) return "null";
+  if (Array.isArray(v)) return `array of ${v.length}`;
+  return typeof v;
+}
+for (const v of [7, "seven", null, undefined, [1, 2], { a: 1 }, true]) {
+  console.log(String(v).padEnd(16), "→", describe(v));
+}</pre>
+
+<pre class="code" data-run>// Money: work in whole cents, format at the end
+const priceCents = 1999;
+const qty = 3;
+const totalCents = priceCents * qty;
+console.log((totalCents / 100).toFixed(2));   // "59.97"
+console.log(new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(totalCents / 100));</pre>
+</section>
+
+<section class="lesson" id="operators" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Operators, equality and coercion</h2>
+<p class="lede">Operators combine values: arithmetic (<code>+ - * / % **</code>), comparison (<code>=== !== &lt; &gt;</code>) and logic (<code>&amp;&amp; || ! ??</code>). JavaScript sometimes <b>coerces</b> (silently converts) values to make an operator work, which is why you should always compare with <code>===</code>.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Try it: how values coerce</div>
+<div class="widget" data-w="coerce"></div>
+<figcaption><b>Falsy</b> values are <code>false</code>, <code>0</code>, <code>-0</code>, <code>0n</code>, <code>""</code>, <code>null</code>, <code>undefined</code> and <code>NaN</code>. Everything else is truthy, including <code>"0"</code>, <code>[]</code> and <code>{}</code>.</figcaption>
+</figure>
+
+<pre class="code" data-run>console.log(7 / 2, 7 % 2, 2 ** 10);   // 3.5 1 1024
+console.log(Math.floor(7 / 2), Math.round(2.5), Math.max(3, 9, 4));
+
+// + joins strings; the other math operators convert to numbers
+console.log("3" + 4, "3" - 1, "3" * "4");   // "34" 2 12
+
+// === checks type AND value; == converts first (avoid it)
+console.log(1 === "1", 1 == "1");           // false true
+console.log(0 == "", null == undefined);    // true true
+
+let count = 5;
+count += 2; count *= 3; count++;
+console.log(count);                          // 22</pre>
+
+<h3>Logical operators return values, not just true/false</h3>
+<pre class="code" data-run>// || returns the first truthy value: handy for defaults
+console.log("" || "guest");        // "guest"
+console.log(0 || 10);              // 10  ← 0 is falsy, maybe not what you wanted!
+
+// ?? (nullish coalescing) only falls back on null or undefined
+console.log(0 ?? 10);              // 0
+console.log(null ?? "default");    // "default"
+
+// &amp;&amp; returns the first falsy value (or the last value)
+const user = { name: "Ada", address: null };
+console.log(user &amp;&amp; user.name);    // "Ada"
+
+// ?. (optional chaining) stops at null/undefined instead of throwing
+console.log(user.address?.city);   // undefined, no error
+console.log(user.getName?.());     // undefined: the method doesn't exist</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What is <code>"5" + 1</code>? And <code>"5" - 1</code>? <span class="ans">— <code>"51"</code> and <code>4</code>.</span></li>
+<li>When does <code>a ?? b</code> differ from <code>a || b</code>? <span class="ans">— When a is falsy but not null/undefined, e.g. <code>0</code> or <code>""</code>: ?? keeps a.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Is a year a leap year?
+function isLeap(y) {
+  return (y % 4 === 0 &amp;&amp; y % 100 !== 0) || y % 400 === 0;
+}
+for (const y of [1900, 2000, 2024, 2025]) console.log(y, isLeap(y));</pre>
+
+<pre class="code" data-run>// Settings with defaults: ?? keeps a real 0
+function makeConfig(opts) {
+  return {
+    volume: opts.volume ?? 50,
+    theme: opts.theme ?? "light",
+    retries: opts.retries ?? 3,
+  };
+}
+console.log(makeConfig({ volume: 0 }));   // volume stays 0
+console.log(makeConfig({ theme: "dark", retries: null }));</pre>
+</section>
+
+<section class="lesson" id="strings" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Strings and template literals</h2>
+<p class="lede">A string is an immutable sequence of characters. String methods never change the original: they return a new string. Template literals (backticks) let you embed any expression with <code>${…}</code> and span several lines.</p></header>
+
+<pre class="code" data-run>const s = "JavaScript";
+console.log(s.length, s[0], s.at(-1));          // 10 "J" "t"
+console.log(s.toUpperCase(), s.toLowerCase());
+console.log(s.slice(0, 4), s.slice(-6));        // "Java" "Script"
+console.log(s.includes("Script"), s.startsWith("Java"), s.indexOf("a"));
+console.log("  padded  ".trim() + "|");
+console.log("a,b,c".split(","), ["x", "y"].join(" + "));
+console.log("ha".repeat(3), "7".padStart(3, "0"));
+console.log("cat dog cat".replaceAll("cat", "🐱"));</pre>
+
+<h3>Template literals</h3>
+<pre class="code" data-run>const name = "Ada";
+const items = 3, price = 4.5;
+
+console.log(`Hi ${name}, you have ${items} items.`);
+console.log(`Total: $${(items * price).toFixed(2)}`);
+console.log(`Status: ${items &gt; 0 ? "ready" : "empty"}`);
+
+const card = `
+┌──────────────┐
+│ ${name.padEnd(12)} │
+└──────────────┘`;
+console.log(card);</pre>
+
+<div class="callout"><b>Strings are immutable</b>
+<p><code>s[0] = "j"</code> silently does nothing. Build a new string instead: <code>s = "j" + s.slice(1)</code>.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does <code>"hello".slice(1, 3)</code> return? <span class="ans">— <code>"el"</code> (start included, end excluded).</span></li>
+<li>Does <code>s.toUpperCase()</code> change <code>s</code>? <span class="ans">— No, it returns a new string.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Turn a title into a URL slug
+function slugify(title) {
+  return title
+    .trim()
+    .toLowerCase()
+    .replaceAll(/[^a-z0-9\s-]/g, "")
+    .split(/\s+/)
+    .join("-");
+}
+console.log(slugify("  Learn JavaScript: The Fun Way!  "));</pre>
+
+<pre class="code" data-run>// Count vowels and capitalise each word
+const text = "the quick brown fox";
+let vowels = 0;
+for (const ch of text) if ("aeiou".includes(ch)) vowels++;
+const titled = text.split(" ").map(w =&gt; w[0].toUpperCase() + w.slice(1)).join(" ");
+console.log(vowels, titled);</pre>
+</section>
+
+<section class="lesson" id="conditions" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Making decisions</h2>
+<p class="lede"><code>if</code> runs a block only when its condition is truthy. Chain alternatives with <code>else if</code>, catch everything else with <code>else</code>, choose between many exact values with <code>switch</code>, and pick between two values inline with the ternary <code>cond ? a : b</code>.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Drag the slider: which branch runs?</div>
+<div class="widget" data-w="flow"></div>
+<figcaption>Conditions are checked from top to bottom and only the <b>first</b> true branch runs.</figcaption>
+</figure>
+
+<pre class="code" data-run>const temp = 22;
+if (temp &gt; 30) {
+  console.log("hot");
+} else if (temp &gt; 15) {
+  console.log("pleasant");
+} else {
+  console.log("cold");
+}
+
+// Ternary: an if/else that produces a value
+const label = temp &gt;= 18 ? "T-shirt" : "Jacket";
+console.log(label);</pre>
+
+<pre class="code" data-run>// switch compares with === and falls through until break
+function dayType(day) {
+  switch (day) {
+    case "Sat":
+    case "Sun":
+      return "weekend";
+    case "Fri":
+      return "almost weekend";
+    default:
+      return "weekday";
+  }
+}
+console.log(dayType("Sun"), dayType("Fri"), dayType("Tue"));</pre>
+
+<div class="callout tip"><b>Guard clauses</b>
+<p>Instead of deep nesting, return early when something is wrong: <code>if (!user) return;</code>. The rest of the function then handles only the normal case.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What happens without <code>break</code> in a switch case? <span class="ans">— Execution "falls through" into the next case.</span></li>
+<li>Will <code>if ("0")</code> run its block? <span class="ans">— Yes: a non-empty string is truthy.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Grade from a score, with a guard clause
+function grade(score) {
+  if (typeof score !== "number" || score &lt; 0 || score &gt; 100) return "invalid";
+  if (score &gt;= 90) return "A";
+  if (score &gt;= 80) return "B";
+  if (score &gt;= 70) return "C";
+  return "F";
+}
+for (const s of [95, 83, 71, 40, 120, "x"]) console.log(s, grade(s));</pre>
+
+<pre class="code" data-run>// FizzBuzz: the classic interview warm-up
+for (let i = 1; i &lt;= 15; i++) {
+  const out = (i % 3 === 0 ? "Fizz" : "") + (i % 5 === 0 ? "Buzz" : "");
+  console.log(out || i);
+}</pre>
+</section>
+
+<section class="lesson" id="loops" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Loops</h2>
+<p class="lede">Loops repeat a block. Use <code>for…of</code> to visit each item of an array or string, the classic <code>for (let i = 0; …)</code> when you need the index or a custom step, <code>while</code> when you don't know in advance how many times, and <code>for…in</code> for the keys of an object.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Step through a for…of loop</div>
+<div class="widget" data-w="loop"></div>
+</figure>
+
+<pre class="code" data-run>const fruits = ["apple", "banana", "cherry"];
+
+for (const fruit of fruits) console.log(fruit);            // values
+
+for (let i = 0; i &lt; fruits.length; i++) {                  // indexes
+  console.log(i, fruits[i]);
+}
+
+for (const [i, fruit] of fruits.entries()) console.log(`${i + 1}. ${fruit}`);
+
+const scores = { ada: 95, linus: 88 };
+for (const key in scores) console.log(key, "→", scores[key]); // object keys</pre>
+
+<pre class="code" data-run>// while: repeat until a condition becomes false
+let n = 27, steps = 0;
+while (n !== 1) {
+  n = n % 2 === 0 ? n / 2 : 3 * n + 1;   // the Collatz sequence
+  steps++;
+}
+console.log("steps:", steps);
+
+// break leaves the loop; continue skips to the next round
+for (let i = 1; i &lt;= 10; i++) {
+  if (i % 2 === 0) continue;
+  if (i &gt; 7) break;
+  console.log("odd:", i);
+}</pre>
+
+<div class="callout warn"><b>for…in on arrays</b>
+<p><code>for…in</code> gives keys as <b>strings</b> and also visits inherited properties. Use <code>for…of</code> (or array methods) for arrays.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Which loop gives the values of an array? <span class="ans">— <code>for…of</code>.</span></li>
+<li>What does <code>continue</code> do? <span class="ans">— Skips the rest of this iteration and starts the next one.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Multiplication table with nested loops
+for (let row = 1; row &lt;= 5; row++) {
+  let line = "";
+  for (let col = 1; col &lt;= 5; col++) line += String(row * col).padStart(4);
+  console.log(line);
+}</pre>
+
+<pre class="code" data-run>// Find the first number divisible by 7 and 11
+let found = null;
+for (let i = 1; i &lt; 1000; i++) {
+  if (i % 7 === 0 &amp;&amp; i % 11 === 0) { found = i; break; }
+}
+console.log(found);
+
+// do…while runs at least once
+let tries = 0;
+do { tries++; } while (Math.random() &gt; 0.3 &amp;&amp; tries &lt; 20);
+console.log("tries:", tries);</pre>
+</section>
+
+<section class="lesson" id="arrays" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Arrays</h2>
+<p class="lede">An array is an ordered list. Items are numbered from <code>0</code>, can be any type, and the list grows and shrinks as you add or remove items. Some methods <b>change the array</b> (push, pop, splice, sort); others <b>return a new one</b> (slice, concat, toSorted).</p></header>
+
+<figure class="viz">
+<div class="viz-title">Try it: array methods</div>
+<div class="widget" data-w="arrayops"></div>
+<figcaption>Adding or removing at the <b>end</b> is fast. At the <b>start</b>, every other item has to move up or down one place.</figcaption>
+</figure>
+
+<pre class="code" data-run>const nums = [5, 2, 9];
+nums.push(7);              // add to the end     → [5, 2, 9, 7]
+nums.unshift(1);           // add to the start   → [1, 5, 2, 9, 7]
+const last = nums.pop();   // remove from end    → 7
+const first = nums.shift();// remove from start  → 1
+console.log(nums, last, first);
+
+console.log(nums.length, nums[0], nums.at(-1));
+console.log(nums.includes(9), nums.indexOf(2));
+
+nums.splice(1, 1, 20, 30); // at index 1: remove 1 item, insert 20 and 30
+console.log(nums);
+console.log(nums.slice(1, 3), nums);   // slice copies a part, nums unchanged</pre>
+
+<pre class="code" data-run>// Sorting: the default sort compares as STRINGS
+const values = [10, 1, 5, 100];
+console.log([...values].sort());                 // [1, 10, 100, 5] !
+console.log([...values].sort((a, b) =&gt; a - b));  // numeric ascending
+console.log(values.toSorted((a, b) =&gt; b - a));   // new array, descending
+console.log(values);                             // unchanged
+
+// Build arrays
+console.log(Array.from({ length: 5 }, (_, i) =&gt; i * i));
+console.log([..."hello"], [1, 2].concat([3], [4, 5]));
+console.log([[1, 2], [3, [4]]].flat(Infinity));</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What is <code>[3, 20, 100].sort()</code>? <span class="ans">— <code>[100, 20, 3]</code>: compared as strings. Pass <code>(a, b) =&gt; a - b</code>.</span></li>
+<li>Which method copies part of an array without changing it? <span class="ans">— <code>slice</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Remove duplicates and keep order
+const tags = ["js", "css", "js", "html", "css"];
+const unique = [...new Set(tags)];
+console.log(unique);
+
+// Chunk an array into groups of 2
+const chunk = (arr, size) =&gt;
+  Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =&gt; arr.slice(i * size, i * size + size));
+console.log(chunk([1, 2, 3, 4, 5], 2));</pre>
+
+<pre class="code" data-run>// A 2D grid (array of arrays)
+const grid = Array.from({ length: 3 }, () =&gt; Array(4).fill("."));
+grid[1][2] = "#";
+grid[0][0] = "@";
+console.log(grid.map(row =&gt; row.join(" ")).join("\n"));</pre>
+</section>
+
+<section class="lesson" id="objects" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Objects</h2>
+<p class="lede">An object groups related data as <b>key: value</b> pairs (called properties). Keys are strings; values can be anything, including functions (then they are called <b>methods</b>). Objects are how JavaScript models users, products, settings and almost everything else.</p></header>
+
+<pre class="code" data-run>const user = {
+  name: "Ada",
+  age: 36,
+  skills: ["math", "code"],
+  address: { city: "London" },
+  greet() {                       // a method
+    return `Hi, I'm ${this.name}`;
+  },
+};
+
+console.log(user.name, user["age"]);      // dot or bracket access
+console.log(user.address.city, user.greet());
+
+user.email = "ada@example.com";            // add
+user.age += 1;                             // change
+delete user.skills;                        // remove
+console.log(user);
+
+const key = "name";
+console.log(user[key]);                    // brackets for dynamic keys
+console.log("email" in user, user.phone);  // true undefined</pre>
+
+<pre class="code" data-run>const prices = { apple: 1.2, bread: 2.5, milk: 0.99 };
+
+console.log(Object.keys(prices));
+console.log(Object.values(prices));
+console.log(Object.entries(prices));
+
+for (const [item, price] of Object.entries(prices)) {
+  console.log(`${item.padEnd(6)} $${price.toFixed(2)}`);
+}
+
+// Shorthand: a variable name becomes the key
+const city = "Paris", zip = "75001";
+const place = { city, zip, [`code_${zip}`]: true };   // computed key
+console.log(place);</pre>
+
+<div class="callout"><b>Copy before you change</b>
+<p><code>const copy = { ...obj }</code> makes a new object with the same top-level properties. Nested objects are still shared: use <code>structuredClone(obj)</code> for a deep copy (see the copying lesson).</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>How do you read a property whose name is in a variable <code>k</code>? <span class="ans">— <code>obj[k]</code>.</span></li>
+<li>What do you get reading a missing property? <span class="ans">— <code>undefined</code> (no error).</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Count words with an object
+const text = "the cat and the hat and the bat";
+const counts = {};
+for (const word of text.split(" ")) counts[word] = (counts[word] ?? 0) + 1;
+console.log(counts);</pre>
+
+<pre class="code" data-run>// Merge settings: later objects win
+const defaults = { theme: "light", fontSize: 16, sound: true };
+const saved = { theme: "dark" };
+const settings = { ...defaults, ...saved, fontSize: 18 };
+console.log(settings);
+console.log(Object.freeze(settings) === settings, Object.isFrozen(settings));</pre>
+</section>
+
+<section class="lesson" id="functions" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Functions</h2>
+<p class="lede">A function is a reusable block of code with a name, inputs (<b>parameters</b>) and an output (its <b>return value</b>). In JavaScript functions are values: you can store them in variables, pass them to other functions and return them.</p></header>
+
+<pre class="code" data-run>// 1. Function declaration (hoisted: usable before this line)
+function add(a, b) {
+  return a + b;
+}
+
+// 2. Function expression
+const multiply = function (a, b) {
+  return a * b;
+};
+
+// 3. Arrow function: short, and the body can be a single expression
+const square = x =&gt; x * x;
+const greet = (name = "friend") =&gt; `Hello, ${name}!`;   // default parameter
+
+console.log(add(2, 3), multiply(4, 5), square(9));
+console.log(greet(), greet("Ada"));
+
+// Rest parameters collect any number of arguments into an array
+function sum(...nums) {
+  return nums.reduce((total, n) =&gt; total + n, 0);
+}
+console.log(sum(1, 2, 3, 4), sum());
+
+// A function without return gives undefined
+function shout(s) { console.log(s.toUpperCase()); }
+console.log(shout("hey"));</pre>
+
+<figure class="viz">
+<div class="viz-title">Step through: the call stack</div>
+<div class="widget" data-w="stack"></div>
+<figcaption>Each call gets its own <b>frame</b> with its own parameters and local variables. A function that calls itself is <b>recursive</b> and needs a base case to stop.</figcaption>
+</figure>
+
+<pre class="code" data-run>// Functions are values: pass them around
+const ops = { add: (a, b) =&gt; a + b, sub: (a, b) =&gt; a - b };
+function apply(op, a, b) { return ops[op](a, b); }
+console.log(apply("add", 10, 4), apply("sub", 10, 4));
+
+// A function that returns a function
+const makeGreeter = greeting =&gt; name =&gt; `${greeting}, ${name}!`;
+const hello = makeGreeter("Hello");
+console.log(hello("Ada"), makeGreeter("Hola")("Linus"));</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does a function return if it has no <code>return</code>? <span class="ans">— <code>undefined</code>.</span></li>
+<li>What does <code>(...args)</code> do in a parameter list? <span class="ans">— Collects the remaining arguments into an array.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Celsius ↔ Fahrenheit with small, named functions
+const toF = c =&gt; c * 9 / 5 + 32;
+const toC = f =&gt; (f - 32) * 5 / 9;
+for (const c of [-10, 0, 37, 100]) {
+  console.log(`${c}°C = ${toF(c)}°F`, "|", `${toF(c)}°F = ${toC(toF(c))}°C`);
+}</pre>
+
+<pre class="code" data-run>// Recursion: sum the numbers in nested arrays
+function deepSum(value) {
+  if (typeof value === "number") return value;          // base case
+  return value.reduce((total, item) =&gt; total + deepSum(item), 0);
+}
+console.log(deepSum([1, [2, 3], [4, [5, [6]]]]));   // 21</pre>
+</section>
+
+<section class="lesson" id="scope" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Scope and hoisting</h2>
+<p class="lede"><b>Scope</b> decides where a name is visible. <code>let</code> and <code>const</code> are visible only inside the nearest <code>{ }</code> block. When code uses a name, JavaScript looks in the current scope, then the enclosing one, and so on outward to the global scope. That path is the <b>scope chain</b>.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Try it: look a name up the scope chain</div>
+<div class="widget" data-w="scope"></div>
+</figure>
+
+<pre class="code" data-run>const appName = "Todo";            // global (module) scope
+
+function render() {
+  const title = "My list";         // function scope
+  if (true) {
+    const count = 3;               // block scope
+    console.log(appName, title, count);   // all visible here
+  }
+  try {
+    console.log(count);            // not visible outside its block
+  } catch (e) {
+    console.log("ReferenceError:", e.message);
+  }
+}
+render();</pre>
+
+<h3>Hoisting and the temporal dead zone</h3>
+<pre class="code" data-run>// Function declarations are hoisted completely
+console.log(double(4));
+function double(n) { return n * 2; }
+
+// var is hoisted but starts as undefined (confusing!)
+console.log(legacy);   // undefined
+var legacy = "old";
+
+// let/const exist from the start of the block but can't be used
+// before their line: the "temporal dead zone"
+try {
+  console.log(modern);
+} catch (e) {
+  console.log(e.name + ":", e.message);
+}
+let modern = "new";</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Is a <code>let</code> declared inside an <code>if</code> visible after the if? <span class="ans">— No, it is block-scoped.</span></li>
+<li>Which declarations can be called before their line? <span class="ans">— Function declarations.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Shadowing: an inner name hides an outer one
+const level = "global";
+function outer() {
+  const level = "outer";
+  function inner() {
+    const level = "inner";
+    console.log(level);
+  }
+  inner();
+  console.log(level);
+}
+outer();
+console.log(level);</pre>
+
+<pre class="code" data-run>// let gives each loop iteration its own variable
+const fns = [];
+for (let i = 0; i &lt; 3; i++) fns.push(() =&gt; i);
+console.log(fns.map(f =&gt; f()));   // [0, 1, 2]
+
+const old = [];
+for (var j = 0; j &lt; 3; j++) old.push(() =&gt; j);
+console.log(old.map(f =&gt; f()));   // [3, 3, 3]: one shared var</pre>
+</section>
+
+<section class="lesson" id="errors" data-level="b" data-group="Beginner">
+<header><span class="lvl b">Beginner</span><h2>Errors and try…catch</h2>
+<p class="lede">When something goes wrong, JavaScript <b>throws</b> an error object. If nothing catches it, the program stops. Wrap risky code in <code>try</code>, handle the problem in <code>catch</code>, and put cleanup that must always run in <code>finally</code>.</p></header>
+
+<pre class="code" data-run>function parseAge(text) {
+  const age = Number(text);
+  if (Number.isNaN(age)) throw new TypeError(`"${text}" is not a number`);
+  if (age &lt; 0 || age &gt; 150) throw new RangeError(`${age} is out of range`);
+  return age;
+}
+
+for (const input of ["42", "abc", "-5"]) {
+  try {
+    console.log("age:", parseAge(input));
+  } catch (err) {
+    console.log(`${err.name}: ${err.message}`);
+  } finally {
+    console.log("  checked", JSON.stringify(input));
+  }
+}</pre>
+
+<div class="tbl"><table>
+<tr><th>Error</th><th>Typical cause</th></tr>
+<tr><td><code>ReferenceError</code></td><td>Using a name that doesn't exist</td></tr>
+<tr><td><code>TypeError</code></td><td>Calling something that isn't a function, reading a property of <code>undefined</code></td></tr>
+<tr><td><code>SyntaxError</code></td><td>Code or JSON that can't be parsed</td></tr>
+<tr><td><code>RangeError</code></td><td>A number outside the allowed range</td></tr>
+</table></div>
+
+<pre class="code" data-run>// Your own error type: extend Error
+class ValidationError extends Error {
+  constructor(field, message) {
+    super(message);
+    this.name = "ValidationError";
+    this.field = field;
+  }
+}
+
+function signUp(form) {
+  if (!form.email.includes("@")) throw new ValidationError("email", "Email needs an @");
+  return "welcome!";
+}
+
+try {
+  signUp({ email: "nope" });
+} catch (err) {
+  if (err instanceof ValidationError) console.log(`Fix ${err.field}: ${err.message}`);
+  else throw err;   // not ours: let it go up
+}
+
+// Uncaught errors stop the program. Press Run to see one:
+undefined.length;</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>When does <code>finally</code> run? <span class="ans">— Always: after try, after catch, even after a return.</span></li>
+<li>What should a catch block do with errors it can't handle? <span class="ans">— Re-throw them.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Safe JSON parsing with a fallback
+function safeParse(text, fallback = null) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return fallback;
+  }
+}
+console.log(safeParse('{"ok": true}'), safeParse("{bad json}", {}));</pre>
+
+<pre class="code" data-run>// Wrap a low-level error with context using { cause }
+function loadConfig(text) {
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    throw new Error("Config file is broken", { cause: err });
+  }
+}
+try {
+  loadConfig("{ port: 80 }");
+} catch (err) {
+  console.log(err.message);
+  console.log("cause:", err.cause.message);
+}</pre>
+</section>
+
+<!-- ===================== INTERMEDIATE ===================== -->
+<section class="lesson" id="arraymethods" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>map, filter, reduce and friends</h2>
+<p class="lede">Instead of writing loops by hand, describe <b>what</b> you want: <code>filter</code> keeps items that pass a test, <code>map</code> transforms every item, <code>reduce</code> combines all items into one value. Each returns a new array (or value) and leaves the original alone, so you can chain them.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Step through: a filter → map → reduce pipeline</div>
+<div class="widget" data-w="pipeline"></div>
+</figure>
+
+<pre class="code" data-run>const products = [
+  { name: "Laptop", price: 1200, category: "tech", inStock: true },
+  { name: "Mouse", price: 25, category: "tech", inStock: false },
+  { name: "Desk", price: 300, category: "home", inStock: true },
+  { name: "Lamp", price: 45, category: "home", inStock: true },
+];
+
+const available = products.filter(p =&gt; p.inStock);
+const names = available.map(p =&gt; p.name);
+const total = available.reduce((sum, p) =&gt; sum + p.price, 0);
+console.log(names, total);
+
+console.log(products.find(p =&gt; p.price &lt; 50));        // first match (or undefined)
+console.log(products.findIndex(p =&gt; p.name === "Desk"));
+console.log(products.some(p =&gt; !p.inStock), products.every(p =&gt; p.price &gt; 10));
+
+// Chain them: name and price of cheap items, sorted by price
+console.log(
+  products
+    .filter(p =&gt; p.price &lt; 500)
+    .toSorted((a, b) =&gt; a.price - b.price)
+    .map(p =&gt; `${p.name}: $${p.price}`)
+);</pre>
+
+<pre class="code" data-run>// reduce can build any shape: here, an object of groups
+const people = [
+  { name: "Ada", team: "red" }, { name: "Linus", team: "blue" },
+  { name: "Grace", team: "red" }, { name: "Ken", team: "green" },
+];
+const byTeam = people.reduce((groups, person) =&gt; {
+  (groups[person.team] ??= []).push(person.name);
+  return groups;
+}, {});
+console.log(byTeam);
+
+// Newer engines have this built in:
+console.log(Object.groupBy(people, p =&gt; p.team));
+
+// forEach is for side effects only (it returns undefined)
+people.forEach((p, i) =&gt; console.log(i, p.name));</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does <code>map</code> return for an array of 5 items? <span class="ans">— A new array with exactly 5 items.</span></li>
+<li>What is the second argument of <code>reduce</code>? <span class="ans">— The starting value of the accumulator.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Average score of students who passed
+const results = [
+  { name: "A", score: 82 }, { name: "B", score: 45 },
+  { name: "C", score: 91 }, { name: "D", score: 67 },
+];
+const passed = results.filter(r =&gt; r.score &gt;= 60);
+const avg = passed.reduce((s, r) =&gt; s + r.score, 0) / passed.length;
+console.log(passed.map(r =&gt; r.name), avg.toFixed(1));</pre>
+
+<pre class="code" data-run>// flatMap: map then flatten one level
+const sentences = ["hello world", "map and filter"];
+console.log(sentences.flatMap(s =&gt; s.split(" ")));
+
+// Most frequent letter, using entries + reduce
+const counts = {};
+for (const ch of "mississippi") counts[ch] = (counts[ch] ?? 0) + 1;
+const [top] = Object.entries(counts).reduce((best, cur) =&gt; (cur[1] &gt; best[1] ? cur : best));
+console.log(counts, "top:", top);</pre>
+</section>
+
+<section class="lesson" id="destructuring" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Destructuring, spread and rest</h2>
+<p class="lede"><b>Destructuring</b> pulls values out of arrays and objects into variables in one line. The <b>spread</b> syntax <code>...</code> expands an array or object into its parts; in a pattern or a parameter list the same <code>...</code> is <b>rest</b> and collects "everything else".</p></header>
+
+<pre class="code" data-run>// Array destructuring: by position
+const [first, second, ...others] = [10, 20, 30, 40];
+console.log(first, second, others);
+
+const [, , third = 0] = [1, 2];    // skip items, default value
+console.log(third);
+
+// Object destructuring: by name
+const user = { id: 7, name: "Ada", role: "admin", address: { city: "London" } };
+const { name, role: position, age = 30, address: { city } } = user;
+console.log(name, position, age, city);
+
+const { id, ...withoutId } = user;   // rest: all other properties
+console.log(withoutId);</pre>
+
+<pre class="code" data-run>// Destructure parameters: named options with defaults
+function createButton({ label, color = "blue", size = "md" } = {}) {
+  return `&lt;button class="${color} ${size}"&gt;${label}&lt;/button&gt;`;
+}
+console.log(createButton({ label: "Save" }));
+console.log(createButton({ label: "Delete", color: "red" }));
+
+// Spread: copy and combine
+const a = [1, 2], b = [3, 4];
+console.log([...a, ...b, 5], Math.max(...a, ...b));
+
+const base = { theme: "light", lang: "en" };
+console.log({ ...base, lang: "fr" });
+
+// Return several values from a function
+const minMax = nums =&gt; [Math.min(...nums), Math.max(...nums)];
+const [lo, hi] = minMax([4, 9, 1, 7]);
+console.log(lo, hi);</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does <code>const { a: x } = obj</code> do? <span class="ans">— Reads <code>obj.a</code> into a variable named <code>x</code>.</span></li>
+<li>Is <code>{ ...obj }</code> a deep copy? <span class="ans">— No, shallow: nested objects are shared.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Update one item immutably in a list of objects
+const todos = [{ id: 1, done: false }, { id: 2, done: false }];
+const toggled = todos.map(t =&gt; (t.id === 2 ? { ...t, done: !t.done } : t));
+console.log(todos, toggled);</pre>
+
+<pre class="code" data-run>// Destructuring in loops
+const scores = { ada: 95, linus: 88, grace: 99 };
+for (const [name, score] of Object.entries(scores)) {
+  console.log(`${name} scored ${score}`);
+}
+const points = [{ x: 1, y: 2 }, { x: 5, y: -1 }];
+for (const { x, y } of points) console.log(`(${x}, ${y})`);</pre>
+</section>
+
+<section class="lesson" id="closures" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Closures</h2>
+<p class="lede">A <b>closure</b> is a function together with the variables from the place it was created. Even after the outer function has returned, the inner function can still read and change those variables. Closures power private state, factories, callbacks and event handlers.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Step through: a counter that remembers</div>
+<div class="widget" data-w="closure"></div>
+<figcaption>Each call to <code>makeCounter()</code> creates a <b>new</b> scope with its own <code>count</code>. The returned function keeps that scope alive.</figcaption>
+</figure>
+
+<pre class="code" data-run>function makeCounter() {
+  let count = 0;                    // private: nothing outside can touch it
+  return {
+    increment: () =&gt; ++count,
+    reset: () =&gt; { count = 0; },
+    get value() { return count; },
+  };
+}
+
+const a = makeCounter();
+const b = makeCounter();
+a.increment(); a.increment(); a.increment();
+b.increment();
+console.log(a.value, b.value);   // 3 1: separate scopes
+console.log(a.count);            // undefined: it's not a property
+
+// Factory: functions configured by the outer call
+const multiplier = factor =&gt; n =&gt; n * factor;
+const double = multiplier(2), triple = multiplier(3);
+console.log(double(5), triple(5));</pre>
+
+<pre class="code" data-run>// once(): run a function at most one time
+function once(fn) {
+  let done = false, result;
+  return (...args) =&gt; {
+    if (!done) { done = true; result = fn(...args); }
+    return result;
+  };
+}
+const init = once(() =&gt; { console.log("initialising…"); return 42; });
+console.log(init(), init(), init());
+
+// memoize(): remember results of slow calls
+function memoize(fn) {
+  const cache = new Map();
+  return n =&gt; {
+    if (!cache.has(n)) cache.set(n, fn(n));
+    return cache.get(n);
+  };
+}
+const slowSquare = n =&gt; { for (let i = 0; i &lt; 1e7; i++); return n * n; };
+const fastSquare = memoize(slowSquare);
+console.time("first"); fastSquare(9); console.timeEnd("first");
+console.time("second"); fastSquare(9); console.timeEnd("second");</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Do two counters from <code>makeCounter()</code> share <code>count</code>? <span class="ans">— No, each call creates its own scope.</span></li>
+<li>Why is <code>count</code> called private? <span class="ans">— Only the returned functions can reach it.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// A bank account with private balance
+function createAccount(owner, balance = 0) {
+  const history = [];
+  return {
+    deposit(amount) { balance += amount; history.push(`+${amount}`); return balance; },
+    withdraw(amount) {
+      if (amount &gt; balance) throw new Error("Insufficient funds");
+      balance -= amount; history.push(`-${amount}`); return balance;
+    },
+    statement: () =&gt; `${owner}: ${history.join(" ")} = ${balance}`,
+  };
+}
+const acc = createAccount("Ada", 100);
+acc.deposit(50); acc.withdraw(30);
+console.log(acc.statement(), acc.balance);</pre>
+
+<pre class="code" data-run>// Unique ID generator per prefix
+const idMaker = prefix =&gt; {
+  let n = 0;
+  return () =&gt; `${prefix}-${String(++n).padStart(3, "0")}`;
+};
+const userId = idMaker("user"), orderId = idMaker("order");
+console.log(userId(), userId(), orderId(), userId());</pre>
+</section>
+
+<section class="lesson" id="classes" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Classes</h2>
+<p class="lede">A <b>class</b> is a blueprint for objects that share the same shape and behavior. The <code>constructor</code> sets up each new instance; methods are shared by all instances. Use <code>extends</code> to build a specialised class on top of another, and <code>#private</code> fields for data no outside code may touch.</p></header>
+
+<pre class="code" data-run>class Rectangle {
+  #id;                                  // private field
+  static count = 0;                     // shared by the class itself
+
+  constructor(width, height) {
+    this.width = width;
+    this.height = height;
+    this.#id = ++Rectangle.count;
+  }
+  get area() { return this.width * this.height; }   // getter: used like a property
+  scale(factor) {
+    this.width *= factor; this.height *= factor;
+    return this;                                       // allows chaining
+  }
+  toString() { return `Rectangle #${this.#id} ${this.width}×${this.height}`; }
+}
+
+const r = new Rectangle(3, 4);
+console.log(r.area, String(r.scale(2)), r.area);
+console.log(r instanceof Rectangle, Rectangle.count);
+console.log(r);   // the private #id is not visible from outside</pre>
+
+<pre class="code" data-run>// Inheritance: extends + super
+class Animal {
+  constructor(name) { this.name = name; }
+  speak() { return `${this.name} makes a sound`; }
+}
+class Dog extends Animal {
+  constructor(name, breed) {
+    super(name);                 // run the parent constructor first
+    this.breed = breed;
+  }
+  speak() { return `${super.speak()}: Woof!`; }   // override + reuse
+}
+
+const pets = [new Animal("Generic"), new Dog("Rex", "beagle")];
+for (const pet of pets) console.log(pet.speak());
+console.log(pets[1] instanceof Animal, Object.getPrototypeOf(Dog) === Animal);</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What must a subclass constructor call before using <code>this</code>? <span class="ans">— <code>super(...)</code>.</span></li>
+<li>Can code outside the class read <code>#id</code>? <span class="ans">— No, it's a SyntaxError to even write <code>r.#id</code> outside.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// A shopping cart class
+class Cart {
+  #items = [];
+  add(name, price, qty = 1) { this.#items.push({ name, price, qty }); return this; }
+  get total() { return this.#items.reduce((s, i) =&gt; s + i.price * i.qty, 0); }
+  get size() { return this.#items.reduce((s, i) =&gt; s + i.qty, 0); }
+}
+const cart = new Cart().add("Book", 12.5, 2).add("Pen", 1.2, 5);
+console.log(cart.size, cart.total.toFixed(2));</pre>
+
+<pre class="code" data-run>// Static factory methods
+class Temperature {
+  constructor(celsius) { this.celsius = celsius; }
+  static fromFahrenheit(f) { return new Temperature((f - 32) * 5 / 9); }
+  get fahrenheit() { return this.celsius * 9 / 5 + 32; }
+}
+const t = Temperature.fromFahrenheit(212);
+console.log(t.celsius, t.fahrenheit);</pre>
+</section>
+
+<section class="lesson" id="prototypes" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Prototypes: how objects share behavior</h2>
+<p class="lede">Every object has a hidden link to another object, its <b>prototype</b>. When you read a property the object doesn't have, JavaScript follows the link and looks there, then at that object's prototype, and so on. This <b>prototype chain</b> is what classes are built on.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Try it: follow the prototype chain</div>
+<div class="widget" data-w="proto"></div>
+</figure>
+
+<pre class="code" data-run>class Dog {
+  constructor(name) { this.name = name; }
+  bark() { return "Woof"; }
+}
+const rex = new Dog("Rex");
+
+console.log(Object.hasOwn(rex, "name"));    // true: on the object itself
+console.log(Object.hasOwn(rex, "bark"));    // false: found on the prototype
+console.log(Object.getPrototypeOf(rex) === Dog.prototype);
+console.log(Object.getPrototypeOf(Dog.prototype) === Object.prototype);
+console.log(rex.toString());                // from Object.prototype
+
+// Methods live once on the prototype, shared by every instance
+const fido = new Dog("Fido");
+console.log(rex.bark === fido.bark);        // true</pre>
+
+<pre class="code" data-run>// The same thing without class syntax
+const animal = { describe() { return `${this.name} has ${this.legs} legs`; } };
+const bird = Object.create(animal);         // bird's prototype is animal
+bird.name = "Tweety";
+bird.legs = 2;
+console.log(bird.describe());
+console.log(Object.getPrototypeOf(bird) === animal);
+
+// Own property "shadows" the prototype's
+bird.describe = () =&gt; "I'm special";
+console.log(bird.describe(), delete bird.describe, bird.describe());</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Where is a class method stored? <span class="ans">— On <code>ClassName.prototype</code>, shared by all instances.</span></li>
+<li>What is at the end of every chain? <span class="ans">— <code>Object.prototype</code>, whose own prototype is <code>null</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Walk and print an object's prototype chain
+function chain(obj) {
+  const names = [];
+  for (let p = obj; p; p = Object.getPrototypeOf(p)) {
+    names.push(p.constructor?.name ?? "(no constructor)");
+  }
+  return names.join(" → ") + " → null";
+}
+class A {} class B extends A {}
+console.log(chain(new B()));
+console.log(chain([]));</pre>
+
+<pre class="code" data-run>// Objects with no prototype make safe dictionaries
+const dict = Object.create(null);
+dict.toString = "just data";
+console.log(dict.toString, "constructor" in dict);
+const normal = {};
+console.log("constructor" in normal);   // inherited!</pre>
+</section>
+
+<section class="lesson" id="this" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>What is this?</h2>
+<p class="lede"><code>this</code> is decided <b>when a function is called</b>, not where it is written. Called as <code>obj.method()</code>, <code>this</code> is <code>obj</code>. Called on its own, it is <code>undefined</code> (in modern strict code). Arrow functions have no <code>this</code> of their own: they use the one from the surrounding code.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Try it: same function, different calls</div>
+<div class="widget" data-w="thisw"></div>
+</figure>
+
+<pre class="code" data-run>const user = {
+  name: "Ada",
+  regular() { return this?.name; },
+  arrow: () =&gt; typeof this,          // takes this from outside the object
+  later() {
+    // arrow functions inside methods see the method's this
+    return [1, 2].map(n =&gt; `${this.name} #${n}`);
+  },
+};
+
+console.log(user.regular());          // "Ada": called on user
+const detached = user.regular;
+console.log(detached());              // undefined: called on nothing
+console.log(user.later());
+
+const bound = user.regular.bind({ name: "Grace" });
+console.log(bound());                 // "Grace": bind fixes this forever
+console.log(user.regular.call({ name: "Linus" }));   // call: one-off this</pre>
+
+<div class="callout warn"><b>The classic bug</b>
+<p>Passing a method as a callback (<code>setTimeout(obj.method, 100)</code> or <code>button.addEventListener("click", obj.method)</code>) loses <code>this</code>. Fix it with an arrow <code>() =&gt; obj.method()</code> or <code>obj.method.bind(obj)</code>.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What is <code>this</code> inside an arrow function? <span class="ans">— Whatever it is in the code around the arrow.</span></li>
+<li>What does <code>fn.bind(x)</code> return? <span class="ans">— A new function whose <code>this</code> is always <code>x</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Losing and fixing this with a timer
+class Timer {
+  constructor() { this.ticks = 0; }
+  tick() { this.ticks++; console.log("ticks:", this.ticks); }
+}
+const t = new Timer();
+setTimeout(() =&gt; t.tick(), 50);        // arrow keeps the call on t
+setTimeout(t.tick.bind(t), 100);       // bind works too
+setTimeout(() =&gt; {
+  try { const f = t.tick; f(); } catch (e) { console.log("Lost this →", e.message); }
+}, 150);</pre>
+
+<pre class="code" data-run>// Class fields with arrows are bound automatically
+class Button {
+  label = "Save";
+  onClick = () =&gt; `clicked ${this.label}`;   // arrow field: this is the instance
+}
+const b = new Button();
+const handler = b.onClick;                    // detached on purpose
+console.log(handler());</pre>
+</section>
+
+<section class="lesson" id="collections" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Map and Set</h2>
+<p class="lede">A <b>Set</b> stores unique values. A <b>Map</b> stores key → value pairs like an object, but any value can be a key (objects too), it remembers insertion order, has a <code>size</code>, and is built for frequent adding and removing. Use objects for fixed records, Maps for lookups that change.</p></header>
+
+<pre class="code" data-run>// Set: unique values
+const seen = new Set();
+for (const word of ["a", "b", "a", "c", "b"]) seen.add(word);
+console.log(seen, seen.size, seen.has("c"));
+seen.delete("a");
+console.log([...seen]);
+
+const a = new Set([1, 2, 3, 4]), b = new Set([3, 4, 5]);
+console.log(a.union(b), a.intersection(b), a.difference(b));   // newer engines
+
+// Map: any key type
+const visits = new Map();
+const homePage = { path: "/" };
+visits.set(homePage, 3).set("about", 1);
+visits.set("about", visits.get("about") + 1);
+console.log(visits.get(homePage), visits.get("about"), visits.size);
+for (const [page, n] of visits) console.log(page, n);</pre>
+
+<div class="tbl"><table>
+<tr><th></th><th>Object</th><th>Map</th></tr>
+<tr><td>Key types</td><td>Strings and symbols</td><td>Anything</td></tr>
+<tr><td>Size</td><td><code>Object.keys(o).length</code></td><td><code>m.size</code></td></tr>
+<tr><td>Iterate</td><td><code>Object.entries(o)</code></td><td><code>for (const [k, v] of m)</code></td></tr>
+<tr><td>JSON</td><td>Works directly</td><td>Convert first: <code>Object.fromEntries(m)</code></td></tr>
+</table></div>
+
+<pre class="code" data-run>// Convert between objects, Maps and arrays
+const prices = { apple: 1.2, pear: 0.8 };
+const m = new Map(Object.entries(prices));
+m.set("kiwi", 0.5);
+console.log(m);
+console.log(Object.fromEntries(m));
+
+// WeakMap: keys are objects that can still be garbage-collected
+const metadata = new WeakMap();
+let element = { id: "btn" };
+metadata.set(element, { clicks: 0 });
+metadata.get(element).clicks++;
+console.log(metadata.get(element));
+element = null;   // the entry can now disappear automatically</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>How do you remove duplicates from an array? <span class="ans">— <code>[...new Set(arr)]</code>.</span></li>
+<li>Why choose a Map over an object for a cache keyed by objects? <span class="ans">— Object keys get turned into strings; Map keys keep their identity.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Count word frequency with a Map, then sort
+const text = "to be or not to be that is the question to ask";
+const freq = new Map();
+for (const w of text.split(" ")) freq.set(w, (freq.get(w) ?? 0) + 1);
+const top3 = [...freq].sort((x, y) =&gt; y[1] - x[1]).slice(0, 3);
+console.log(top3);</pre>
+
+<pre class="code" data-run>// Find common friends with Sets
+const ada = new Set(["grace", "linus", "ken"]);
+const tim = new Set(["ken", "guido", "grace"]);
+const common = [...ada].filter(f =&gt; tim.has(f));
+console.log("common:", common);
+console.log("only Ada's:", [...ada].filter(f =&gt; !tim.has(f)));</pre>
+</section>
+
+<section class="lesson" id="iterators" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Iterators and generators</h2>
+<p class="lede">Anything you can use in <code>for…of</code> or spread with <code>...</code> is <b>iterable</b>: arrays, strings, Maps, Sets. A <b>generator</b> function (<code>function*</code>) is the easy way to make your own: each <code>yield</code> hands out one value and pauses the function until the next value is asked for.</p></header>
+
+<pre class="code" data-run>function* countdown(n) {
+  while (n &gt; 0) {
+    yield n;          // pause here and hand n to the caller
+    n--;
+  }
+  return "liftoff";   // the final value (not part of for…of)
+}
+
+const gen = countdown(3);
+console.log(gen.next());   // { value: 3, done: false }
+console.log(gen.next());
+console.log(gen.next());
+console.log(gen.next());   // { value: 'liftoff', done: true }
+
+console.log([...countdown(5)]);
+for (const n of countdown(2)) console.log("T-minus", n);</pre>
+
+<pre class="code" data-run>// Infinite sequences are fine: values are made only on demand
+function* naturals() { let n = 1; while (true) yield n++; }
+function* take(iterable, count) {
+  for (const x of iterable) {
+    if (count-- &lt;= 0) return;
+    yield x;
+  }
+}
+function* mapIt(iterable, fn) { for (const x of iterable) yield fn(x); }
+
+console.log([...take(mapIt(naturals(), n =&gt; n * n), 6)]);
+
+// Make a class iterable with Symbol.iterator
+class Range {
+  constructor(from, to, step = 1) { Object.assign(this, { from, to, step }); }
+  *[Symbol.iterator]() { for (let i = this.from; i &lt;= this.to; i += this.step) yield i; }
+}
+console.log([...new Range(0, 20, 5)], Math.max(...new Range(1, 9)));</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does calling a generator function return? <span class="ans">— A generator object; none of the body runs until <code>next()</code>.</span></li>
+<li>Why can a generator produce an infinite sequence safely? <span class="ans">— Values are created lazily, one per <code>next()</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Fibonacci generator
+function* fib() {
+  let [a, b] = [0, 1];
+  while (true) { yield a; [a, b] = [b, a + b]; }
+}
+const first10 = [];
+for (const n of fib()) { if (first10.length === 10) break; first10.push(n); }
+console.log(first10);</pre>
+
+<pre class="code" data-run>// Paginate any array lazily
+function* pages(items, size) {
+  for (let i = 0; i &lt; items.length; i += size) yield items.slice(i, i + size);
+}
+const letters = [..."abcdefghij"];
+let page = 1;
+for (const p of pages(letters, 4)) console.log(`page ${page++}:`, p.join(""));</pre>
+</section>
+
+<section class="lesson" id="json" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>JSON and dates</h2>
+<p class="lede"><b>JSON</b> is the text format the web uses to send data. <code>JSON.stringify</code> turns a value into JSON text and <code>JSON.parse</code> turns text back into values. <b>Dates</b> are stored as milliseconds since 1 January 1970 (UTC); format them for people with <code>Intl</code>.</p></header>
+
+<pre class="code" data-run>const order = {
+  id: 42,
+  items: [{ sku: "A1", qty: 2 }],
+  paid: true,
+  note: undefined,          // undefined and functions are skipped
+  created: new Date(Date.UTC(2026, 0, 15, 9, 30)),
+};
+
+const text = JSON.stringify(order);
+console.log(text);
+console.log(JSON.stringify(order, null, 2));          // pretty-printed
+
+const back = JSON.parse(text);
+console.log(back.items[0].qty, typeof back.created);   // dates come back as strings!
+console.log(new Date(back.created).getUTCFullYear());
+
+// A reviver can rebuild dates while parsing
+const withDates = JSON.parse(text, (key, value) =&gt; (key === "created" ? new Date(value) : value));
+console.log(withDates.created instanceof Date);</pre>
+
+<pre class="code" data-run>const d = new Date(2026, 10, 25, 14, 5);   // months count from 0: 10 = November!
+console.log(d.getFullYear(), d.getMonth() + 1, d.getDate(), d.getDay());   // getDay: 0 = Sunday
+
+// Date math with milliseconds
+const DAY = 24 * 60 * 60 * 1000;
+const due = new Date(d.getTime() + 7 * DAY);
+console.log("days between:", Math.round((due - d) / DAY));
+
+// Formatting for people
+console.log(d.toISOString());
+console.log(new Intl.DateTimeFormat("en-GB", { dateStyle: "full", timeStyle: "short" }).format(d));
+console.log(new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(d));
+console.log(new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(-1, "day"));</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What happens to <code>undefined</code> properties in <code>JSON.stringify</code>? <span class="ans">— They are left out.</span></li>
+<li>What does <code>new Date(2026, 0, 1)</code> mean? <span class="ans">— 1 January 2026: months start at 0.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Deep compare two plain values via JSON (simple cases only)
+const same = (x, y) =&gt; JSON.stringify(x) === JSON.stringify(y);
+console.log(same({ a: [1, 2] }, { a: [1, 2] }), same({ a: 1, b: 2 }, { b: 2, a: 1 }));
+// key order matters to stringify, so the second is false</pre>
+
+<pre class="code" data-run>// How long until a date?
+function countdown(target, now = new Date(2026, 10, 25, 12, 0)) {
+  let ms = target - now;
+  const days = Math.floor(ms / 86400000); ms %= 86400000;
+  const hours = Math.floor(ms / 3600000);
+  return `${days} days, ${hours} hours`;
+}
+console.log(countdown(new Date(2026, 11, 25)));</pre>
+</section>
+
+<section class="lesson" id="modules" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Modules: import and export</h2>
+<p class="lede">Real programs are split into files called <b>modules</b>. Each module has its own scope; it <code>export</code>s what others may use and <code>import</code>s what it needs. Browsers load modules with <code>&lt;script type="module"&gt;</code>, and Node.js treats <code>.mjs</code> files (or a <code>"type": "module"</code> package) the same way.</p></header>
+
+<div class="two">
+<div><p><b>math.js</b></p>
+<pre class="code">// named exports: any number per file
+export const PI = 3.14159;
+export function area(r) {
+  return PI * r * r;
+}
+
+// one default export per file
+export default function circumference(r) {
+  return 2 * PI * r;
+}</pre></div>
+<div><p><b>app.js</b></p>
+<pre class="code">// named imports use { } and the exact names
+import circumference, { area, PI as pi } from "./math.js";
+
+console.log(area(2), circumference(2), pi);
+
+// import everything as one object
+import * as math from "./math.js";
+console.log(math.area(1));
+
+// load a module only when needed
+const { area: lazyArea } = await import("./math.js");</pre></div>
+</div>
+
+<pre class="code">&lt;!-- index.html: type="module" enables import/export and defers loading --&gt;
+&lt;script type="module" src="app.js"&gt;&lt;/script&gt;</pre>
+
+<div class="tbl"><table>
+<tr><th></th><th>ES modules (modern)</th><th>CommonJS (older Node.js)</th></tr>
+<tr><td>Export</td><td><code>export function f() {}</code></td><td><code>module.exports = { f }</code></td></tr>
+<tr><td>Import</td><td><code>import { f } from "./x.js"</code></td><td><code>const { f } = require("./x")</code></td></tr>
+<tr><td>Loading</td><td>Static, analysed before running</td><td>At run time</td></tr>
+</table></div>
+
+<div class="callout tip"><b>Packages</b>
+<p>Third-party code comes from the npm registry: <code>npm install date-fns</code> adds it to <code>package.json</code>, then <code>import { format } from "date-fns"</code>. Bundlers such as Vite combine your modules and packages for the browser.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>How many default exports can a module have? <span class="ans">— One.</span></li>
+<li>Are variables declared in a module global? <span class="ans">— No, they are private to the module unless exported.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// The module pattern before ES modules: an IIFE returns the public API
+const counterModule = (() =&gt; {
+  let count = 0;                         // private
+  const increment = () =&gt; ++count;
+  const current = () =&gt; count;
+  return { increment, current };         // "exports"
+})();
+counterModule.increment(); counterModule.increment();
+console.log(counterModule.current(), counterModule.count);</pre>
+
+<pre class="code" data-run>// import() loads a module at run time and returns a promise of its exports.
+// Here the "file" is a data: URL so the example works offline.
+const source = "export default 'hello from a module'; export const answer = 42;";
+const mod = await import("data:text/javascript," + encodeURIComponent(source));
+console.log(mod.default, mod.answer, Object.keys(mod));</pre>
+</section>
+
+<!-- ===================== ADVANCED ===================== -->
+<section class="lesson" id="eventloop" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>The event loop</h2>
+<p class="lede">JavaScript runs your code on <b>one thread</b>: one thing at a time. Slow work (timers, network, clicks) is handed to the browser or Node.js, and when it finishes a callback is put in a <b>queue</b>. The <b>event loop</b> runs a callback from a queue only when the call stack is empty, and it always empties the <b>microtask</b> queue (promise callbacks) before taking the next <b>task</b> (timers, events).</p></header>
+
+<figure class="viz">
+<div class="viz-title">Step through: why the output is A D C B</div>
+<div class="widget" data-w="eventloop"></div>
+<figcaption>A <code>setTimeout(…, 0)</code> callback waits for the stack <b>and</b> all microtasks. "0 ms" means "as soon as possible after everything else", not "now".</figcaption>
+</figure>
+
+<pre class="code" data-run>console.log("A: script starts");
+
+setTimeout(() =&gt; console.log("B: timeout callback (task)"), 0);
+
+Promise.resolve().then(() =&gt; console.log("C: promise callback (microtask)"));
+
+queueMicrotask(() =&gt; console.log("C2: another microtask"));
+
+console.log("D: script ends");</pre>
+
+<pre class="code" data-run>// Long synchronous work blocks everything else, timers included
+const start = performance.now();
+setTimeout(() =&gt; console.log(`timer ran after ${Math.round(performance.now() - start)} ms (asked for 10)`), 10);
+
+let x = 0;
+while (performance.now() - start &lt; 300) x++;   // busy for 300 ms
+console.log("busy loop done");</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Which runs first: a resolved promise's <code>.then</code> or a <code>setTimeout(fn, 0)</code>? <span class="ans">— The promise callback (microtasks first).</span></li>
+<li>Why does a long loop freeze a web page? <span class="ans">— The single thread is busy, so no events, timers or rendering can run.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Predict the order, then run
+setTimeout(() =&gt; console.log(1), 0);
+Promise.resolve().then(() =&gt; {
+  console.log(2);
+  setTimeout(() =&gt; console.log(3), 0);
+  Promise.resolve().then(() =&gt; console.log(4));
+});
+console.log(5);</pre>
+
+<pre class="code" data-run>// Split heavy work into chunks so other work can run in between
+function processInChunks(items, chunkSize, done) {
+  let i = 0;
+  function next() {
+    const end = Math.min(i + chunkSize, items.length);
+    for (; i &lt; end; i++) items[i] = items[i] * 2;
+    if (i &lt; items.length) setTimeout(next, 0);   // yield to the event loop
+    else done(items);
+  }
+  next();
+}
+setTimeout(() =&gt; console.log("other work got a turn"), 0);
+processInChunks(Array.from({ length: 10 }, (_, k) =&gt; k), 3, out =&gt; console.log("done:", out));</pre>
+</section>
+
+<section class="lesson" id="promises" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Promises</h2>
+<p class="lede">A <b>promise</b> is an object standing for a value that will arrive later. It starts <b>pending</b>, then becomes <b>fulfilled</b> with a value or <b>rejected</b> with an error, and never changes again. You attach what to do next with <code>.then</code>, handle errors with <code>.catch</code> and clean up with <code>.finally</code>.</p></header>
+
+<pre class="code" data-run>// Create a promise: call resolve or reject when the work is done
+function wait(ms, value) {
+  return new Promise(resolve =&gt; setTimeout(() =&gt; resolve(value), ms));
+}
+function mayFail(ok) {
+  return new Promise((resolve, reject) =&gt;
+    setTimeout(() =&gt; (ok ? resolve("worked") : reject(new Error("failed"))), 100));
+}
+
+wait(200, 21)
+  .then(n =&gt; n * 2)                     // each then returns a new promise
+  .then(n =&gt; console.log("result:", n))
+  .finally(() =&gt; console.log("cleanup runs either way"));
+
+mayFail(false)
+  .then(v =&gt; console.log("never runs", v))
+  .catch(err =&gt; console.log("caught:", err.message));</pre>
+
+<h3>Running several at once</h3>
+<pre class="code" data-run>const wait = (ms, v) =&gt; new Promise(r =&gt; setTimeout(() =&gt; r(v), ms));
+const fail = (ms, msg) =&gt; new Promise((_, rej) =&gt; setTimeout(() =&gt; rej(new Error(msg)), ms));
+
+// all: every promise must fulfil (fails fast on the first rejection)
+Promise.all([wait(100, "a"), wait(300, "b"), wait(200, "c")]).then(v =&gt; console.log("all:", v));
+
+// allSettled: wait for everything and report each outcome
+Promise.allSettled([wait(50, "ok"), fail(80, "boom")]).then(r =&gt; console.log("allSettled:", r));
+
+// race: the first to settle wins; any: the first to FULFIL wins
+Promise.race([wait(150, "slow"), wait(60, "fast")]).then(v =&gt; console.log("race:", v));
+Promise.any([fail(30, "x"), wait(90, "first success")]).then(v =&gt; console.log("any:", v));</pre>
+
+<div class="callout warn"><b>Always handle rejections</b>
+<p>A rejected promise with no <code>.catch</code> becomes an "unhandled rejection" error. End every chain with <code>.catch</code>, or use <code>try/catch</code> with <code>await</code>.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Can a fulfilled promise later become rejected? <span class="ans">— No, a settled promise never changes.</span></li>
+<li>What does <code>Promise.all</code> do if one promise rejects? <span class="ans">— It rejects immediately with that error.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// A timeout wrapper built from race
+const wait = (ms, v) =&gt; new Promise(r =&gt; setTimeout(() =&gt; r(v), ms));
+function withTimeout(promise, ms) {
+  const timeout = new Promise((_, reject) =&gt; setTimeout(() =&gt; reject(new Error(`timed out after ${ms} ms`)), ms));
+  return Promise.race([promise, timeout]);
+}
+withTimeout(wait(50, "fast answer"), 200).then(console.log).catch(e =&gt; console.log(e.message));
+withTimeout(wait(500, "slow answer"), 200).then(console.log).catch(e =&gt; console.log(e.message));</pre>
+
+<pre class="code" data-run>// Promisify a callback-style function
+function oldStyleRead(name, callback) {
+  setTimeout(() =&gt; (name ? callback(null, `contents of ${name}`) : callback(new Error("no name"))), 50);
+}
+const read = name =&gt; new Promise((resolve, reject) =&gt;
+  oldStyleRead(name, (err, data) =&gt; (err ? reject(err) : resolve(data))));
+
+read("notes.txt").then(console.log);
+read("").catch(e =&gt; console.log("error:", e.message));</pre>
+</section>
+
+<section class="lesson" id="async" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>async and await</h2>
+<p class="lede">An <code>async</code> function always returns a promise. Inside it, <code>await</code> pauses <b>that function</b> (not the whole program) until a promise settles, so asynchronous code reads top to bottom like normal code, and errors are caught with ordinary <code>try/catch</code>.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Sequential awaits vs Promise.all</div>
+<div class="widget" data-w="asyncbars"></div>
+</figure>
+
+<pre class="code" data-run>const wait = ms =&gt; new Promise(r =&gt; setTimeout(r, ms));
+
+async function download(name, ms) {
+  await wait(ms);
+  return `${name} (${ms} ms)`;
+}
+
+async function sequential() {
+  console.time("sequential");
+  const a = await download("A", 200);   // wait…
+  const b = await download("B", 100);   // …then wait again
+  const c = await download("C", 300);
+  console.timeEnd("sequential");
+  return [a, b, c];
+}
+
+async function parallel() {
+  console.time("parallel");
+  const all = await Promise.all([download("A", 200), download("B", 100), download("C", 300)]);
+  console.timeEnd("parallel");
+  return all;
+}
+
+console.log(await sequential());
+console.log(await parallel());</pre>
+
+<pre class="code" data-run>// Errors: try/catch around await
+async function getUser(id) {
+  await new Promise(r =&gt; setTimeout(r, 50));
+  if (id &lt;= 0) throw new Error(`No user with id ${id}`);
+  return { id, name: "User " + id };
+}
+
+async function main() {
+  try {
+    console.log(await getUser(1));
+    console.log(await getUser(0));
+    console.log("not reached");
+  } catch (err) {
+    console.log("Handled:", err.message);
+  } finally {
+    console.log("finished");
+  }
+}
+main();   // returns a promise; this page's runner waits for it
+
+// await in a loop runs one at a time; for…of over promises keeps order
+for (const id of [3, 1, 2]) console.log((await getUser(id)).name);</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does an async function return if you <code>return 5</code>? <span class="ans">— A promise fulfilled with 5.</span></li>
+<li>How do you start three independent requests at the same time? <span class="ans">— Call all three, then <code>await Promise.all([...])</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Retry a flaky operation with a growing delay
+let attempts = 0;
+async function flaky() {
+  attempts++;
+  if (attempts &lt; 3) throw new Error(`attempt ${attempts} failed`);
+  return "success on attempt " + attempts;
+}
+async function retry(fn, tries = 5, delay = 50) {
+  for (let i = 1; i &lt;= tries; i++) {
+    try { return await fn(); }
+    catch (err) {
+      console.log(err.message, `→ retrying in ${delay * i} ms`);
+      await new Promise(r =&gt; setTimeout(r, delay * i));
+    }
+  }
+  throw new Error("gave up");
+}
+console.log(await retry(flaky));</pre>
+
+<pre class="code" data-run>// Limit concurrency: process 6 jobs, at most 2 at a time
+const wait = ms =&gt; new Promise(r =&gt; setTimeout(r, ms));
+async function pool(jobs, limit) {
+  const results = [];
+  let next = 0;
+  async function worker(id) {
+    while (next &lt; jobs.length) {
+      const i = next++;
+      console.log(`worker ${id} starts job ${i}`);
+      results[i] = await jobs[i]();
+    }
+  }
+  await Promise.all(Array.from({ length: limit }, (_, k) =&gt; worker(k + 1)));
+  return results;
+}
+const jobs = [120, 60, 90, 30, 50, 70].map((ms, i) =&gt; () =&gt; wait(ms).then(() =&gt; `job${i}`));
+console.log(await pool(jobs, 2));</pre>
+</section>
+
+<section class="lesson" id="fetch" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>fetch: talking to APIs</h2>
+<p class="lede"><code>fetch(url)</code> sends an HTTP request and returns a promise of a <b>Response</b>. Check <code>response.ok</code> (fetch only rejects on network failure, not on 404 or 500), then read the body with <code>await response.json()</code>. These examples call free public test APIs, so they need an internet connection.</p></header>
+
+<pre class="code" data-run>// GET: read JSON from an API
+const res = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+console.log(res.status, res.ok, res.headers.get("content-type"));
+const todo = await res.json();
+console.log(todo);</pre>
+
+<pre class="code" data-run>// A small reusable helper: checks status, parses JSON, times out
+async function getJSON(url, { timeout = 5000 } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() =&gt; controller.abort(), timeout);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+    return await res.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+const users = await getJSON("https://jsonplaceholder.typicode.com/users");
+console.log(users.slice(0, 3).map(u =&gt; `${u.name} &lt;${u.email}&gt;`));
+
+try {
+  await getJSON("https://jsonplaceholder.typicode.com/does-not-exist");
+} catch (err) {
+  console.log("Error:", err.message);
+}</pre>
+
+<pre class="code" data-run>// POST: send JSON (this test API echoes it back with a new id)
+const res = await fetch("https://jsonplaceholder.typicode.com/posts", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ title: "Hello", body: "From the tutorial", userId: 1 }),
+});
+console.log(res.status, await res.json());</pre>
+
+<div class="callout"><b>CORS</b>
+<p>A page can only read responses from another site if that site allows it with CORS headers. Public APIs meant for browsers do; many others don't, and then you call them from your own server instead.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Does <code>fetch</code> reject when the server answers 404? <span class="ans">— No. Check <code>res.ok</code> or <code>res.status</code>.</span></li>
+<li>How do you send JSON? <span class="ans">— <code>method: "POST"</code>, a <code>Content-Type: application/json</code> header and <code>body: JSON.stringify(data)</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Fetch in parallel and combine: each user with their number of todos
+const base = "https://jsonplaceholder.typicode.com";
+const [users, todos] = await Promise.all([
+  fetch(`${base}/users`).then(r =&gt; r.json()),
+  fetch(`${base}/todos`).then(r =&gt; r.json()),
+]);
+const report = users.slice(0, 5).map(u =&gt; ({
+  name: u.name,
+  done: todos.filter(t =&gt; t.userId === u.id &amp;&amp; t.completed).length,
+}));
+console.table(report);</pre>
+
+<pre class="code" data-run>// Query strings: build URLs safely
+const url = new URL("https://jsonplaceholder.typicode.com/comments");
+url.searchParams.set("postId", 3);
+console.log(url.href);
+const comments = await fetch(url).then(r =&gt; r.json());
+console.log(comments.length, "comments; first by", comments[0].email);</pre>
+</section>
+
+<section class="lesson" id="dom" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>The DOM: changing the page</h2>
+<p class="lede">The browser turns HTML into a tree of objects called the <b>DOM</b> (Document Object Model). JavaScript finds elements with <code>document.querySelector</code>, reads and changes their text, attributes, classes and styles, and creates or removes elements. These examples are <b>runnable pages</b>: Run shows a live preview, and console output appears under it.</p></header>
+
+<figure class="viz">
+<div class="viz-title">HTML text becomes a tree of objects</div>
+<div class="two" style="align-items:center">
+<pre class="mini">&lt;body&gt;
+  &lt;h1 id="title"&gt;Shop&lt;/h1&gt;
+  &lt;ul class="list"&gt;
+    &lt;li&gt;Apples&lt;/li&gt;
+    &lt;li&gt;Pears&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/body&gt;</pre>
+<div class="tree">
+  <div class="row"><div class="node">body</div></div><div class="vline"></div>
+  <div class="row"><div class="node">h1#title</div><div class="node">ul.list</div></div><div class="vline" style="margin-left:96px"></div>
+  <div class="row" style="margin-left:96px"><div class="node">li</div><div class="node">li</div></div>
+</div>
+</div>
+<figcaption>Each tag is an element object with properties (<code>textContent</code>, <code>id</code>, <code>classList</code>, <code>children</code>) and methods (<code>append</code>, <code>remove</code>, <code>addEventListener</code>).</figcaption>
+</figure>
+
+<pre class="code" data-run="page">&lt;h1 id="title"&gt;Shop&lt;/h1&gt;
+&lt;ul class="list"&gt;
+  &lt;li&gt;Apples&lt;/li&gt;
+  &lt;li&gt;Pears&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p class="note"&gt;Edit the script and Run again.&lt;/p&gt;
+
+&lt;script&gt;
+  const title = document.querySelector("#title");      // first match by CSS selector
+  title.textContent = "Fruit shop 🍎";                   // change text
+  title.style.color = "darkgreen";                       // inline style
+
+  const list = document.querySelector(".list");
+  const item = document.createElement("li");             // create…
+  item.textContent = "Cherries";
+  list.append(item);                                     // …and insert
+
+  for (const li of document.querySelectorAll("li")) {    // all matches
+    li.classList.add("fruit");
+  }
+  document.querySelector(".note").remove();
+  console.log(list.children.length, "items:", [...list.children].map(li =&gt; li.textContent));
+&lt;/script&gt;
+
+&lt;style&gt;
+  .fruit { padding: 4px 8px; margin: 4px 0; background: #fff6c8; border-radius: 6px; list-style: none; }
+&lt;/style&gt;</pre>
+
+<pre class="code" data-run="page">&lt;div id="app"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  // Render a list from data: the core idea behind every UI framework
+  const products = [
+    { name: "Laptop", price: 1200, sale: false },
+    { name: "Headphones", price: 150, sale: true },
+    { name: "Keyboard", price: 80, sale: true },
+  ];
+
+  function render() {
+    const app = document.querySelector("#app");
+    app.innerHTML = "";                              // clear
+    for (const p of products) {
+      const card = document.createElement("div");
+      card.className = "card" + (p.sale ? " sale" : "");
+      card.dataset.name = p.name;                    // becomes data-name="…"
+      card.innerHTML = `&lt;b&gt;&lt;/b&gt;&lt;span&gt;$${p.price}&lt;/span&gt;`;
+      card.querySelector("b").textContent = p.name;  // textContent: safe for user text
+      app.append(card);
+    }
+  }
+  render();
+  console.log(document.querySelector("[data-name='Keyboard']").outerHTML);
+&lt;/script&gt;
+
+&lt;style&gt;
+  #app { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .card { border: 2px solid #ddd; border-radius: 10px; padding: 10px; display: grid; }
+  .card.sale { border-color: crimson; }
+  .card.sale span::after { content: " SALE"; color: crimson; font-weight: bold; }
+&lt;/style&gt;</pre>
+
+<div class="callout warn"><b>innerHTML and user input</b>
+<p>Never put text typed by users into <code>innerHTML</code>: it is parsed as HTML, so it can inject scripts. Use <code>textContent</code> for text.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What's the difference between <code>querySelector</code> and <code>querySelectorAll</code>? <span class="ans">— The first returns one element (or null); the second returns a list of all matches.</span></li>
+<li>How do you add a CSS class? <span class="ans">— <code>el.classList.add("name")</code> (also remove, toggle, contains).</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run="page">&lt;table id="t"&gt;&lt;tr&gt;&lt;th&gt;n&lt;/th&gt;&lt;th&gt;n²&lt;/th&gt;&lt;th&gt;n³&lt;/th&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;script&gt;
+  // Build a table row by row
+  const table = document.querySelector("#t");
+  for (let n = 1; n &lt;= 5; n++) {
+    const row = table.insertRow();
+    for (const v of [n, n ** 2, n ** 3]) row.insertCell().textContent = v;
+  }
+  console.log("rows:", table.rows.length);
+&lt;/script&gt;
+&lt;style&gt;td, th { border: 1px solid #ccc; padding: 4px 12px; text-align: right; } table { border-collapse: collapse; }&lt;/style&gt;</pre>
+
+<pre class="code" data-run="page">&lt;div class="bar" style="--w: 30%"&gt;30%&lt;/div&gt;
+&lt;div class="bar" style="--w: 75%"&gt;75%&lt;/div&gt;
+&lt;script&gt;
+  // Read and change CSS custom properties and attributes
+  for (const bar of document.querySelectorAll(".bar")) {
+    const w = parseInt(bar.style.getPropertyValue("--w"));
+    bar.title = `width ${w}%`;
+    if (w &gt; 50) bar.classList.add("big");
+    console.log(bar.textContent, getComputedStyle(bar).width);
+  }
+&lt;/script&gt;
+&lt;style&gt;.bar { width: var(--w); background: #4f7cff; color: white; margin: 6px 0; padding: 4px; border-radius: 4px; } .big { background: #e5484d; }&lt;/style&gt;</pre>
+</section>
+
+<section class="lesson" id="events" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Events</h2>
+<p class="lede">Pages react to people through <b>events</b>: clicks, key presses, typing, form submits. Register a function with <code>element.addEventListener("click", handler)</code>; the browser calls it with an <b>event object</b> describing what happened. Events <b>bubble</b> up from the element to its parents, which enables <b>event delegation</b>: one listener on a parent handles all its children.</p></header>
+
+<pre class="code" data-run="page">&lt;button id="plus"&gt;+1&lt;/button&gt;
+&lt;button id="reset"&gt;Reset&lt;/button&gt;
+&lt;p&gt;Count: &lt;b id="count"&gt;0&lt;/b&gt;&lt;/p&gt;
+&lt;input id="name" placeholder="Type your name"&gt;
+&lt;p id="hello"&gt;Hello, stranger!&lt;/p&gt;
+
+&lt;script&gt;
+  let count = 0;
+  const countEl = document.querySelector("#count");
+
+  document.querySelector("#plus").addEventListener("click", () =&gt; {
+    count++;
+    countEl.textContent = count;
+  });
+  document.querySelector("#reset").addEventListener("click", () =&gt; {
+    count = 0;
+    countEl.textContent = count;
+    console.log("reset");
+  });
+
+  // "input" fires on every keystroke
+  document.querySelector("#name").addEventListener("input", event =&gt; {
+    const name = event.target.value.trim();
+    document.querySelector("#hello").textContent = `Hello, ${name || "stranger"}!`;
+  });
+&lt;/script&gt;</pre>
+
+<pre class="code" data-run="page">&lt;form id="signup"&gt;
+  &lt;input name="email" type="email" placeholder="email" required&gt;
+  &lt;button&gt;Sign up&lt;/button&gt;
+&lt;/form&gt;
+&lt;ul id="list"&gt;
+  &lt;li&gt;Learn events &lt;button class="del"&gt;✕&lt;/button&gt;&lt;/li&gt;
+  &lt;li&gt;Use delegation &lt;button class="del"&gt;✕&lt;/button&gt;&lt;/li&gt;
+  &lt;li&gt;Build a project &lt;button class="del"&gt;✕&lt;/button&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script&gt;
+  // Forms: stop the page reload and read the fields
+  document.querySelector("#signup").addEventListener("submit", event =&gt; {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(event.target));
+    console.log("submitted:", data);
+    event.target.reset();
+  });
+
+  // Delegation: ONE listener on the &lt;ul&gt; handles every ✕ button, even future ones
+  document.querySelector("#list").addEventListener("click", event =&gt; {
+    const button = event.target.closest(".del");
+    if (!button) return;                       // the click wasn't on a ✕
+    const li = button.closest("li");
+    console.log("removed:", li.firstChild.textContent.trim());
+    li.remove();
+  });
+&lt;/script&gt;</pre>
+
+<div class="tbl"><table>
+<tr><th>Event</th><th>Fires when</th></tr>
+<tr><td><code>click</code>, <code>dblclick</code></td><td>The element is clicked (also Enter on buttons)</td></tr>
+<tr><td><code>input</code>, <code>change</code></td><td>A field's value changes (every keystroke / when committed)</td></tr>
+<tr><td><code>submit</code></td><td>A form is sent (call <code>preventDefault()</code> to handle it in JS)</td></tr>
+<tr><td><code>keydown</code></td><td>A key is pressed (<code>event.key</code> says which)</td></tr>
+<tr><td><code>DOMContentLoaded</code></td><td>The HTML is parsed and the DOM is ready</td></tr>
+</table></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does <code>event.preventDefault()</code> do on a form submit? <span class="ans">— Stops the browser's default action (sending the form and reloading).</span></li>
+<li>Why use delegation for list items? <span class="ans">— One listener handles all items, including ones added later.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run="page">&lt;p&gt;Press arrow keys (click here first)&lt;/p&gt;
+&lt;div id="box"&gt;&lt;/div&gt;
+&lt;script&gt;
+  // Keyboard: move a box with the arrow keys
+  let x = 0, y = 0;
+  const box = document.querySelector("#box");
+  document.addEventListener("keydown", e =&gt; {
+    const moves = { ArrowLeft: [-10, 0], ArrowRight: [10, 0], ArrowUp: [0, -10], ArrowDown: [0, 10] };
+    if (!moves[e.key]) return;
+    e.preventDefault();
+    x += moves[e.key][0]; y += moves[e.key][1];
+    box.style.transform = `translate(${x}px, ${y}px)`;
+    console.log(e.key, x, y);
+  });
+&lt;/script&gt;
+&lt;style&gt;#box { width: 30px; height: 30px; background: tomato; border-radius: 6px; transition: transform .1s; } body { height: 160px; }&lt;/style&gt;</pre>
+
+<pre class="code" data-run="page">&lt;input id="search" placeholder="Filter fruits…"&gt;
+&lt;ul id="fruits"&gt;&lt;/ul&gt;
+&lt;script&gt;
+  // Live filter
+  const fruits = ["apple", "apricot", "banana", "blueberry", "cherry", "grape", "mango"];
+  const ul = document.querySelector("#fruits");
+  function show(filter = "") {
+    ul.replaceChildren(...fruits
+      .filter(f =&gt; f.includes(filter.toLowerCase()))
+      .map(f =&gt; Object.assign(document.createElement("li"), { textContent: f })));
+  }
+  document.querySelector("#search").addEventListener("input", e =&gt; show(e.target.value));
+  show();
+&lt;/script&gt;</pre>
+</section>
+
+<section class="lesson" id="regex" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Regular expressions</h2>
+<p class="lede">A <b>regular expression</b> describes a text pattern. Write it between slashes (<code>/\d+/g</code>) and use it to test, find, extract or replace text. Flags change the search: <code>g</code> all matches, <code>i</code> ignore case, <code>m</code> multi-line, <code>u</code> Unicode.</p></header>
+
+<pre class="code" data-run>const text = "Order #123 shipped 2026-11-25, order #456 pending.";
+
+console.log(/order/i.test(text));                 // true: is there a match?
+console.log(text.match(/#\d+/));                  // first match with details
+console.log(text.match(/#\d+/g));                 // all matches: ['#123', '#456']
+console.log(text.replace(/\d{4}-\d{2}-\d{2}/, "DATE"));
+
+// Groups ( ) capture parts; named groups (?&lt;name&gt; ) are clearer
+const m = text.match(/(?&lt;year&gt;\d{4})-(?&lt;month&gt;\d{2})-(?&lt;day&gt;\d{2})/);
+console.log(m.groups);
+
+// matchAll: every match with its groups
+for (const [, id] of text.matchAll(/#(\d+)/g)) console.log("order id:", id);
+
+// replace with a function
+console.log("hello world".replace(/\b\w/g, ch =&gt; ch.toUpperCase()));</pre>
+
+<div class="tbl"><table>
+<tr><th>Pattern</th><th>Matches</th><th>Pattern</th><th>Matches</th></tr>
+<tr><td><code>\d \w \s</code></td><td>digit, word char, whitespace</td><td><code>. </code></td><td>any char except newline</td></tr>
+<tr><td><code>[abc] [^abc]</code></td><td>one of / none of</td><td><code>^ $</code></td><td>start / end</td></tr>
+<tr><td><code>a* a+ a?</code></td><td>0+, 1+, 0 or 1</td><td><code>a{2,4}</code></td><td>2 to 4 times</td></tr>
+<tr><td><code>(…) (?:…)</code></td><td>capture / don't capture</td><td><code>a|b</code></td><td>either</td></tr>
+</table></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Which flag finds all matches? <span class="ans">— <code>g</code>.</span></li>
+<li>What does <code>\d{3}</code> match? <span class="ans">— Exactly three digits.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Simple validators
+const isEmail = s =&gt; /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(s);
+const isStrong = s =&gt; s.length &gt;= 8 &amp;&amp; /[A-Z]/.test(s) &amp;&amp; /[a-z]/.test(s) &amp;&amp; /\d/.test(s);
+for (const e of ["ada@example.com", "bad@", "a b@c.io"]) console.log(e, isEmail(e));
+for (const p of ["password", "Passw0rdOk"]) console.log(p, isStrong(p));</pre>
+
+<pre class="code" data-run>// Parse a log file into objects
+const log = `2026-11-25 10:01 ERROR Disk full
+2026-11-25 10:05 INFO Backup started
+2026-11-25 10:09 ERROR Timeout`;
+const entries = [...log.matchAll(/^(\S+) (\S+) (\w+) (.+)$/gm)]
+  .map(([, date, time, level, msg]) =&gt; ({ time, level, msg }));
+console.table(entries.filter(e =&gt; e.level === "ERROR"));</pre>
+</section>
+
+<section class="lesson" id="copying" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Copying and immutability</h2>
+<p class="lede">Assigning an object never copies it. A <b>shallow copy</b> (<code>{ ...obj }</code>, <code>[...arr]</code>) creates a new outer object whose nested objects are still shared; a <b>deep copy</b> (<code>structuredClone</code>) copies everything. Updating data by making changed copies instead of mutating it, <b>immutability</b>, is how React and most state libraries work.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Step through: alias vs shallow vs deep copy</div>
+<div class="widget" data-w="copies"></div>
+</figure>
+
+<pre class="code" data-run>const original = { name: "Ada", tags: ["math"] };
+const alias = original;
+const shallow = { ...original };
+const deep = structuredClone(original);
+
+original.tags.push("code");
+original.name = "Ada L.";
+
+console.log("alias:  ", alias);     // everything changed
+console.log("shallow:", shallow);   // name kept, tags shared
+console.log("deep:   ", deep);      // fully independent
+
+// Freeze prevents changes (shallow too!)
+const config = Object.freeze({ port: 80, db: { host: "local" } });
+try {
+  config.port = 99;          // modules and classes are strict, so this throws
+} catch (e) {
+  console.log("TypeError:", e.message);
+}
+config.db.host = "remote";   // but nested objects are not frozen
+console.log(config);</pre>
+
+<pre class="code" data-run>// Immutable updates: return new objects, never change the old ones
+const state = { user: { name: "Ada", prefs: { theme: "light" } }, todos: [{ id: 1, done: false }] };
+
+const next = {
+  ...state,
+  user: { ...state.user, prefs: { ...state.user.prefs, theme: "dark" } },
+  todos: [...state.todos, { id: 2, done: false }],
+};
+
+console.log(state.user.prefs.theme, next.user.prefs.theme);
+console.log(state.todos.length, next.todos.length);
+console.log(state.todos[0] === next.todos[0]);   // unchanged parts are shared: cheap!
+
+// Non-mutating array methods
+const nums = [3, 1, 2];
+console.log(nums.toSorted(), nums.toReversed(), nums.with(0, 99), nums);</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Does <code>[...arr]</code> copy objects inside the array? <span class="ans">— No: the new array holds the same object references.</span></li>
+<li>Which built-in makes a deep copy? <span class="ans">— <code>structuredClone(value)</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// structuredClone handles Dates, Maps, Sets and cycles; JSON does not
+const data = { when: new Date(0), ids: new Set([1, 2]) };
+data.self = data;
+const clone = structuredClone(data);
+console.log(clone.when instanceof Date, clone.ids, clone.self === clone);
+console.log(JSON.parse(JSON.stringify({ when: new Date(0), ids: new Set([1]) })));</pre>
+
+<pre class="code" data-run>// Remove an item immutably three ways
+const list = ["a", "b", "c", "d"];
+const i = 1;
+console.log(list.filter((_, k) =&gt; k !== i));
+console.log([...list.slice(0, i), ...list.slice(i + 1)]);
+console.log(list.toSpliced(i, 1), list);</pre>
+</section>
+
+<section class="lesson" id="patterns" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Useful patterns: debounce, throttle, pipelines</h2>
+<p class="lede">A few small patterns appear in almost every app. <b>Debounce</b> waits until calls stop (search-as-you-type). <b>Throttle</b> allows at most one call per interval (scroll handlers). <b>Composition</b> builds big functions out of small ones. <b>Event emitters</b> let parts of a program talk without knowing about each other.</p></header>
+
+<pre class="code" data-run>function debounce(fn, ms) {
+  let timer;
+  return (...args) =&gt; {
+    clearTimeout(timer);
+    timer = setTimeout(() =&gt; fn(...args), ms);
+  };
+}
+function throttle(fn, ms) {
+  let last = 0;
+  return (...args) =&gt; {
+    const now = Date.now();
+    if (now - last &gt;= ms) { last = now; fn(...args); }
+  };
+}
+
+const search = debounce(q =&gt; console.log("debounced search:", q), 100);
+const onScroll = throttle(y =&gt; console.log("throttled scroll:", y), 100);
+
+// Simulate fast typing and scrolling: calls every 30 ms
+const typed = "javascript";
+for (let i = 1; i &lt;= typed.length; i++) {
+  setTimeout(() =&gt; { search(typed.slice(0, i)); onScroll(i * 100); }, i * 30);
+}</pre>
+
+<pre class="code" data-run>// Compose small functions into a pipeline
+const pipe = (...fns) =&gt; input =&gt; fns.reduce((value, fn) =&gt; fn(value), input);
+
+const clean = pipe(
+  s =&gt; s.trim(),
+  s =&gt; s.toLowerCase(),
+  s =&gt; s.replace(/\s+/g, " "),
+  s =&gt; s.replace(/[^a-z ]/g, ""),
+);
+console.log(clean("   Hello,   WORLD!!  JavaScript  "));
+
+// A tiny event emitter (publish/subscribe)
+function createEmitter() {
+  const handlers = new Map();
+  return {
+    on(event, fn) {
+      if (!handlers.has(event)) handlers.set(event, new Set());
+      handlers.get(event).add(fn);
+      return () =&gt; handlers.get(event).delete(fn);   // returns "unsubscribe"
+    },
+    emit(event, data) { handlers.get(event)?.forEach(fn =&gt; fn(data)); },
+  };
+}
+const bus = createEmitter();
+const off = bus.on("login", user =&gt; console.log("welcome", user));
+bus.on("login", user =&gt; console.log("audit log:", user, "logged in"));
+bus.emit("login", "ada");
+off();
+bus.emit("login", "grace");</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>For a search box that calls an API, debounce or throttle? <span class="ans">— Debounce: call once after typing pauses.</span></li>
+<li>What does <code>pipe(f, g)(x)</code> compute? <span class="ans">— <code>g(f(x))</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Curry: turn f(a, b, c) into f(a)(b)(c)
+const curry = fn =&gt; function curried(...args) {
+  return args.length &gt;= fn.length ? fn(...args) : (...more) =&gt; curried(...args, ...more);
+};
+const volume = curry((l, w, h) =&gt; l * w * h);
+console.log(volume(2)(3)(4), volume(2, 3)(4), volume(2, 3, 4));</pre>
+
+<pre class="code" data-run>// A simple observable store: the heart of state managers
+function createStore(reducer, state) {
+  const listeners = new Set();
+  return {
+    getState: () =&gt; state,
+    dispatch(action) { state = reducer(state, action); listeners.forEach(l =&gt; l(state)); },
+    subscribe: l =&gt; (listeners.add(l), () =&gt; listeners.delete(l)),
+  };
+}
+const counter = (state, action) =&gt;
+  action.type === "add" ? { count: state.count + action.by } : action.type === "reset" ? { count: 0 } : state;
+const store = createStore(counter, { count: 0 });
+store.subscribe(s =&gt; console.log("state:", s));
+store.dispatch({ type: "add", by: 5 });
+store.dispatch({ type: "add", by: 2 });
+store.dispatch({ type: "reset" });</pre>
+</section>
+
+<!-- ===================== DEVELOPMENT ===================== -->
+<section class="lesson" id="tooling" data-level="d" data-group="Development">
+<header><span class="lvl d">Development</span><h2>Tools: Node.js, npm and a real project</h2>
+<p class="lede">Outside a tutorial you work in a project folder: <b>Node.js</b> runs JavaScript and tools, <b>npm</b> installs packages and runs scripts listed in <code>package.json</code>, a <b>dev server</b> such as Vite reloads the browser on every save, and a <b>linter</b> and <b>formatter</b> catch mistakes and keep style consistent.</p></header>
+
+<h3>Start a project in five commands</h3>
+<pre class="code">node --version                 # check Node.js is installed (use the LTS version)
+npm create vite@latest my-app  # scaffold a project (pick "Vanilla" + "JavaScript")
+cd my-app
+npm install                    # download the packages listed in package.json
+npm run dev                    # start the dev server, open the printed URL</pre>
+
+<div class="two">
+<div><p><b>package.json</b>: the project's manifest</p>
+<pre class="code">{
+  "name": "my-app",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "node --test",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "vite": "^6.0.0",
+    "eslint": "^9.0.0"
+  }
+}</pre></div>
+<div><p><b>Typical layout</b></p>
+<pre class="code">my-app/
+├── index.html        entry page
+├── package.json
+├── package-lock.json exact installed versions (commit it)
+├── node_modules/     installed packages (never commit)
+├── src/
+│   ├── main.js       imports the rest
+│   ├── api.js
+│   └── ui.js
+└── tests/
+    └── api.test.js</pre></div>
+</div>
+
+<div class="tbl"><table>
+<tr><th>Tool</th><th>What it does</th><th>Command</th></tr>
+<tr><td>npm / pnpm</td><td>Install packages, run scripts</td><td><code>npm install pkg</code>, <code>npm run build</code></td></tr>
+<tr><td>Vite</td><td>Dev server with instant reload; bundles for production</td><td><code>npm run dev</code></td></tr>
+<tr><td>ESLint</td><td>Finds bugs and bad patterns</td><td><code>npx eslint .</code></td></tr>
+<tr><td>Prettier</td><td>Formats code automatically</td><td><code>npx prettier --write .</code></td></tr>
+<tr><td>DevTools</td><td>Console, debugger, network, performance</td><td>F12 in the browser</td></tr>
+</table></div>
+
+<h3>Debugging</h3>
+<pre class="code" data-run>// Add `debugger;` to pause here when DevTools is open, then step line by line.
+// console helpers are the next best thing:
+const cart = [{ item: "pen", qty: 2 }, { item: "book", qty: 1 }];
+console.table(cart);
+console.group("checkout");
+console.count("step");
+console.log("items:", cart.length);
+console.count("step");
+console.assert(cart.every(c =&gt; c.qty &gt; 0), "quantities must be positive");
+console.assert(cart.length &gt; 5, "expected more than 5 items");   // prints because it fails
+console.groupEnd();
+console.time("sum");
+let s = 0; for (let i = 0; i &lt; 1e6; i++) s += i;
+console.timeEnd("sum");</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Which folder should you never commit? <span class="ans">— <code>node_modules/</code>: anyone can recreate it with <code>npm install</code>.</span></li>
+<li>What does <code>npm run dev</code> run? <span class="ans">— The command under <code>"dev"</code> in package.json's scripts.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Environment-style config with sensible defaults
+const env = { PORT: "8080", DEBUG: "true" };   // in Node.js: process.env
+const config = {
+  port: Number(env.PORT ?? 3000),
+  debug: env.DEBUG === "true",
+  apiUrl: env.API_URL ?? "http://localhost:3000/api",
+};
+console.log(config);</pre>
+
+<pre class="code" data-run>// A tiny logger with levels, like real logging libraries
+const LEVELS = ["debug", "info", "warn", "error"];
+function createLogger(minLevel = "info") {
+  const min = LEVELS.indexOf(minLevel);
+  return Object.fromEntries(LEVELS.map((lvl, i) =&gt; [lvl, (...msg) =&gt; {
+    if (i &gt;= min) console.log(`[${new Date(0).toISOString().slice(11, 19)}] ${lvl.toUpperCase().padEnd(5)}`, ...msg);
+  }]));
+}
+const log = createLogger("info");
+log.debug("hidden"); log.info("server started"); log.error("disk full");</pre>
+</section>
+
+<section class="lesson" id="testing" data-level="d" data-group="Development">
+<header><span class="lvl d">Development</span><h2>Testing your code</h2>
+<p class="lede">A <b>test</b> is code that calls your code with known inputs and checks the output. Tests catch bugs before users do and let you change code without fear. Node.js has a built-in test runner (<code>node --test</code>); Vitest and Jest are popular alternatives with the same shape: <code>test("name", () =&gt; { expect… })</code>.</p></header>
+
+<pre class="code">// sum.test.js  →  run with: node --test
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { sum } from "./sum.js";
+
+test("adds numbers", () =&gt; {
+  assert.equal(sum(2, 3), 5);
+});
+
+test("rejects non-numbers", () =&gt; {
+  assert.throws(() =&gt; sum("2", 3), TypeError);
+});</pre>
+
+<p>To see the idea run here, the example below builds a mini test runner in 20 lines. Real runners add nicer output, watch mode, mocks and coverage.</p>
+
+<pre class="code" data-run>// --- a minimal test runner ---
+const results = [];
+function test(name, fn) {
+  try { fn(); results.push(["✓", name]); }
+  catch (err) { results.push(["✗", `${name}\n    ${err.message}`]); }
+}
+const expect = actual =&gt; ({
+  toBe: expected =&gt; { if (!Object.is(actual, expected)) throw new Error(`expected ${expected}, got ${actual}`); },
+  toEqual: expected =&gt; {
+    if (JSON.stringify(actual) !== JSON.stringify(expected))
+      throw new Error(`expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+  },
+  toThrow: () =&gt; { try { actual(); } catch { return; } throw new Error("expected a throw"); },
+});
+
+// --- the code under test ---
+function slugify(s) { return s.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+function divide(a, b) { if (b === 0) throw new RangeError("divide by zero"); return a / b; }
+
+// --- the tests ---
+test("slugify lowercases and joins words", () =&gt; expect(slugify("Hello World")).toBe("hello-world"));
+test("slugify trims punctuation", () =&gt; expect(slugify("  Hi!! there? ")).toBe("hi-there"));
+test("divide works", () =&gt; expect(divide(10, 4)).toBe(2.5));
+test("divide by zero throws", () =&gt; expect(() =&gt; divide(1, 0)).toThrow());
+test("a failing test looks like this", () =&gt; expect([1, 2].map(n =&gt; n * 2)).toEqual([2, 5]));
+
+for (const [mark, text] of results) console.log(mark, text);
+const failed = results.filter(r =&gt; r[0] === "✗").length;
+console.log(`\n${results.length - failed} passed, ${failed} failed`);</pre>
+
+<div class="callout tip"><b>What to test</b>
+<p>Test behavior, not implementation: inputs and outputs of functions, edge cases (empty list, zero, missing fields), and the errors you expect. Pure functions (no side effects) are the easiest to test, which is one more reason to write them.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What command runs Node's built-in tests? <span class="ans">— <code>node --test</code>.</span></li>
+<li>Why are pure functions easy to test? <span class="ans">— Same input always gives the same output, with nothing to set up.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Table-driven tests: many cases, one loop
+function isPalindrome(s) {
+  const clean = s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  return clean === [...clean].reverse().join("");
+}
+const cases = [["racecar", true], ["A man, a plan, a canal: Panama", true], ["hello", false], ["", true]];
+for (const [input, expected] of cases) {
+  const got = isPalindrome(input);
+  console.log(got === expected ? "✓" : "✗", JSON.stringify(input), "→", got);
+}</pre>
+
+<pre class="code" data-run>// Testing async code: await the result, then check it
+async function fetchUserName(id, api) {
+  const user = await api.get(`/users/${id}`);
+  return user.name.toUpperCase();
+}
+// A fake API ("mock") so the test needs no network
+const fakeApi = { get: async url =&gt; ({ name: url === "/users/1" ? "ada" : "unknown" }) };
+const name = await fetchUserName(1, fakeApi);
+console.assert(name === "ADA", "expected ADA");
+console.log("async test passed:", name);</pre>
+</section>
+
+<!-- ===================== PROJECTS ===================== -->
+<section class="lesson" id="p-tip" data-level="p" data-group="Projects">
+<header><span class="lvl p">Project 1</span><h2>Tip and bill splitter</h2>
+<p class="lede">Your first complete app: type a bill, pick a tip, choose how many people, and see what everyone pays, updated on every keystroke. You'll separate the <b>math</b> (a pure function you can test) from the <b>page</b> (reading inputs and showing results).</p>
+<div class="proj-meta"><span>⏱ about 30 minutes</span><span>Uses: functions, numbers, Intl, DOM, input events</span></div></header>
+
+<h3>What you'll build</h3>
+<ul class="feat">
+<li>Bill amount, tip buttons (10 / 15 / 20%) and a custom tip</li>
+<li>Number of people, with validation</li>
+<li>Tip, total and per-person amount, updated live</li>
+<li>Money done safely in cents and formatted as currency</li>
+</ul>
+
+<h3>Build it step by step</h3>
+<ol class="steps">
+<li class="step"><h4>Write the math as a pure function</h4>
+<p>Start without any HTML. A <b>pure function</b> takes inputs and returns a result without touching anything else, so it is easy to check. Floating-point numbers can't store amounts like 0.1 exactly, so the function converts to whole <b>cents</b> first, does the math with integers, and converts back at the end.</p>
+<p>Rounding each share <b>up</b> (<code>Math.ceil</code>) guarantees the group never pays less than the total.</p>
+<pre class="code" data-run>function calcSplit(bill, tipPct, people) {
+  const billCents = Math.round(bill * 100);              // 84.5 → 8450
+  const tipCents = Math.round(billCents * tipPct / 100); // 15% of 8450 → 1268
+  const totalCents = billCents + tipCents;               // 9718
+  const eachCents = Math.ceil(totalCents / people);      // 3239.33… → 3240
+  return { tip: tipCents / 100, total: totalCents / 100, each: eachCents / 100 };
+}
+
+console.log(calcSplit(84.5, 15, 3));
+console.log(calcSplit(100, 20, 4));
+console.log(calcSplit(0.1 + 0.2, 0, 1));   // cents fix the 0.30000000000000004 problem</pre></li>
+
+<li class="step"><h4>Format money for people</h4>
+<p><code>Intl.NumberFormat</code> knows every currency's symbol, decimal places and grouping. Create one formatter and reuse it.</p>
+<pre class="code" data-run>const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+console.log(money.format(32.4), money.format(1234567.891));
+
+// Try other locales and currencies:
+console.log(new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(1234.5));
+console.log(new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(1234567));</pre></li>
+
+<li class="step"><h4>Lay out the page</h4>
+<p>The HTML gives every input and result an <code>id</code> so the script can find it. The tip buttons carry their value in a <code>data-tip</code> attribute, which the script reads as <code>button.dataset.tip</code>. CSS grid keeps the card tidy. Run it: the page looks right but does nothing yet.</p>
+<pre class="code" data-run="page">&lt;div class="card"&gt;
+  &lt;h2&gt;Tip &amp;amp; split&lt;/h2&gt;
+  &lt;label&gt;Bill amount &lt;input id="bill" type="number" min="0" step="0.01" value="84.50"&gt;&lt;/label&gt;
+  &lt;fieldset id="tips"&gt;
+    &lt;legend&gt;Tip&lt;/legend&gt;
+    &lt;button type="button" data-tip="10"&gt;10%&lt;/button&gt;
+    &lt;button type="button" data-tip="15" class="on"&gt;15%&lt;/button&gt;
+    &lt;button type="button" data-tip="20"&gt;20%&lt;/button&gt;
+    &lt;input id="custom" type="number" min="0" placeholder="Custom %"&gt;
+  &lt;/fieldset&gt;
+  &lt;label&gt;People &lt;input id="people" type="number" min="1" step="1" value="3"&gt;&lt;/label&gt;
+  &lt;div class="result"&gt;
+    &lt;p&gt;Tip &lt;b id="tip"&gt;–&lt;/b&gt;&lt;/p&gt;
+    &lt;p&gt;Total &lt;b id="total"&gt;–&lt;/b&gt;&lt;/p&gt;
+    &lt;p class="big"&gt;Each person pays &lt;b id="each"&gt;–&lt;/b&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;style&gt;
+  body { background: #f4f1e8; }
+  .card { max-width: 360px; margin: auto; background: white; border-radius: 16px; padding: 18px; display: grid; gap: 12px; box-shadow: 0 6px 24px #0002; }
+  h2 { margin: 0; }
+  label { display: grid; gap: 4px; font-weight: 600; }
+  input { font: inherit; padding: 8px; border: 2px solid #ddd; border-radius: 8px; }
+  fieldset { border: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  legend { font-weight: 600; margin-bottom: 4px; }
+  fieldset button { font: inherit; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer; }
+  fieldset button.on { background: #1f1d17; color: #f7df1e; border-color: #1f1d17; }
+  .result { background: #1f1d17; color: white; border-radius: 12px; padding: 12px 16px; }
+  .result p { display: flex; justify-content: space-between; margin: 4px 0; }
+  .result .big { font-size: 1.2em; color: #f7df1e; }
+&lt;/style&gt;</pre></li>
+
+<li class="step" id="p-tip-final"><h4>Bring it to life</h4>
+<p>The script keeps one piece of state (<code>tipPct</code>), and one <code>update()</code> function reads the inputs, validates them, calls <code>calcSplit</code> and writes the results. Every event handler just changes state and calls <code>update()</code>. This "change state, then re-render" loop is the pattern behind every interactive app. Run it and try the inputs.</p>
+<pre class="code" data-run="page">&lt;div class="card"&gt;
+  &lt;h2&gt;Tip &amp;amp; split&lt;/h2&gt;
+  &lt;label&gt;Bill amount &lt;input id="bill" type="number" min="0" step="0.01" value="84.50"&gt;&lt;/label&gt;
+  &lt;fieldset id="tips"&gt;
+    &lt;legend&gt;Tip&lt;/legend&gt;
+    &lt;button type="button" data-tip="10"&gt;10%&lt;/button&gt;
+    &lt;button type="button" data-tip="15" class="on"&gt;15%&lt;/button&gt;
+    &lt;button type="button" data-tip="20"&gt;20%&lt;/button&gt;
+    &lt;input id="custom" type="number" min="0" placeholder="Custom %"&gt;
+  &lt;/fieldset&gt;
+  &lt;label&gt;People &lt;input id="people" type="number" min="1" step="1" value="3"&gt;&lt;/label&gt;
+  &lt;div class="result"&gt;
+    &lt;p&gt;Tip &lt;b id="tip"&gt;–&lt;/b&gt;&lt;/p&gt;
+    &lt;p&gt;Total &lt;b id="total"&gt;–&lt;/b&gt;&lt;/p&gt;
+    &lt;p class="big"&gt;Each person pays &lt;b id="each"&gt;–&lt;/b&gt;&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;p id="error" class="error"&gt;&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+  const $ = selector =&gt; document.querySelector(selector);
+  let tipPct = 15;                                    // the app's only state
+
+  function calcSplit(bill, tipPct, people) {
+    const billCents = Math.round(bill * 100);
+    const tipCents = Math.round(billCents * tipPct / 100);
+    const totalCents = billCents + tipCents;
+    const eachCents = Math.ceil(totalCents / people);
+    return { tip: tipCents / 100, total: totalCents / 100, each: eachCents / 100 };
+  }
+
+  function update() {
+    const bill = $("#bill").valueAsNumber;            // NaN when the box is empty
+    const people = $("#people").valueAsNumber;
+    const valid = bill &gt;= 0 &amp;&amp; people &gt;= 1 &amp;&amp; Number.isInteger(people);
+    $("#error").textContent = valid ? "" : "Enter a bill and a whole number of people (1 or more).";
+    if (!valid) {
+      for (const id of ["#tip", "#total", "#each"]) $(id).textContent = "–";
+      return;
+    }
+    const r = calcSplit(bill, tipPct, people);
+    $("#tip").textContent = money.format(r.tip);
+    $("#total").textContent = money.format(r.total);
+    $("#each").textContent = money.format(r.each);
+  }
+
+  // Tip buttons: one listener on the fieldset (event delegation)
+  $("#tips").addEventListener("click", event =&gt; {
+    const button = event.target.closest("button[data-tip]");
+    if (!button) return;
+    tipPct = Number(button.dataset.tip);
+    $("#custom").value = "";
+    for (const b of document.querySelectorAll("#tips button")) b.classList.toggle("on", b === button);
+    update();
+  });
+
+  $("#custom").addEventListener("input", event =&gt; {
+    tipPct = event.target.valueAsNumber || 0;
+    for (const b of document.querySelectorAll("#tips button")) b.classList.remove("on");
+    update();
+  });
+
+  $("#bill").addEventListener("input", update);
+  $("#people").addEventListener("input", update);
+  update();                                           // show results right away
+&lt;/script&gt;
+
+&lt;style&gt;
+  body { background: #f4f1e8; }
+  .card { max-width: 360px; margin: auto; background: white; border-radius: 16px; padding: 18px; display: grid; gap: 12px; box-shadow: 0 6px 24px #0002; }
+  h2 { margin: 0; }
+  label { display: grid; gap: 4px; font-weight: 600; }
+  input { font: inherit; padding: 8px; border: 2px solid #ddd; border-radius: 8px; }
+  fieldset { border: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  legend { font-weight: 600; margin-bottom: 4px; }
+  fieldset button { font: inherit; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer; }
+  fieldset button.on { background: #1f1d17; color: #f7df1e; border-color: #1f1d17; }
+  .result { background: #1f1d17; color: white; border-radius: 12px; padding: 12px 16px; }
+  .result p { display: flex; justify-content: space-between; margin: 4px 0; }
+  .result .big { font-size: 1.2em; color: #f7df1e; }
+  .error { color: crimson; margin: 0; min-height: 1.2em; }
+&lt;/style&gt;</pre></li>
+</ol>
+
+<h3>How the code works</h3>
+<ul class="walk">
+<li><code>const $ = selector =&gt; …</code> A two-character shortcut for <code>document.querySelector</code>, used everywhere below.</li>
+<li><code>let tipPct = 15</code> The only value that isn't read from an input. Everything on screen is computed from the inputs plus this.</li>
+<li><code>valueAsNumber</code> Number inputs give their value as a number directly (or <code>NaN</code> when empty), so there's no <code>Number(...)</code> conversion to forget.</li>
+<li><code>bill &gt;= 0 &amp;&amp; people &gt;= 1</code> Comparisons with <code>NaN</code> are always false, so an empty box fails validation automatically.</li>
+<li><code>event.target.closest("button[data-tip]")</code> One listener on the fieldset handles all three buttons. <code>closest</code> finds the clicked button even if you click on its text.</li>
+<li><code>classList.toggle("on", b === button)</code> The second argument forces the class on or off: on for the clicked button, off for the others.</li>
+<li><code>update()</code> at the end Shows correct results the moment the page loads, before anyone types.</li>
+</ul>
+
+<h3>Ideas to extend it</h3>
+<ul>
+<li>Add a currency picker that rebuilds the <code>Intl.NumberFormat</code>.</li>
+<li>Add a "round up the total to a whole number" checkbox.</li>
+<li>Remember the last tip percentage in <code>localStorage</code>.</li>
+</ul>
+</section>
+
+<section class="lesson" id="p-todo" data-level="p" data-group="Projects">
+<header><span class="lvl p">Project 2</span><h2>To-do list with filters and saving</h2>
+<p class="lede">The classic app, done properly: add tasks, tick them off, delete them, filter All / Active / Done, and keep everything after a reload. You'll learn the most important UI pattern there is: <b>state → render</b>. The data lives in one array; a render function rebuilds the list from it after every change.</p>
+<div class="proj-meta"><span>⏱ about 45 minutes</span><span>Uses: arrays of objects, immutable updates, rendering, delegation, localStorage</span></div></header>
+
+<h3>What you'll build</h3>
+<ul class="feat">
+<li>Add a task with Enter or a button</li>
+<li>Toggle done, delete with ✕</li>
+<li>Filters and an "items left" counter</li>
+<li>Saved in <code>localStorage</code> between visits</li>
+</ul>
+
+<h3>Build it step by step</h3>
+<ol class="steps">
+<li class="step"><h4>Model the data and its changes</h4>
+<p>Each task is an object <code>{ id, text, done }</code> and the whole app state is an array of them. Write every change as a small <b>pure function</b> that returns a <b>new</b> array instead of editing the old one. They are easy to test and they make bugs where "something changed somewhere" much rarer.</p>
+<pre class="code" data-run>let nextId = 1;
+const addTodo = (todos, text) =&gt; [...todos, { id: nextId++, text, done: false }];
+const toggleTodo = (todos, id) =&gt; todos.map(t =&gt; (t.id === id ? { ...t, done: !t.done } : t));
+const removeTodo = (todos, id) =&gt; todos.filter(t =&gt; t.id !== id);
+const visible = (todos, filter) =&gt;
+  todos.filter(t =&gt; (filter === "active" ? !t.done : filter === "done" ? t.done : true));
+
+let todos = [];
+todos = addTodo(todos, "Buy milk");
+todos = addTodo(todos, "Learn JavaScript");
+todos = addTodo(todos, "Call mom");
+todos = toggleTodo(todos, 2);
+todos = removeTodo(todos, 1);
+
+console.table(todos);
+console.log("active:", visible(todos, "active").map(t =&gt; t.text));
+console.log("done:", visible(todos, "done").map(t =&gt; t.text));</pre></li>
+
+<li class="step"><h4>Render state into HTML</h4>
+<p><code>render()</code> turns the array into list items. It doesn't care how the array got that way, so any change to the data followed by <code>render()</code> shows correctly. Notice the user's text goes in with <code>textContent</code>, never <code>innerHTML</code>, so typing <code>&lt;b&gt;hi&lt;/b&gt;</code> stays plain text.</p>
+<pre class="code" data-run="page">&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+  const todos = [
+    { id: 1, text: "Buy milk", done: true },
+    { id: 2, text: "Learn &lt;b&gt;JavaScript&lt;/b&gt;", done: false },
+  ];
+  function render() {
+    const items = todos.map(t =&gt; {
+      const li = document.createElement("li");
+      li.className = t.done ? "done" : "";
+      li.innerHTML = `&lt;input type="checkbox" ${t.done ? "checked" : ""}&gt; &lt;span&gt;&lt;/span&gt;`;
+      li.querySelector("span").textContent = t.text;   // safe
+      return li;
+    });
+    document.querySelector("#list").replaceChildren(...items);
+  }
+  render();
+&lt;/script&gt;
+&lt;style&gt;.done span { text-decoration: line-through; opacity: .5; } li { list-style: none; padding: 4px; }&lt;/style&gt;</pre></li>
+
+<li class="step"><h4>Handle events and save</h4>
+<p>A <code>submit</code> listener on the form catches both Enter and the Add button. A single click listener on the <code>&lt;ul&gt;</code> handles every checkbox and ✕ through delegation: it finds the clicked <code>&lt;li&gt;</code>, reads its <code>data-id</code> and decides what was clicked with <code>matches()</code>. All changes go through <code>setTodos()</code>, which saves to <code>localStorage</code> and re-renders, so the screen and storage can never disagree.</p></li>
+
+<li class="step" id="p-todo-final"><h4>The finished app</h4>
+<p>Filters are just one more piece of state (<code>filter</code>) that <code>render()</code> uses. Add, tick and delete tasks, switch filters, then press Run again: your tasks are still there. (In this preview, storage lasts until you leave the page; in a real site it is permanent.)</p>
+<pre class="code" data-run="page">&lt;div class="app"&gt;
+  &lt;h2&gt;My to-dos&lt;/h2&gt;
+  &lt;form id="add"&gt;
+    &lt;input id="text" placeholder="What needs doing?" autocomplete="off" maxlength="80"&gt;
+    &lt;button&gt;Add&lt;/button&gt;
+  &lt;/form&gt;
+  &lt;nav id="filters"&gt;
+    &lt;button data-filter="all"&gt;All&lt;/button&gt;
+    &lt;button data-filter="active"&gt;Active&lt;/button&gt;
+    &lt;button data-filter="done"&gt;Done&lt;/button&gt;
+  &lt;/nav&gt;
+  &lt;ul id="list"&gt;&lt;/ul&gt;
+  &lt;footer&gt;&lt;span id="left"&gt;&lt;/span&gt;&lt;button id="clear"&gt;Clear done&lt;/button&gt;&lt;/footer&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  const KEY = "todos-v1";
+  let todos = load();
+  let filter = "all";
+
+  function load() {
+    try {
+      return JSON.parse(localStorage.getItem(KEY)) ?? [];
+    } catch {
+      return [];                                       // broken data: start fresh
+    }
+  }
+
+  // Pure state updates
+  const newId = list =&gt; Math.max(0, ...list.map(t =&gt; t.id)) + 1;
+  const addTodo = (list, text) =&gt; [...list, { id: newId(list), text, done: false }];
+  const toggleTodo = (list, id) =&gt; list.map(t =&gt; (t.id === id ? { ...t, done: !t.done } : t));
+  const removeTodo = (list, id) =&gt; list.filter(t =&gt; t.id !== id);
+  const visible = (list, f) =&gt; list.filter(t =&gt; (f === "active" ? !t.done : f === "done" ? t.done : true));
+
+  // The only way state changes: update, save, re-render
+  function setTodos(next) {
+    todos = next;
+    localStorage.setItem(KEY, JSON.stringify(todos));
+    render();
+  }
+
+  function render() {
+    const items = visible(todos, filter).map(t =&gt; {
+      const li = document.createElement("li");
+      li.dataset.id = t.id;
+      li.className = t.done ? "done" : "";
+      li.innerHTML = `&lt;label&gt;&lt;input type="checkbox" ${t.done ? "checked" : ""}&gt; &lt;span&gt;&lt;/span&gt;&lt;/label&gt;
+                      &lt;button class="del" aria-label="Delete"&gt;✕&lt;/button&gt;`;
+      li.querySelector("span").textContent = t.text;
+      return li;
+    });
+    document.querySelector("#list").replaceChildren(...items);
+
+    const left = todos.filter(t =&gt; !t.done).length;
+    document.querySelector("#left").textContent = `${left} item${left === 1 ? "" : "s"} left`;
+    for (const b of document.querySelectorAll("#filters button")) {
+      b.classList.toggle("on", b.dataset.filter === filter);
+    }
+  }
+
+  document.querySelector("#add").addEventListener("submit", event =&gt; {
+    event.preventDefault();                            // don't reload the page
+    const input = document.querySelector("#text");
+    const text = input.value.trim();
+    if (!text) return;
+    setTodos(addTodo(todos, text));
+    input.value = "";
+  });
+
+  document.querySelector("#list").addEventListener("click", event =&gt; {
+    const li = event.target.closest("li");
+    if (!li) return;
+    const id = Number(li.dataset.id);
+    if (event.target.matches(".del")) setTodos(removeTodo(todos, id));
+    else if (event.target.matches("input[type=checkbox]")) setTodos(toggleTodo(todos, id));
+  });
+
+  document.querySelector("#filters").addEventListener("click", event =&gt; {
+    if (!event.target.dataset.filter) return;
+    filter = event.target.dataset.filter;
+    render();
+  });
+
+  document.querySelector("#clear").addEventListener("click", () =&gt; setTodos(todos.filter(t =&gt; !t.done)));
+
+  if (todos.length === 0) {
+    setTodos([{ id: 1, text: "Learn the DOM", done: true }, { id: 2, text: "Build a to-do app", done: false }]);
+  } else {
+    render();
+  }
+&lt;/script&gt;
+
+&lt;style&gt;
+  body { background: #f4f1e8; }
+  .app { max-width: 420px; margin: auto; background: white; border-radius: 16px; padding: 18px; box-shadow: 0 6px 24px #0002; }
+  h2 { margin: 0 0 10px; }
+  form { display: flex; gap: 6px; }
+  input#text { flex: 1; font: inherit; padding: 8px 10px; border: 2px solid #ddd; border-radius: 8px; }
+  button { font: inherit; cursor: pointer; border: 2px solid #1f1d17; background: #1f1d17; color: #f7df1e; border-radius: 8px; padding: 6px 12px; }
+  nav { display: flex; gap: 6px; margin: 12px 0 6px; }
+  nav button, footer button { background: white; color: #1f1d17; border-color: #ddd; padding: 3px 10px; }
+  nav button.on { border-color: #1f1d17; font-weight: 700; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { display: flex; align-items: center; justify-content: space-between; padding: 8px 4px; border-bottom: 1px solid #eee; }
+  li.done span { text-decoration: line-through; color: #999; }
+  .del { background: none; color: #c00; border: 0; font-size: 1.1em; }
+  footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; color: #666; }
+&lt;/style&gt;</pre></li>
+</ol>
+
+<h3>How the code works</h3>
+<ul class="walk">
+<li><code>load()</code> Reads the saved JSON. <code>?? []</code> handles "nothing saved yet" (<code>null</code>), and <code>try/catch</code> handles corrupted data, so the app always starts.</li>
+<li><code>newId(list)</code> The next id is one more than the largest existing id, so ids stay unique even after reloads and deletes.</li>
+<li><code>setTodos(next)</code> The single place where state changes. Because it always saves and renders, you can't forget either step.</li>
+<li><code>replaceChildren(...items)</code> Swaps the whole list in one operation. Simple and fast enough for hundreds of items (frameworks like React do this smartly for thousands).</li>
+<li><code>event.target.matches(".del")</code> Tells apart the ✕ button and the checkbox inside the same <code>&lt;li&gt;</code>. Clicking the text clicks the label, which the browser turns into a click on its checkbox.</li>
+<li><code>visible(todos, filter)</code> Filtering happens only at render time. The full list is never thrown away, so switching filters is instant.</li>
+</ul>
+
+<h3>Ideas to extend it</h3>
+<ul>
+<li>Double-click a task to edit its text.</li>
+<li>Add due dates and sort by them.</li>
+<li>Drag to reorder (look up the HTML Drag and Drop API).</li>
+</ul>
+</section>
+
+<section class="lesson" id="p-quiz" data-level="p" data-group="Projects">
+<header><span class="lvl p">Project 3</span><h2>Timed quiz game</h2>
+<p class="lede">A multiple-choice quiz with shuffled questions, a 15-second timer per question, instant feedback, a progress bar and a results screen with a review. The app moves through <b>screens</b> (question → feedback → next → results), and its state decides what to show.</p>
+<div class="proj-meta"><span>⏱ about 45 minutes</span><span>Uses: arrays, shuffling, setInterval, state, DOM</span></div></header>
+
+<h3>What you'll build</h3>
+<ul class="feat">
+<li>Questions in a random order every game</li>
+<li>Countdown timer; time out counts as wrong</li>
+<li>Right/wrong colors and an explanation</li>
+<li>Score, verdict and answer review at the end</li>
+</ul>
+
+<h3>Build it step by step</h3>
+<ol class="steps">
+<li class="step"><h4>Questions as data</h4>
+<p>Keep content out of logic: each question is an object with the text, the choices, the index of the correct choice and a short explanation. Adding a question means adding data, not code.</p>
+<pre class="code" data-run>const QUESTIONS = [
+  { q: "Which keyword declares a constant?", choices: ["var", "let", "const", "fixed"], answer: 2,
+    why: "const can't be reassigned." },
+  { q: "What does [1, 2, 3].map(n =&gt; n * 2) return?", choices: ["[2, 4, 6]", "6", "[1, 2, 3]", "undefined"], answer: 0,
+    why: "map returns a new array with each item transformed." },
+];
+
+// The scoring logic, separate from any screen:
+function score(questions, picks) {
+  return picks.filter((pick, i) =&gt; pick === questions[i].answer).length;
+}
+console.log(score(QUESTIONS, [2, 0]), "of", QUESTIONS.length);
+console.log(score(QUESTIONS, [1, 0]), "of", QUESTIONS.length);</pre></li>
+
+<li class="step"><h4>Shuffle fairly</h4>
+<p>The <b>Fisher–Yates shuffle</b> walks the array from the end, swapping each item with a random earlier one (or itself). Every order is equally likely. The popular shortcut <code>sort(() =&gt; Math.random() - 0.5)</code> is biased.</p>
+<pre class="code" data-run>function shuffle(array) {
+  const a = [...array];                          // don't change the original
+  for (let i = a.length - 1; i &gt; 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];                 // swap
+  }
+  return a;
+}
+console.log(shuffle([1, 2, 3, 4, 5]));
+
+// Check fairness: how often does each value land first?
+const counts = { 1: 0, 2: 0, 3: 0 };
+for (let k = 0; k &lt; 30000; k++) counts[shuffle([1, 2, 3])[0]]++;
+console.log(counts);   // all close to 10000</pre></li>
+
+<li class="step"><h4>Plan the state and the timer</h4>
+<p>The game needs: the shuffled questions (<code>order</code>), the current <code>index</code>, the <code>score</code>, a list of <code>answers</code> for the review, and the timer. <code>setInterval</code> ticks once a second; <b>always</b> <code>clearInterval</code> when an answer is given or a new question starts, or several timers will run at once. The functions map to moments in the game: <code>start</code>, <code>showQuestion</code>, <code>answer</code>, <code>next</code>, <code>finish</code>.</p></li>
+
+<li class="step" id="p-quiz-final"><h4>The finished quiz</h4>
+<pre class="code" data-run="page">&lt;div id="quiz"&gt;
+  &lt;div class="top"&gt;&lt;span id="progress"&gt;&lt;/span&gt;&lt;span id="timer"&gt;&lt;/span&gt;&lt;/div&gt;
+  &lt;div class="bar"&gt;&lt;i id="bar"&gt;&lt;/i&gt;&lt;/div&gt;
+  &lt;h2 id="question"&gt;&lt;/h2&gt;
+  &lt;div id="choices"&gt;&lt;/div&gt;
+  &lt;p id="feedback"&gt;&lt;/p&gt;
+  &lt;button id="next" hidden&gt;Next →&lt;/button&gt;
+&lt;/div&gt;
+&lt;div id="result" hidden&gt;
+  &lt;h2&gt;Your score: &lt;span id="score"&gt;&lt;/span&gt;&lt;/h2&gt;
+  &lt;p id="verdict"&gt;&lt;/p&gt;
+  &lt;ul id="review"&gt;&lt;/ul&gt;
+  &lt;button id="restart"&gt;Play again&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  const QUESTIONS = [
+    { q: "Which keyword declares a constant?", choices: ["var", "let", "const", "fixed"], answer: 2, why: "const can't be reassigned." },
+    { q: "What is typeof null?", choices: ['"null"', '"object"', '"undefined"', '"number"'], answer: 1, why: "A historical bug kept for compatibility." },
+    { q: "What does [1, 2, 3].map(n =&gt; n * 2) return?", choices: ["[2, 4, 6]", "6", "[1, 2, 3]", "undefined"], answer: 0, why: "map returns a new, transformed array." },
+    { q: "Which runs first?", choices: ["setTimeout(f, 0)", "Promise.resolve().then(f)"], answer: 1, why: "Microtasks (promises) run before timer tasks." },
+    { q: 'What is "5" + 1?', choices: ["6", '"51"', "NaN", "TypeError"], answer: 1, why: "+ with a string joins strings." },
+    { q: "How do you stop a form reloading the page?", choices: ["return false", "event.stop()", "event.preventDefault()", "form.cancel()"], answer: 2, why: "preventDefault cancels the browser's default action." },
+  ];
+  const TIME = 15;
+  const $ = s =&gt; document.querySelector(s);
+  let order, index, score, answers, timerId, secondsLeft;
+
+  function shuffle(array) {
+    const a = [...array];
+    for (let i = a.length - 1; i &gt; 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function start() {
+    order = shuffle(QUESTIONS);
+    index = 0; score = 0; answers = [];
+    $("#quiz").hidden = false;
+    $("#result").hidden = true;
+    showQuestion();
+  }
+
+  function showQuestion() {
+    const q = order[index];
+    $("#progress").textContent = `Question ${index + 1} of ${order.length}`;
+    $("#bar").style.width = `${(index / order.length) * 100}%`;
+    $("#question").textContent = q.q;
+    $("#feedback").textContent = "";
+    $("#next").hidden = true;
+    $("#choices").replaceChildren(...q.choices.map((text, i) =&gt; {
+      const b = document.createElement("button");
+      b.textContent = text;
+      b.dataset.i = i;
+      return b;
+    }));
+
+    secondsLeft = TIME;
+    $("#timer").textContent = `⏱ ${secondsLeft}s`;
+    clearInterval(timerId);                       // never leave an old timer running
+    timerId = setInterval(() =&gt; {
+      secondsLeft--;
+      $("#timer").textContent = `⏱ ${secondsLeft}s`;
+      if (secondsLeft &lt;= 0) answer(-1);           // -1 means "no answer"
+    }, 1000);
+  }
+
+  function answer(choice) {
+    clearInterval(timerId);
+    const q = order[index];
+    const correct = choice === q.answer;
+    if (correct) score++;
+    answers.push({ q: q.q, correct, right: q.choices[q.answer] });
+
+    [...$("#choices").children].forEach((b, i) =&gt; {
+      b.disabled = true;
+      if (i === q.answer) b.classList.add("right");
+      else if (i === choice) b.classList.add("wrong");
+    });
+    const lead = choice === -1 ? "⏰ Time's up! " : correct ? "✅ Correct! " : "❌ Not quite. ";
+    $("#feedback").textContent = lead + q.why;
+    $("#next").textContent = index === order.length - 1 ? "See results" : "Next →";
+    $("#next").hidden = false;
+    $("#next").focus();
+  }
+
+  function next() {
+    index++;
+    if (index &lt; order.length) showQuestion();
+    else finish();
+  }
+
+  function finish() {
+    $("#quiz").hidden = true;
+    $("#result").hidden = false;
+    const pct = Math.round((score / order.length) * 100);
+    $("#score").textContent = `${score} / ${order.length} (${pct}%)`;
+    $("#verdict").textContent = pct === 100 ? "Perfect! 🏆" : pct &gt;= 60 ? "Nice work! 🎉" : "Keep practising 💪";
+    $("#review").replaceChildren(...answers.map(a =&gt; {
+      const li = document.createElement("li");
+      li.textContent = `${a.correct ? "✅" : "❌"} ${a.q} → ${a.right}`;
+      return li;
+    }));
+  }
+
+  $("#choices").addEventListener("click", event =&gt; {
+    const b = event.target.closest("button");
+    if (b &amp;&amp; !b.disabled) answer(Number(b.dataset.i));
+  });
+  $("#next").addEventListener("click", next);
+  $("#restart").addEventListener("click", start);
+  start();
+&lt;/script&gt;
+
+&lt;style&gt;
+  [hidden] { display: none !important; }
+  body { background: #1f1d17; color: white; }
+  #quiz, #result { max-width: 460px; margin: auto; }
+  .top { display: flex; justify-content: space-between; color: #bbb; font-size: .9em; }
+  .bar { height: 6px; background: #444; border-radius: 3px; margin: 6px 0 12px; }
+  .bar i { display: block; height: 100%; width: 0; background: #f7df1e; border-radius: 3px; transition: width .3s; }
+  h2 { font-size: 1.25em; }
+  #choices { display: grid; gap: 8px; }
+  #choices button { font: inherit; text-align: left; padding: 10px 12px; border-radius: 10px; border: 2px solid #555; background: #2b2820; color: white; cursor: pointer; }
+  #choices button:hover:not(:disabled) { border-color: #f7df1e; }
+  #choices .right { border-color: #2f9e44; background: #1d3b26; }
+  #choices .wrong { border-color: #e03131; background: #3d1d1d; }
+  #next, #restart { margin-top: 10px; font: inherit; font-weight: 700; padding: 8px 16px; border: 0; border-radius: 10px; background: #f7df1e; cursor: pointer; }
+  #review { padding-left: 0; list-style: none; line-height: 1.8; }
+&lt;/style&gt;</pre></li>
+</ol>
+
+<h3>How the code works</h3>
+<ul class="walk">
+<li><code>let order, index, score, answers, timerId, secondsLeft</code> All game state in one place. <code>start()</code> resets every one of them, which makes "Play again" trivial.</li>
+<li><code>clearInterval(timerId)</code> in <code>showQuestion</code> and <code>answer</code> Guarantees at most one timer. Forgetting this is the classic timer bug: the countdown speeds up each round.</li>
+<li><code>answer(-1)</code> A timeout is handled by the same function as a click, with an impossible choice, so there's one code path for "the question is over".</li>
+<li><code>b.disabled = true</code> Locks the answer. The click listener also checks <code>!b.disabled</code>, so double clicks can't score twice.</li>
+<li><code>$("#next").focus()</code> Keyboard users can press Enter to continue: small accessibility wins add up.</li>
+<li><code>[hidden] { display: none !important }</code> Makes the <code>hidden</code> attribute win even if other CSS sets <code>display</code>.</li>
+</ul>
+
+<h3>Ideas to extend it</h3>
+<ul>
+<li>Load questions from a JSON file with <code>fetch</code>.</li>
+<li>Give bonus points for fast answers (use <code>secondsLeft</code>).</li>
+<li>Keep a high score in <code>localStorage</code>.</li>
+</ul>
+</section>
+
+<section class="lesson" id="p-expense" data-level="p" data-group="Projects">
+<header><span class="lvl p">Project 4</span><h2>Expense tracker with a chart</h2>
+<p class="lede">Track spending by category: a form with validation, a sortable table, totals, and a bar chart drawn with plain HTML and CSS. This project is mostly about <b>data</b>: grouping and summing with <code>reduce</code>, money in cents, and turning numbers into a picture.</p>
+<div class="proj-meta"><span>⏱ about 60 minutes</span><span>Uses: reduce, objects as maps, FormData, validation, CSS bars, localStorage</span></div></header>
+
+<h3>What you'll build</h3>
+<ul class="feat">
+<li>Add expenses with description, amount and category</li>
+<li>Friendly validation messages</li>
+<li>Total, biggest category and entry count</li>
+<li>Bar chart by category, table with delete</li>
+</ul>
+
+<h3>Build it step by step</h3>
+<ol class="steps">
+<li class="step"><h4>Summarise the data</h4>
+<p>Store amounts as whole <b>cents</b>. One <code>reduce</code> builds an object of totals per category; sorting its entries gives the chart order, and each bar's width is its share of the grand total.</p>
+<pre class="code" data-run>const expenses = [
+  { id: 1, desc: "Groceries", cents: 5420, category: "Food" },
+  { id: 2, desc: "Bus pass", cents: 3000, category: "Transport" },
+  { id: 3, desc: "Cinema", cents: 1250, category: "Fun" },
+  { id: 4, desc: "Lunch", cents: 980, category: "Food" },
+];
+
+const total = expenses.reduce((sum, e) =&gt; sum + e.cents, 0);
+const byCategory = expenses.reduce((acc, e) =&gt; {
+  acc[e.category] = (acc[e.category] ?? 0) + e.cents;
+  return acc;
+}, {});
+const ranked = Object.entries(byCategory).sort((a, b) =&gt; b[1] - a[1]);
+
+console.log("total:", total / 100);
+console.log(byCategory);
+for (const [cat, cents] of ranked) {
+  const pct = (cents / total) * 100;
+  console.log(cat.padEnd(10), "█".repeat(Math.round(pct / 4)).padEnd(25), `${pct.toFixed(1)}%`);
+}</pre></li>
+
+<li class="step"><h4>Validate input</h4>
+<p>Never trust form data. <code>validate</code> returns a list of messages (empty means valid), so the page can show all problems at once. Keeping it a pure function means you can test it right here.</p>
+<pre class="code" data-run>const CATEGORIES = ["Food", "Transport", "Fun", "Bills", "Other"];
+
+function validate({ desc = "", amount = "", category = "" }) {
+  const errors = [];
+  if (!desc.trim()) errors.push("Add a description.");
+  const n = Number(amount);
+  if (amount === "" || !Number.isFinite(n) || n &lt;= 0) errors.push("Amount must be a number above 0.");
+  else if (!/^\d+(\.\d{1,2})?$/.test(amount.trim())) errors.push("Use at most 2 decimals.");
+  if (!CATEGORIES.includes(category)) errors.push("Pick a category.");
+  return errors;
+}
+
+console.log(validate({ desc: "Coffee", amount: "3.5", category: "Food" }));   // []
+console.log(validate({ desc: " ", amount: "-2", category: "Toys" }));
+console.log(validate({ desc: "Tea", amount: "1.999", category: "Food" }));</pre></li>
+
+<li class="step" id="p-expense-final"><h4>The finished tracker</h4>
+<p>The page reads the form with <code>new FormData(form)</code>, validates, adds the expense and re-renders the summary, chart and table from the array. Bars are <code>&lt;i&gt;</code> elements whose <code>width</code> is a percentage, which is all a bar chart needs.</p>
+<pre class="code" data-run="page">&lt;div class="app"&gt;
+  &lt;h2&gt;Expense tracker&lt;/h2&gt;
+  &lt;form id="form" novalidate&gt;
+    &lt;input name="desc" placeholder="Description" maxlength="40"&gt;
+    &lt;input name="amount" type="number" step="0.01" placeholder="Amount"&gt;
+    &lt;select name="category"&gt;
+      &lt;option value=""&gt;Category…&lt;/option&gt;
+      &lt;option&gt;Food&lt;/option&gt;&lt;option&gt;Transport&lt;/option&gt;&lt;option&gt;Fun&lt;/option&gt;&lt;option&gt;Bills&lt;/option&gt;&lt;option&gt;Other&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;button&gt;Add&lt;/button&gt;
+  &lt;/form&gt;
+  &lt;ul id="errors"&gt;&lt;/ul&gt;
+  &lt;div class="summary"&gt;
+    &lt;div&gt;&lt;small&gt;Total spent&lt;/small&gt;&lt;b id="total"&gt;&lt;/b&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;small&gt;Biggest category&lt;/small&gt;&lt;b id="biggest"&gt;&lt;/b&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;small&gt;Entries&lt;/small&gt;&lt;b id="count"&gt;&lt;/b&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div id="chart"&gt;&lt;/div&gt;
+  &lt;table&gt;
+    &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Description&lt;/th&gt;&lt;th&gt;Category&lt;/th&gt;&lt;th class="num"&gt;Amount&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+    &lt;tbody id="rows"&gt;&lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  const KEY = "expenses-v1";
+  const COLORS = { Food: "#f59f00", Transport: "#1c7ed6", Fun: "#d6336c", Bills: "#2f9e44", Other: "#868e96" };
+  const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+  const $ = s =&gt; document.querySelector(s);
+
+  let expenses = JSON.parse(localStorage.getItem(KEY) ?? "null") ?? [
+    { id: 1, desc: "Groceries", cents: 5420, category: "Food" },
+    { id: 2, desc: "Bus pass", cents: 3000, category: "Transport" },
+    { id: 3, desc: "Cinema", cents: 1250, category: "Fun" },
+    { id: 4, desc: "Electricity", cents: 6400, category: "Bills" },
+  ];
+
+  function validate({ desc, amount, category }) {
+    const errors = [];
+    if (!desc.trim()) errors.push("Add a description.");
+    const n = Number(amount);
+    if (amount === "" || !Number.isFinite(n) || n &lt;= 0) errors.push("Amount must be a number above 0.");
+    if (!(category in COLORS)) errors.push("Pick a category.");
+    return errors;
+  }
+
+  const totalsByCategory = list =&gt; list.reduce((acc, e) =&gt; {
+    acc[e.category] = (acc[e.category] ?? 0) + e.cents;
+    return acc;
+  }, {});
+
+  function render() {
+    localStorage.setItem(KEY, JSON.stringify(expenses));
+    const total = expenses.reduce((s, e) =&gt; s + e.cents, 0);
+    const ranked = Object.entries(totalsByCategory(expenses)).sort((a, b) =&gt; b[1] - a[1]);
+
+    $("#total").textContent = money.format(total / 100);
+    $("#biggest").textContent = ranked.length ? ranked[0][0] : "–";
+    $("#count").textContent = expenses.length;
+
+    $("#chart").replaceChildren(...ranked.map(([cat, cents]) =&gt; {
+      const pct = (cents / total) * 100;
+      const row = document.createElement("div");
+      row.className = "bar";
+      row.innerHTML = `&lt;span&gt;${cat}&lt;/span&gt;&lt;i style="width:${pct}%; background:${COLORS[cat]}"&gt;&lt;/i&gt;
+                       &lt;b&gt;${money.format(cents / 100)} · ${Math.round(pct)}%&lt;/b&gt;`;
+      return row;
+    }));
+
+    $("#rows").replaceChildren(...expenses.toSorted((a, b) =&gt; b.cents - a.cents).map(e =&gt; {
+      const tr = document.createElement("tr");
+      tr.dataset.id = e.id;
+      tr.innerHTML = `&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="dot" style="background:${COLORS[e.category]}"&gt;&lt;/span&gt;${e.category}&lt;/td&gt;
+                      &lt;td class="num"&gt;${money.format(e.cents / 100)}&lt;/td&gt;&lt;td&gt;&lt;button class="del" aria-label="Delete"&gt;✕&lt;/button&gt;&lt;/td&gt;`;
+      tr.querySelector("td").textContent = e.desc;      // user text: textContent
+      return tr;
+    }));
+  }
+
+  $("#form").addEventListener("submit", event =&gt; {
+    event.preventDefault();
+    const form = event.target;
+    const data = Object.fromEntries(new FormData(form));
+    const errors = validate(data);
+    $("#errors").replaceChildren(...errors.map(msg =&gt; Object.assign(document.createElement("li"), { textContent: msg })));
+    if (errors.length) return;
+
+    const id = Math.max(0, ...expenses.map(e =&gt; e.id)) + 1;
+    expenses = [...expenses, { id, desc: data.desc.trim(), cents: Math.round(Number(data.amount) * 100), category: data.category }];
+    form.reset();
+    form.desc.focus();
+    render();
+  });
+
+  $("#rows").addEventListener("click", event =&gt; {
+    if (!event.target.matches(".del")) return;
+    const id = Number(event.target.closest("tr").dataset.id);
+    expenses = expenses.filter(e =&gt; e.id !== id);
+    render();
+  });
+
+  render();
+&lt;/script&gt;
+
+&lt;style&gt;
+  body { background: #f4f1e8; }
+  .app { max-width: 560px; margin: auto; background: white; border-radius: 16px; padding: 18px; box-shadow: 0 6px 24px #0002; }
+  h2 { margin: 0 0 10px; }
+  form { display: grid; grid-template-columns: 2fr 1fr 1.3fr auto; gap: 6px; }
+  input, select, button { font: inherit; padding: 7px; border: 2px solid #ddd; border-radius: 8px; min-width: 0; }
+  button { cursor: pointer; background: #1f1d17; color: #f7df1e; border-color: #1f1d17; }
+  #errors { color: crimson; margin: 6px 0; padding-left: 18px; }
+  .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin: 10px 0; }
+  .summary div { background: #f4f1e8; border-radius: 10px; padding: 8px 10px; display: grid; }
+  .summary small { color: #666; }
+  .summary b { font-size: 1.2em; }
+  .bar { display: grid; grid-template-columns: 80px 1fr auto; align-items: center; gap: 8px; margin: 5px 0; font-size: .9em; }
+  .bar i { height: 14px; border-radius: 7px; transition: width .4s; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: .92em; }
+  th, td { text-align: left; padding: 6px; border-bottom: 1px solid #eee; }
+  .num { text-align: right; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+  .del { background: none; border: 0; color: #c00; padding: 0 4px; }
+  @media (max-width: 480px) { form { grid-template-columns: 1fr 1fr; } }
+&lt;/style&gt;</pre></li>
+</ol>
+
+<h3>How the code works</h3>
+<ul class="walk">
+<li><code>JSON.parse(localStorage.getItem(KEY) ?? "null") ?? [...]</code> If nothing is saved, <code>getItem</code> returns <code>null</code>; parsing <code>"null"</code> gives <code>null</code>, and the second <code>??</code> falls back to sample data.</li>
+<li><code>Object.fromEntries(new FormData(form))</code> Turns every named field into one object: <code>{ desc, amount, category }</code>. Add a field to the HTML and it appears here automatically.</li>
+<li><code>novalidate</code> on the form Turns off the browser's own popups so your <code>validate()</code> messages are the only ones, styled your way.</li>
+<li><code>Math.round(Number(data.amount) * 100)</code> Converts dollars to cents once, at the edge. Everything inside the app is integer cents.</li>
+<li><code>toSorted((a, b) =&gt; b.cents - a.cents)</code> Sorts a copy for display, leaving the stored order alone.</li>
+<li><code>style="width:${pct}%"</code> A bar chart is just widths. <code>transition: width .4s</code> animates bars when the numbers change.</li>
+</ul>
+
+<h3>Ideas to extend it</h3>
+<ul>
+<li>Add a month filter using a date field and <code>Intl.DateTimeFormat</code>.</li>
+<li>Click a column header to sort by it.</li>
+<li>Export the table as CSV with <code>Blob</code> and a download link.</li>
+</ul>
+</section>
+
+<section class="lesson" id="p-weather" data-level="p" data-group="Projects">
+<header><span class="lvl p">Project 5</span><h2>Weather app with a real API</h2>
+<p class="lede">Search any city and see the current weather and a 5-day forecast, using the free <a href="https://open-meteo.com">Open-Meteo</a> API (no key needed). This is <code>async</code>/<code>await</code> in practice: chaining two requests, showing loading and error states, and ignoring answers that arrive too late. It needs an internet connection.</p>
+<div class="proj-meta"><span>⏱ about 60 minutes</span><span>Uses: fetch, async/await, URL, error handling, Intl dates</span></div></header>
+
+<h3>What you'll build</h3>
+<ul class="feat">
+<li>City search turned into coordinates (geocoding)</li>
+<li>Current temperature, feels-like, wind, humidity</li>
+<li>5-day forecast cards with icons</li>
+<li>Loading, "not found" and network-error states</li>
+</ul>
+
+<h3>Build it step by step</h3>
+<ol class="steps">
+<li class="step"><h4>Find a city's coordinates</h4>
+<p>Weather APIs want latitude and longitude, so first ask the geocoding API. Build the URL with <code>URL</code> and <code>searchParams</code>: they encode spaces and accents for you. If the city doesn't exist, the response simply has no <code>results</code>.</p>
+<pre class="code" data-run>async function geocode(city) {
+  const url = new URL("https://geocoding-api.open-meteo.com/v1/search");
+  url.searchParams.set("name", city);
+  url.searchParams.set("count", 1);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Geocoding failed (HTTP ${res.status})`);
+  const data = await res.json();
+  if (!data.results?.length) throw new Error(`No place called "${city}"`);
+  const { name, country, latitude, longitude } = data.results[0];
+  return { name, country, latitude, longitude };
+}
+
+console.log(await geocode("São Paulo"));
+try {
+  await geocode("Xyzzyville");
+} catch (err) {
+  console.log("Error:", err.message);
+}</pre></li>
+
+<li class="step"><h4>Get the forecast</h4>
+<p>The forecast API takes the coordinates and a list of the values you want. <code>timezone=auto</code> makes the days local to the city. The daily data comes back as <b>parallel arrays</b> (one array of dates, one of maximums…), so zip them into one object per day with <code>map</code>.</p>
+<pre class="code" data-run>async function forecast({ latitude, longitude }) {
+  const url = new URL("https://api.open-meteo.com/v1/forecast");
+  url.search = new URLSearchParams({
+    latitude, longitude,
+    current: "temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m",
+    daily: "weather_code,temperature_2m_max,temperature_2m_min",
+    timezone: "auto",
+    forecast_days: 5,
+  });
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Forecast failed (HTTP ${res.status})`);
+  const data = await res.json();
+  const days = data.daily.time.map((date, i) =&gt; ({
+    date,
+    code: data.daily.weather_code[i],
+    max: data.daily.temperature_2m_max[i],
+    min: data.daily.temperature_2m_min[i],
+  }));
+  return { current: data.current, days };
+}
+
+const result = await forecast({ latitude: 48.85, longitude: 2.35 });   // Paris
+console.log(result.current);
+console.table(result.days);</pre></li>
+
+<li class="step"><h4>Turn weather codes into words and icons</h4>
+<p>The API describes weather with WMO code numbers. A small table of ranges maps each code to a label and an emoji. It's data again, so the rest of the code never needs to know the numbers.</p>
+<pre class="code" data-run>const WEATHER = [
+  [0, "Clear sky", "☀️"], [1, "Mainly clear", "🌤️"], [2, "Partly cloudy", "⛅"], [3, "Overcast", "☁️"],
+  [48, "Fog", "🌫️"], [57, "Drizzle", "🌦️"], [67, "Rain", "🌧️"], [77, "Snow", "🌨️"],
+  [82, "Rain showers", "🌦️"], [86, "Snow showers", "🌨️"], [99, "Thunderstorm", "⛈️"],
+];
+// each row means "codes up to this number"
+const describe = code =&gt; {
+  const [, label, icon] = WEATHER.find(([max]) =&gt; code &lt;= max) ?? [0, "Unknown", "❓"];
+  return { label, icon };
+};
+for (const code of [0, 2, 45, 63, 75, 95]) console.log(code, describe(code));</pre></li>
+
+<li class="step" id="p-weather-final"><h4>The finished app</h4>
+<p><code>search()</code> shows "Loading…", awaits both requests, then renders, all inside <code>try/catch/finally</code> so the button is always re-enabled. A request counter makes sure that if you search twice quickly, only the <b>latest</b> answer is shown.</p>
+<pre class="code" data-run="page">&lt;div class="app"&gt;
+  &lt;form id="search"&gt;
+    &lt;input id="city" value="Tokyo" placeholder="Search a city" autocomplete="off"&gt;
+    &lt;button id="go"&gt;Search&lt;/button&gt;
+  &lt;/form&gt;
+  &lt;p id="status"&gt;&lt;/p&gt;
+  &lt;section id="current" hidden&gt;
+    &lt;div class="big"&gt;&lt;span id="icon"&gt;&lt;/span&gt;&lt;b id="temp"&gt;&lt;/b&gt;&lt;/div&gt;
+    &lt;div&gt;
+      &lt;h2 id="place"&gt;&lt;/h2&gt;
+      &lt;p id="desc"&gt;&lt;/p&gt;
+      &lt;p id="details"&gt;&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+  &lt;div id="days"&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  const WEATHER = [
+    [0, "Clear sky", "☀️"], [1, "Mainly clear", "🌤️"], [2, "Partly cloudy", "⛅"], [3, "Overcast", "☁️"],
+    [48, "Fog", "🌫️"], [57, "Drizzle", "🌦️"], [67, "Rain", "🌧️"], [77, "Snow", "🌨️"],
+    [82, "Rain showers", "🌦️"], [86, "Snow showers", "🌨️"], [99, "Thunderstorm", "⛈️"],
+  ];
+  const describe = code =&gt; {
+    const [, label, icon] = WEATHER.find(([max]) =&gt; code &lt;= max) ?? [0, "Unknown", "❓"];
+    return { label, icon };
+  };
+  const $ = s =&gt; document.querySelector(s);
+  const dayName = new Intl.DateTimeFormat("en", { weekday: "short", timeZone: "UTC" });
+
+  async function getJSON(url) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`The weather service answered ${res.status}`);
+    return res.json();
+  }
+
+  async function geocode(city) {
+    const url = new URL("https://geocoding-api.open-meteo.com/v1/search");
+    url.search = new URLSearchParams({ name: city, count: 1 });
+    const data = await getJSON(url);
+    if (!data.results?.length) throw new Error(`No place called "${city}".`);
+    return data.results[0];
+  }
+
+  async function forecast(place) {
+    const url = new URL("https://api.open-meteo.com/v1/forecast");
+    url.search = new URLSearchParams({
+      latitude: place.latitude, longitude: place.longitude, timezone: "auto", forecast_days: 5,
+      current: "temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m",
+      daily: "weather_code,temperature_2m_max,temperature_2m_min",
+    });
+    return getJSON(url);
+  }
+
+  function render(place, data) {
+    const c = data.current, now = describe(c.weather_code);
+    $("#icon").textContent = now.icon;
+    $("#temp").textContent = `${Math.round(c.temperature_2m)}°`;
+    $("#place").textContent = `${place.name}, ${place.country ?? ""}`;
+    $("#desc").textContent = now.label;
+    $("#details").textContent = `Feels like ${Math.round(c.apparent_temperature)}° · Wind ${Math.round(c.wind_speed_10m)} km/h · Humidity ${c.relative_humidity_2m}%`;
+    $("#current").hidden = false;
+
+    $("#days").replaceChildren(...data.daily.time.map((date, i) =&gt; {
+      const d = describe(data.daily.weather_code[i]);
+      const card = document.createElement("div");
+      card.className = "day";
+      card.title = d.label;
+      card.innerHTML = `&lt;small&gt;${i === 0 ? "Today" : dayName.format(new Date(date))}&lt;/small&gt;
+        &lt;span&gt;${d.icon}&lt;/span&gt;&lt;b&gt;${Math.round(data.daily.temperature_2m_max[i])}°&lt;/b&gt;
+        &lt;small&gt;${Math.round(data.daily.temperature_2m_min[i])}°&lt;/small&gt;`;
+      return card;
+    }));
+  }
+
+  let latest = 0;                                  // id of the newest search
+  async function search(city) {
+    const id = ++latest;
+    $("#status").textContent = `Loading weather for ${city}…`;
+    $("#go").disabled = true;
+    try {
+      const place = await geocode(city);
+      const data = await forecast(place);
+      if (id !== latest) return;                   // a newer search started: drop this one
+      render(place, data);
+      $("#status").textContent = "";
+      console.log("updated", place.name, data.current.time);
+    } catch (err) {
+      if (id !== latest) return;
+      $("#status").textContent = err instanceof TypeError ? "Network problem: are you online?" : err.message;
+      $("#current").hidden = true;
+      $("#days").replaceChildren();
+    } finally {
+      if (id === latest) $("#go").disabled = false;
+    }
+  }
+
+  $("#search").addEventListener("submit", event =&gt; {
+    event.preventDefault();
+    const city = $("#city").value.trim();
+    if (city) search(city);
+  });
+  search($("#city").value);
+&lt;/script&gt;
+
+&lt;style&gt;
+  [hidden] { display: none !important; }
+  body { background: linear-gradient(160deg, #1c7ed6, #5f3dc4); color: white; min-height: 330px; }
+  .app { max-width: 480px; margin: auto; }
+  form { display: flex; gap: 6px; }
+  input { flex: 1; font: inherit; padding: 9px 12px; border-radius: 10px; border: 0; }
+  button { font: inherit; font-weight: 700; padding: 9px 14px; border-radius: 10px; border: 0; background: #f7df1e; cursor: pointer; }
+  button:disabled { opacity: .6; }
+  #status { min-height: 1.4em; }
+  #current { display: flex; gap: 18px; align-items: center; background: #ffffff22; border-radius: 16px; padding: 12px 16px; }
+  .big { display: grid; justify-items: center; font-size: 2.4em; line-height: 1.1; }
+  #current h2 { margin: 0; font-size: 1.2em; }
+  #current p { margin: 2px 0; opacity: .9; font-size: .92em; }
+  #days { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 10px; }
+  .day { background: #ffffff22; border-radius: 12px; padding: 8px 4px; display: grid; justify-items: center; gap: 2px; }
+  .day span { font-size: 1.6em; }
+&lt;/style&gt;</pre></li>
+</ol>
+
+<h3>How the code works</h3>
+<ul class="walk">
+<li><code>getJSON(url)</code> One helper owns "fetch, check <code>res.ok</code>, parse". Both API calls reuse it, so an HTTP error can't slip through either.</li>
+<li><code>data.results?.length</code> Optional chaining: if <code>results</code> is missing (no match) the expression is <code>undefined</code>, which is falsy, so we throw a friendly error instead of crashing.</li>
+<li><code>let latest = 0</code> and <code>if (id !== latest) return</code> Requests can finish in any order. Each search remembers its number and only the newest one may touch the page.</li>
+<li><code>err instanceof TypeError</code> <code>fetch</code> rejects with a TypeError when the network fails; our own errors are plain Errors with messages meant for people.</li>
+<li><code>finally</code> Runs after success and failure alike, so the button can never get stuck disabled.</li>
+<li><code>timeZone: "UTC"</code> on the day formatter The API's dates (<code>"2026-11-26"</code>) are parsed as UTC midnight; formatting in UTC keeps the weekday right in every time zone.</li>
+</ul>
+
+<h3>Ideas to extend it</h3>
+<ul>
+<li>Add a °C / °F toggle (the API accepts <code>temperature_unit=fahrenheit</code>).</li>
+<li>Use <code>navigator.geolocation</code> to show the weather where you are.</li>
+<li>Show an hourly temperature line for today with an SVG <code>&lt;polyline&gt;</code>.</li>
+</ul>
+</section>
+
+<section class="lesson" id="p-memory" data-level="p" data-group="Projects">
+<header><span class="lvl p">Project 6</span><h2>Memory card game</h2>
+<p class="lede">Flip two cards; if they match they stay up, otherwise they flip back. Find all 8 pairs in as few moves as possible. You'll keep the <b>game rules</b> in plain functions that know nothing about the page, and let the page only draw the state and forward clicks. The same split is used by real games.</p>
+<div class="proj-meta"><span>⏱ about 60 minutes</span><span>Uses: shuffling, state machines, setTimeout, CSS 3D transforms</span></div></header>
+
+<h3>What you'll build</h3>
+<ul class="feat">
+<li>A shuffled 4×4 grid of emoji pairs</li>
+<li>Flip animation with CSS</li>
+<li>Board locks while a wrong pair is showing</li>
+<li>Moves counter, timer, win message, new game</li>
+</ul>
+
+<h3>Build it step by step</h3>
+<ol class="steps">
+<li class="step"><h4>Build a shuffled deck</h4>
+<p>Each symbol appears twice (<code>flatMap</code> doubles the list), then the Fisher–Yates shuffle from the quiz project mixes them. Each card gets an id and a <code>matched</code> flag.</p>
+<pre class="code" data-run>const SYMBOLS = ["🍎", "🍌", "🍇", "🍉", "🍒", "🥝", "🍍", "🥥"];
+
+function shuffle(array) {
+  const a = [...array];
+  for (let i = a.length - 1; i &gt; 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const createDeck = symbols =&gt;
+  shuffle(symbols.flatMap(s =&gt; [s, s])).map((symbol, id) =&gt; ({ id, symbol, matched: false }));
+
+const deck = createDeck(SYMBOLS);
+console.log(deck.length, "cards");
+for (let row = 0; row &lt; 4; row++) console.log(deck.slice(row * 4, row * 4 + 4).map(c =&gt; c.symbol).join(" "));</pre></li>
+
+<li class="step"><h4>Write the rules as a state machine</h4>
+<p><code>handleClick(state, i)</code> applies the rules and returns what happened: <code>"ignore"</code>, <code>"first"</code>, <code>"match"</code>, <code>"miss"</code> or <code>"win"</code>. After a miss the board is <code>locked</code> until <code>hideMiss()</code> flips the two cards back. Simulate a game in the console before drawing anything.</p>
+<pre class="code" data-run>function newGame(deck) {
+  return { deck, first: null, second: null, locked: false, moves: 0 };
+}
+
+function handleClick(state, i) {
+  const card = state.deck[i];
+  if (state.locked || card.matched || i === state.first) return "ignore";
+  if (state.first === null) { state.first = i; return "first"; }
+
+  state.second = i;
+  state.moves++;
+  const other = state.deck[state.first];
+  if (other.symbol === card.symbol) {
+    other.matched = card.matched = true;
+    state.first = state.second = null;
+    return state.deck.every(c =&gt; c.matched) ? "win" : "match";
+  }
+  state.locked = true;                        // two wrong cards stay visible for a moment
+  return "miss";
+}
+
+function hideMiss(state) {
+  state.first = state.second = null;
+  state.locked = false;
+}
+
+// A tiny fixed deck so the result is predictable
+const deck = ["A", "B", "A", "B"].map((symbol, id) =&gt; ({ id, symbol, matched: false }));
+const game = newGame(deck);
+console.log(handleClick(game, 0));   // first
+console.log(handleClick(game, 1));   // miss (A vs B)
+console.log(handleClick(game, 2));   // ignore: board is locked
+hideMiss(game);
+console.log(handleClick(game, 0), handleClick(game, 2));   // first, match
+console.log(handleClick(game, 1), handleClick(game, 3));   // first, win
+console.log("moves:", game.moves);</pre></li>
+
+<li class="step" id="p-memory-final"><h4>The finished game</h4>
+<p>The page draws one <code>&lt;button&gt;</code> per card with a front and back face; the CSS class <code>flipped</code> rotates it 180° in 3D. A click calls <code>handleClick</code>, then <code>render()</code>; on a miss, <code>setTimeout</code> waits 800 ms before <code>hideMiss</code>. The timer starts on the first flip and stops on a win.</p>
+<pre class="code" data-run="page">&lt;div class="hud"&gt;
+  &lt;span&gt;Moves: &lt;b id="moves"&gt;0&lt;/b&gt;&lt;/span&gt;
+  &lt;span&gt;Time: &lt;b id="time"&gt;0:00&lt;/b&gt;&lt;/span&gt;
+  &lt;button id="new"&gt;New game&lt;/button&gt;
+&lt;/div&gt;
+&lt;div id="board"&gt;&lt;/div&gt;
+&lt;p id="message"&gt;&lt;/p&gt;
+
+&lt;script&gt;
+  const SYMBOLS = ["🍎", "🍌", "🍇", "🍉", "🍒", "🥝", "🍍", "🥥"];
+  const $ = s =&gt; document.querySelector(s);
+  let game, timerId, startedAt;
+
+  function shuffle(array) {
+    const a = [...array];
+    for (let i = a.length - 1; i &gt; 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  const createDeck = symbols =&gt;
+    shuffle(symbols.flatMap(s =&gt; [s, s])).map((symbol, id) =&gt; ({ id, symbol, matched: false }));
+
+  // ---- rules (no DOM here) ----
+  function handleClick(state, i) {
+    const card = state.deck[i];
+    if (state.locked || card.matched || i === state.first) return "ignore";
+    if (state.first === null) { state.first = i; return "first"; }
+    state.second = i;
+    state.moves++;
+    const other = state.deck[state.first];
+    if (other.symbol === card.symbol) {
+      other.matched = card.matched = true;
+      state.first = state.second = null;
+      return state.deck.every(c =&gt; c.matched) ? "win" : "match";
+    }
+    state.locked = true;
+    return "miss";
+  }
+  function hideMiss(state) { state.first = state.second = null; state.locked = false; }
+
+  // ---- page ----
+  function render() {
+    [...$("#board").children].forEach((btn, i) =&gt; {
+      const c = game.deck[i];
+      btn.classList.toggle("flipped", c.matched || i === game.first || i === game.second);
+      btn.classList.toggle("matched", c.matched);
+    });
+    $("#moves").textContent = game.moves;
+  }
+
+  function tick() {
+    const s = Math.floor((Date.now() - startedAt) / 1000);
+    $("#time").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  }
+
+  function start() {
+    clearInterval(timerId);
+    timerId = null;
+    game = { deck: createDeck(SYMBOLS), first: null, second: null, locked: false, moves: 0 };
+    $("#board").replaceChildren(...game.deck.map(c =&gt; {
+      const btn = document.createElement("button");
+      btn.className = "card";
+      btn.setAttribute("aria-label", "Hidden card");
+      btn.innerHTML = `&lt;span class="face back"&gt;?&lt;/span&gt;&lt;span class="face front"&gt;${c.symbol}&lt;/span&gt;`;
+      return btn;
+    }));
+    $("#time").textContent = "0:00";
+    $("#message").textContent = "Find all 8 pairs!";
+    render();
+  }
+
+  $("#board").addEventListener("click", event =&gt; {
+    const btn = event.target.closest(".card");
+    if (!btn) return;
+    const i = [...$("#board").children].indexOf(btn);
+    const result = handleClick(game, i);
+    if (result === "ignore") return;
+
+    if (!timerId) { startedAt = Date.now(); timerId = setInterval(tick, 250); }
+    btn.setAttribute("aria-label", game.deck[i].symbol);
+    render();
+
+    if (result === "miss") {
+      setTimeout(() =&gt; { hideMiss(game); render(); }, 800);
+    } else if (result === "win") {
+      clearInterval(timerId);
+      tick();
+      $("#message").textContent = `🎉 You won in ${game.moves} moves and ${$("#time").textContent}!`;
+      console.log("win", { moves: game.moves, time: $("#time").textContent });
+    }
+  });
+
+  $("#new").addEventListener("click", start);
+  start();
+&lt;/script&gt;
+
+&lt;style&gt;
+  body { background: #1f1d17; color: white; }
+  .hud { display: flex; gap: 16px; align-items: center; justify-content: center; margin-bottom: 10px; }
+  .hud button { font: inherit; padding: 5px 12px; border-radius: 8px; border: 0; background: #f7df1e; cursor: pointer; }
+  #board { display: grid; grid-template-columns: repeat(4, 70px); gap: 8px; justify-content: center; }
+  .card { width: 70px; height: 70px; padding: 0; border: 0; background: none; cursor: pointer;
+          position: relative; transform-style: preserve-3d; transition: transform .35s; }
+  .card.flipped { transform: rotateY(180deg); cursor: default; }
+  .face { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 12px;
+          backface-visibility: hidden; font-size: 34px; }
+  .back { background: #3b372b; color: #f7df1e; font-weight: 800; border: 2px solid #f7df1e55; }
+  .front { background: white; transform: rotateY(180deg); }
+  .matched .front { background: #d3f9d8; }
+  #message { text-align: center; min-height: 1.4em; }
+&lt;/style&gt;</pre></li>
+</ol>
+
+<h3>How the code works</h3>
+<ul class="walk">
+<li><code>return "miss"</code> <code>handleClick</code> reports what happened as a word. The rules never touch the DOM, and the page never decides who matched. You could swap the page for a terminal version without changing a single rule.</li>
+<li><code>i === state.first</code> Clicking the same card twice is ignored, otherwise one card could "match itself".</li>
+<li><code>state.locked = true</code> While a wrong pair is visible, every click returns <code>"ignore"</code>. Without the lock, fast clickers could flip a third card.</li>
+<li><code>setTimeout(() =&gt; { hideMiss(game); render(); }, 800)</code> Gives the player time to remember both cards before they flip back.</li>
+<li><code>transform-style: preserve-3d</code> and <code>backface-visibility: hidden</code> The two faces sit back to back; rotating the button 180° hides one and shows the other.</li>
+<li><code>setInterval(tick, 250)</code> The clock is computed from <code>Date.now() - startedAt</code>, not by counting ticks, so it stays accurate even if the tab is busy.</li>
+</ul>
+
+<h3>Ideas to extend it</h3>
+<ul>
+<li>Difficulty levels: 4×3, 4×4, 6×6.</li>
+<li>Store the best score per level in <code>localStorage</code>.</li>
+<li>Keyboard play with arrow keys and Enter.</li>
+</ul>
+</section>
+
+<!-- ===================== REFERENCE ===================== -->
+<section class="lesson" id="cheatsheet" data-level="ref" data-group="Reference">
+<header><span class="lvl d">Quick reference</span><h2>Cheat sheet</h2>
+<p class="lede">Everything at a glance. The search box at the top filters these cards too.</p></header>
+<div class="cheat" id="cheat">
+<div class="cc"><h4>Basics</h4><pre class="mini">const x = 5; let n = 0;   // var: avoid
+typeof x; Array.isArray(a)
+Number("3") String(9) Boolean(0)
+parseInt("42px") parseFloat("3.5")
+`Hi ${name}`  // template literal
+// comment   /* block */</pre></div>
+<div class="cc"><h4>Operators</h4><pre class="mini">=== !==        // always use these
+a ?? b         // b if a is null/undefined
+a || b  a &amp;&amp; b // first truthy / falsy
+obj?.prop  fn?.()
+x ??= 1  x ||= 1  x &amp;&amp;= 2
+2 ** 10   7 % 3   i++   +="a"</pre></div>
+<div class="cc"><h4>Control flow</h4><pre class="mini">if (a) {} else if (b) {} else {}
+cond ? x : y
+switch (v) { case 1: ...; break; default: }
+for (let i = 0; i &lt; n; i++) {}
+for (const x of arr) {}
+for (const k in obj) {}
+while (c) {}  do {} while (c)
+break  continue</pre></div>
+<div class="cc"><h4>Strings</h4><pre class="mini">s.length s[0] s.at(-1)
+s.slice(1, 4) s.toUpperCase()
+s.includes(x) s.startsWith(x) s.indexOf(x)
+s.split(",") arr.join(", ")
+s.trim() s.padStart(5, "0") s.repeat(3)
+s.replace(a, b) s.replaceAll(a, b)</pre></div>
+<div class="cc"><h4>Arrays: change in place</h4><pre class="mini">a.push(x) a.pop() a.unshift(x) a.shift()
+a.splice(i, del, ...items)
+a.sort((x, y) =&gt; x - y) a.reverse()
+a.fill(0)  a.length = 0  // clear</pre></div>
+<div class="cc"><h4>Arrays: return new</h4><pre class="mini">a.map(f) a.filter(f) a.reduce(f, init)
+a.find(f) a.findIndex(f) a.some(f) a.every(f)
+a.includes(x) a.indexOf(x)
+a.slice(1, 3) a.concat(b) [...a, ...b]
+a.flat() a.flatMap(f)
+a.toSorted(f) a.toReversed() a.with(i, v)
+Array.from({ length: n }, (_, i) =&gt; i)</pre></div>
+<div class="cc"><h4>Objects</h4><pre class="mini">const o = { a, b: 2, [key]: v, m() {} }
+o.a  o["a"]  delete o.a  "a" in o
+Object.keys(o) values(o) entries(o)
+Object.fromEntries(pairs)
+{ ...o, b: 3 }   structuredClone(o)
+Object.freeze(o)  Object.hasOwn(o, k)</pre></div>
+<div class="cc"><h4>Destructuring</h4><pre class="mini">const [a, b, ...rest] = arr
+const { x, y: why = 0, ...others } = obj
+function f({ id, name = "?" } = {}) {}
+[a, b] = [b, a]   // swap</pre></div>
+<div class="cc"><h4>Functions</h4><pre class="mini">function f(a, b = 1, ...rest) { return a }
+const g = (a, b) =&gt; a + b
+const h = x =&gt; ({ value: x })  // object
+f.call(obj, 1)  f.bind(obj)
+const once = fn =&gt; { let done; ... }  // closure</pre></div>
+<div class="cc"><h4>Classes</h4><pre class="mini">class Dog extends Animal {
+  #secret = 1;  static count = 0;
+  constructor(name) { super(name); }
+  get label() { return this.name; }
+  speak() { return super.speak(); }
+}
+new Dog("Rex") instanceof Animal</pre></div>
+<div class="cc"><h4>Map &amp; Set</h4><pre class="mini">const m = new Map([["a", 1]])
+m.set(k, v) m.get(k) m.has(k) m.delete(k) m.size
+const s = new Set([1, 2])
+s.add(x) s.has(x) s.delete(x) s.size
+[...new Set(arr)]   // unique values</pre></div>
+<div class="cc"><h4>Errors</h4><pre class="mini">try { risky() }
+catch (err) { err.name; err.message }
+finally { cleanup() }
+throw new Error("msg", { cause: e })
+class MyError extends Error {}</pre></div>
+<div class="cc"><h4>Promises &amp; async</h4><pre class="mini">new Promise((resolve, reject) =&gt; {})
+p.then(f).catch(g).finally(h)
+Promise.all([...]) allSettled race any
+async function f() { const v = await p }
+const r = await fetch(url)
+if (!r.ok) throw ...; await r.json()</pre></div>
+<div class="cc"><h4>Timers &amp; event loop</h4><pre class="mini">const id = setTimeout(fn, ms); clearTimeout(id)
+const t = setInterval(fn, ms); clearInterval(t)
+queueMicrotask(fn)
+// order: sync code → microtasks → tasks</pre></div>
+<div class="cc"><h4>DOM</h4><pre class="mini">document.querySelector(".a")
+document.querySelectorAll("li")
+el.textContent = "safe"  el.innerHTML
+el.classList.add/remove/toggle("x")
+el.dataset.id  el.style.color = "red"
+document.createElement("li"); parent.append(el)
+el.remove()  parent.replaceChildren(...els)</pre></div>
+<div class="cc"><h4>Events</h4><pre class="mini">el.addEventListener("click", e =&gt; {})
+e.target  e.target.closest("li")
+e.preventDefault()  e.key
+form.addEventListener("submit", ...)
+Object.fromEntries(new FormData(form))
+input.addEventListener("input", ...)</pre></div>
+<div class="cc"><h4>JSON, storage, dates</h4><pre class="mini">JSON.stringify(v, null, 2) JSON.parse(s)
+localStorage.setItem(k, JSON.stringify(v))
+JSON.parse(localStorage.getItem(k))
+new Date(); Date.now(); d.toISOString()
+new Intl.DateTimeFormat("en", {...}).format(d)
+new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" })</pre></div>
+<div class="cc"><h4>Modules &amp; tools</h4><pre class="mini">export const a = 1; export default f
+import f, { a } from "./mod.js"
+const m = await import("./mod.js")
+npm init -y; npm install pkg
+npm create vite@latest; npm run dev
+node --test   npx eslint .</pre></div>
+<div class="cc"><h4>Common gotchas</h4><pre class="mini">[10, 1, 5].sort()     // string sort!
+0.1 + 0.2 !== 0.3     // use cents
+typeof null === "object"
+"5" + 1 === "51"
+obj.method passed as callback loses this
+forEach ignores await; use for...of
+fetch doesn't reject on 404: check r.ok
+new Date(2026, 0, 1)  // month 0 = Jan</pre></div>
+</div>
+</section>
+
+<footer>Built for learning. Console examples run in a Web Worker in your browser with an 8-second limit; page examples run in a sandboxed frame (their storage lasts until you leave this page). Examples that call APIs need an internet connection. Reference: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">MDN Web Docs</a>.</footer>
+</main>
+</div>
+<script src="course-data.js"></script>
+<script src="../../assets/course.js"></script>
+<script src="../../assets/jsts.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

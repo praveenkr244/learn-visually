@@ -27,6 +27,20 @@ window.TUTORIALS = [
     color: "var(--t3)"
   },
   {
+    id: "javascript",
+    label: "JavaScript",
+    note: "Beginner → Projects",
+    path: "tutorials/javascript/index.html",
+    color: "var(--t6)"
+  },
+  {
+    id: "typescript",
+    label: "TypeScript",
+    note: "Types → Projects",
+    path: "tutorials/typescript/index.html",
+    color: "var(--t7)"
+  },
+  {
     id: "mcp",
     label: "MCP",
     note: "Model Context Protocol",

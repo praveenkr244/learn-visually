@@ -17,13 +17,14 @@ python3 -m http.server 8000   # then open http://localhost:8000
 - Theme: the shell sends `{type: "lv-theme", theme}` to each iframe; `assets/embed.js` (loaded in every tutorial `<head>`) applies it as `data-theme` (`light`/`dark`) plus `data-palette` (`sepia`/`ocean`/`forest`, defined in `assets/palettes.css`). Saved in `localStorage` key `lv-theme`.
 - `assets/theme.css` is the user's global override file, loaded **last** everywhere. Keep it as commented-out examples; don't put real styles there.
 
-### Course mode (Java Strings, Java Arrays, Python)
+### Course mode (Java Strings, Java Arrays, Python, JavaScript, TypeScript)
 
 `assets/course.{js,css}` turns a long page into one lesson per screen with progress, a lesson menu, Remember boxes, practice and a quick check. Each page defines `window.COURSE` in its `course-data.js` (the header comment in `assets/course.js` documents the shape: `key`, `title`, `lang`, `parts`, `tag()`, `data`). Lesson ids in `data` must match the `id` of the `[data-lesson]` sections that `tag()` marks.
 
 Script order matters:
 - Java pages: `script.js` → `course-data.js` → `../../assets/course.js` → `../../assets/java-runner.js`
 - Python page: `course-data.js` → `../../assets/course.js` → `script.js` (which holds the Pyodide runner)
+- JavaScript / TypeScript pages: `course-data.js` → `../../assets/course.js` → `../../assets/jsts.js` → `script.js` (widgets only; they use the helpers `jsts.js` exposes as `window.LV`)
 
 MCP and Playwright tabs do **not** use course mode; they have their own `script.js`.
 
@@ -31,7 +32,8 @@ MCP and Playwright tabs do **not** use course mode; they have their own `script.
 
 - Java: `<pre class="jrun" data-title="…">` holding a full program with a non-public `class Main`. `assets/java-runner.js` adds Edit/Reset/Run and runs it on Compiler Explorer (godbolt.org, JDK 21), falling back to Wandbox.
 - Python: `<pre class="code" data-run>` gets a Run button; Pyodide loads from jsDelivr on first run.
-- Inside HTML code blocks escape `<` as `&lt;` and `&` as `&amp;`. In `course-data.js`, Python code uses `String.raw` (`R\`...\``) so backslashes survive.
+- JavaScript / TypeScript (`assets/jsts.js`, chosen by `<body data-lang="js|ts">`): `<pre class="code" data-run>` runs console code in a fresh Web Worker (8 s limit, Node-style `console` output); `<pre class="code" data-run="page">` holds a small HTML page that runs in a sandboxed iframe preview with its console forwarded. On the TypeScript page every Run first type-checks with the real compiler (TypeScript 5.8.3 from jsDelivr, `strict`, lib es2022, plus DOM types for page blocks); type errors stop the run. Examples meant to show an error must still be valid TypeScript otherwise; use `// @ts-expect-error` to demonstrate an error while still running, and never start an ordinary comment with `@ts-expect-error`.
+- Inside HTML code blocks escape `<` as `&lt;` and `&` as `&amp;` (a page block must not contain a literal `</pre>`). In `course-data.js`, code uses a raw tag (`R\`...\``) so backslashes survive; on the JavaScript and TypeScript pages `\`` and `\${` inside it become a real backtick and `${`.
 
 ## Conventions
 

@@ -1,0 +1,3038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TypeScript, Visually</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/jsts.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../assets/course.css">
+<link rel="stylesheet" href="../../assets/palettes.css">
+<link rel="stylesheet" href="../../assets/theme.css">
+<script src="../../assets/embed.js"></script>
+</head>
+<body data-lang="ts">
+<div class="top">
+  <div class="top-in">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="4" fill="#3178c6"/><path d="M18.3 15.3h-3.9V27h-2.9V15.3H7.6V13h10.7zm.6 10.6v-2.8c.5.4 1 .7 1.6.9.6.2 1.2.3 1.8.3.4 0 .7 0 1-.1l.7-.3.4-.4.1-.5c0-.3-.1-.5-.2-.7l-.6-.5-.9-.5-1.1-.5c-1-.4-1.7-.9-2.2-1.5-.5-.6-.7-1.3-.7-2.1 0-.6.1-1.2.4-1.6.2-.5.6-.8 1-1.1.4-.3.9-.5 1.5-.7.6-.1 1.2-.2 1.8-.2.6 0 1.2 0 1.7.1.5.1.9.2 1.4.4v2.7l-.7-.4-.8-.3-.8-.2h-.8c-.3 0-.6 0-.9.1l-.7.3-.4.4-.2.5c0 .2.1.4.2.6l.5.5.8.4 1 .5c.5.2 1 .5 1.4.7.4.3.8.5 1.1.8.3.3.5.7.7 1.1.2.4.2.9.2 1.4 0 .7-.1 1.2-.4 1.7-.3.5-.6.8-1.1 1.1-.4.3-1 .5-1.5.6-.6.1-1.2.2-1.9.2s-1.3-.1-1.9-.2c-.6-.1-1.1-.3-1.6-.5z" fill="#fff"/></svg>
+      TypeScript, Visually
+    </div>
+    <div class="search"><input id="q" type="search" placeholder="Search lessons and cheat sheet… (try “generic”, “union”, “Partial”)" aria-label="Search lessons"></div>
+    <div class="rtstat" title="Code is type-checked by the real TypeScript compiler in your browser, then compiled to JavaScript and run"><span class="dot" id="rtDot"></span><span id="rtText">TypeScript loads on first Run</span></div>
+  </div>
+</div>
+<div class="shell">
+<main id="main">
+
+<section class="hero" id="top">
+  <h1>Learn TypeScript by <span>watching the types</span></h1>
+  <p>TypeScript is JavaScript with a type checker that finds mistakes <b>before</b> your code runs. This path goes from your first type annotation to generics, mapped and conditional types, and ends with <b>six projects</b> you build step by step. Every <b>Run</b> button sends the code through the real TypeScript compiler in your browser: type errors are listed like in your editor, and code that passes is compiled to JavaScript and run. Press <b>JS</b> on any block to see what the compiler emits. It assumes you know basic JavaScript (see the JavaScript tab).</p>
+  <div class="road">
+    <a href="#why" style="--c:var(--good)"><b>1 · Basics</b><small>Types, inference, objects, functions, interfaces, unions, narrowing, classes</small></a>
+    <a href="#generics" style="--c:var(--warn)"><b>2 · Intermediate</b><small>Generics, utility types, structural typing, discriminated unions, unknown</small></a>
+    <a href="#keyof" style="--c:var(--adv)"><b>3 · Advanced</b><small>keyof, mapped, conditional and template literal types, type-safe patterns</small></a>
+    <a href="#p-grades" style="--c:var(--proj)"><b>4 · Projects</b><small>Grade book, bank, typed store, inventory, form validator, Pomodoro timer</small></a>
+  </div>
+  <figure class="viz play" id="playground" style="margin-top:22px">
+    <div class="viz-title">Playground: edit, type-check and run any TypeScript</div>
+    <textarea id="playCode" spellcheck="false" aria-label="TypeScript code">interface User {
+  name: string;
+  age: number;
+}
+
+function greet(user: User): string {
+  return `Hello, ${user.name}! Next year you'll be ${user.age + 1}.`;
+}
+
+console.log(greet({ name: "Ada", age: 36 }));
+// Try changing age to "36" and press Run.</textarea>
+    <div class="ctrl"><button class="btn pri" id="playRun">▶ Run</button><button class="btn" id="playClear">Clear output</button><span class="stp-count">Tip: Ctrl/⌘ + Enter runs. The first run downloads the compiler (≈1.6 MB).</span></div>
+    <pre class="console" id="playOut"></pre>
+  </figure>
+</section>
+
+<!-- ===================== BASICS ===================== -->
+<section class="lesson" id="why" data-level="b" data-group="Basics">
+<header><span class="lvl b">Basics</span><h2>Why TypeScript?</h2>
+<p class="lede">TypeScript adds <b>type annotations</b> to JavaScript. The TypeScript compiler (<code>tsc</code>) checks that values are used consistently, reports mistakes as you type, then <b>erases</b> the types and outputs plain JavaScript. At run time there is no TypeScript at all, only the JavaScript it produced.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Type erasure: press Compile</div>
+<div class="widget" data-w="erase"></div>
+<figcaption>Types exist only for the checker and your editor. That is why TypeScript can't check data that arrives while the program runs (like JSON from an API) by itself: you validate it with code.</figcaption>
+</figure>
+
+<pre class="code" data-run>// In JavaScript this bug only shows up when the code runs:
+function total(prices: number[]): number {
+  return prices.reduce((sum, p) =&gt; sum + p, 0);
+}
+
+console.log(total([4.5, 10, 2]));
+
+// Uncomment the next line and press Run: TypeScript stops it before it runs.
+// console.log(total(["4.5", "10"]));</pre>
+
+<pre class="code" data-run>// A typo JavaScript would happily run (printing undefined):
+const user = { firstName: "Ada", lastName: "Lovelace" };
+console.log(user.firstname);</pre>
+
+<div class="tbl"><table>
+<tr><th>You get</th><th>Because</th></tr>
+<tr><td>Errors before running</td><td>Typos, wrong argument types, missing properties, possibly-undefined values</td></tr>
+<tr><td>Great editor help</td><td>Autocomplete, go-to-definition, safe renames, inline docs</td></tr>
+<tr><td>Living documentation</td><td>Function signatures say what goes in and what comes out</td></tr>
+<tr><td>Confident refactoring</td><td>Change a type and the compiler lists every place to update</td></tr>
+</table></div>
+
+<div class="callout"><b>Try it locally</b>
+<p><code>npm install -D typescript</code>, write <code>hello.ts</code>, run <code>npx tsc hello.ts</code> to get <code>hello.js</code>. Node.js 23+ can also run <code>.ts</code> files directly (it strips the types), and tools like <code>tsx</code> or Vite do the same during development.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Do type annotations exist when the code runs? <span class="ans">— No, they are erased during compilation.</span></li>
+<li>What does <code>tsc</code> output? <span class="ans">— Plain JavaScript (plus type errors, if any).</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Press "JS" to see the compiled output: the types are simply gone
+const greeting: string = "hello";
+const count: number = 3;
+function shout(text: string, times: number): string {
+  return (text.toUpperCase() + "!").repeat(times);
+}
+console.log(shout(greeting, count));</pre>
+
+<pre class="code" data-run>// TypeScript catches calling something that might not exist
+const scores = new Map&lt;string, number&gt;([["ada", 95]]);
+const ada = scores.get("ada");      // number | undefined
+// console.log(ada.toFixed(1));     // error: 'ada' is possibly 'undefined'
+console.log(ada?.toFixed(1) ?? "no score");</pre>
+</section>
+
+<section class="lesson" id="basics" data-level="b" data-group="Basics">
+<header><span class="lvl b">Basics</span><h2>Basic types and inference</h2>
+<p class="lede">Annotate a variable with <code>: type</code>. Most of the time you don't need to: TypeScript <b>infers</b> the type from the value. The basic types match JavaScript's: <code>string</code>, <code>number</code>, <code>boolean</code>, <code>bigint</code>, <code>symbol</code>, <code>null</code>, <code>undefined</code>, plus special ones like <code>any</code>, <code>unknown</code>, <code>void</code> and <code>never</code>.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Try it: what type does TypeScript infer?</div>
+<div class="widget" data-w="infer"></div>
+<figcaption><code>let</code> infers a wide type (<code>string</code>) because the value can change; <code>const</code> infers the exact <b>literal</b> type (<code>"red"</code>) because it can't.</figcaption>
+</figure>
+
+<pre class="code" data-run>let title: string = "Report";   // explicit annotation
+let pages = 12;                 // inferred: number
+const ready = true;             // inferred: true (a literal type)
+
+pages = 13;                     // fine
+// pages = "thirteen";          // error: string is not assignable to number
+
+let big: bigint = 10n ** 20n;
+let id: number | string = 42;   // a union: either type
+id = "A-42";
+
+console.log(title, pages, ready, big, id);
+
+// Annotate when there is no initial value
+let answer: number;
+answer = 42;
+console.log(answer);</pre>
+
+<div class="tbl"><table>
+<tr><th>Type</th><th>Meaning</th></tr>
+<tr><td><code>any</code></td><td>Turns checking off for this value. Avoid it.</td></tr>
+<tr><td><code>unknown</code></td><td>Could be anything; you must check before using it. The safe <code>any</code>.</td></tr>
+<tr><td><code>void</code></td><td>A function returns nothing useful.</td></tr>
+<tr><td><code>never</code></td><td>Can't happen: a function that always throws, or an impossible case.</td></tr>
+</table></div>
+
+<pre class="code" data-run>let anything: any = "text";
+anything.nonExistentMethod;      // no error: any switches the checker off
+
+let mystery: unknown = "text";
+// mystery.toUpperCase();        // error: 'mystery' is of type 'unknown'
+if (typeof mystery === "string") {
+  console.log(mystery.toUpperCase());   // fine after checking
+}
+
+function fail(message: string): never {
+  throw new Error(message);
+}
+function log(message: string): void {
+  console.log("[log]", message);
+}
+log("void returns nothing");
+try { fail("never returns"); } catch (e) { console.log((e as Error).message); }</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What type does <code>const color = "red"</code> get? <span class="ans">— The literal type <code>"red"</code>.</span></li>
+<li>Why prefer <code>unknown</code> to <code>any</code>? <span class="ans">— unknown forces you to check the value before using it.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Hover-free inference check: TypeScript knows the types of results
+const nums = [3, 1, 2];                 // number[]
+const doubled = nums.map(n =&gt; n * 2);   // number[]
+const labels = nums.map(n =&gt; `#${n}`);  // string[]
+const total = nums.reduce((a, b) =&gt; a + b, 0);   // number
+console.log(doubled, labels, total.toFixed(2));</pre>
+
+<pre class="code" data-run>// Type errors are listed with line and column, like in an editor.
+// This block has two on purpose. Fix them and run again.
+let quantity: number = "3";
+const price = 2.5;
+console.log(price.toUppercase());</pre>
+</section>
+
+<section class="lesson" id="objects" data-level="b" data-group="Basics">
+<header><span class="lvl b">Basics</span><h2>Arrays, tuples and object types</h2>
+<p class="lede">Arrays are written <code>string[]</code> (or <code>Array&lt;string&gt;</code>). <b>Tuples</b> are fixed-length arrays where each position has its own type: <code>[string, number]</code>. Object types list their properties: <code>{ name: string; age?: number }</code>, where <code>?</code> marks an optional property and <code>readonly</code> one you can't reassign.</p></header>
+
+<pre class="code" data-run>const tags: string[] = ["ts", "js"];
+const matrix: number[][] = [[1, 2], [3, 4]];
+tags.push("web");
+// tags.push(42);               // error: number is not assignable to string
+
+// Tuple: position matters
+const point: [number, number] = [10, 20];
+const entry: [name: string, score: number] = ["Ada", 95];   // labelled tuple
+const [who, score] = entry;
+console.log(tags, matrix[1][0], point[0] + point[1], who, score);
+
+// readonly arrays can't be changed
+const days: readonly string[] = ["Mon", "Tue"];
+// days.push("Wed");            // error: push does not exist on readonly string[]
+console.log(days.length);</pre>
+
+<pre class="code" data-run>// An object type written inline
+let product: { readonly id: number; name: string; price: number; discount?: number } = {
+  id: 1,
+  name: "Lamp",
+  price: 45,
+};
+
+product.price = 40;             // fine
+// product.id = 2;              // error: id is read-only
+// product.colour = "red";      // error: colour does not exist (did you mean...?)
+
+// Optional properties may be undefined: handle that case
+const finalPrice = product.price - (product.discount ?? 0);
+console.log(product, finalPrice);
+
+// Index signature: any string key, number values
+const stock: { [sku: string]: number } = { A1: 3, B2: 0 };
+stock.C3 = 12;
+console.log(stock);</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>How is <code>[string, number]</code> different from <code>(string | number)[]</code>? <span class="ans">— The tuple has exactly two items in that order; the array can hold any mix, any length.</span></li>
+<li>What does <code>age?: number</code> mean? <span class="ans">— age may be missing, so its type is <code>number | undefined</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Functions can return tuples, like React's useState
+function useCounter(start: number): [number, (by: number) =&gt; number] {
+  let value = start;
+  const add = (by: number) =&gt; (value += by);
+  return [value, add];
+}
+const [initial, add] = useCounter(5);
+console.log(initial, add(2), add(3));</pre>
+
+<pre class="code" data-run>// Arrays of objects: each item is checked
+const people: { name: string; langs: string[] }[] = [
+  { name: "Ada", langs: ["ts", "python"] },
+  { name: "Linus", langs: ["c"] },
+];
+const polyglots = people.filter(p =&gt; p.langs.length &gt; 1).map(p =&gt; p.name);
+console.log(polyglots);</pre>
+</section>
+
+<section class="lesson" id="functions" data-level="b" data-group="Basics">
+<header><span class="lvl b">Basics</span><h2>Typing functions</h2>
+<p class="lede">Annotate each parameter; the return type is usually inferred, but writing it makes your intent explicit and catches mistakes inside the function. Optional parameters use <code>?</code>, defaults use <code>=</code>, rest parameters are typed arrays, and a <b>function type</b> looks like <code>(a: number) =&gt; string</code>.</p></header>
+
+<pre class="code" data-run>function area(width: number, height: number): number {
+  return width * height;
+}
+
+// Optional and default parameters
+function greet(name: string, greeting = "Hello", punctuation?: string): string {
+  return `${greeting}, ${name}${punctuation ?? "!"}`;
+}
+
+// Rest parameters
+function sum(...nums: number[]): number {
+  return nums.reduce((a, b) =&gt; a + b, 0);
+}
+
+// Arrow function with types
+const toCelsius = (f: number): number =&gt; ((f - 32) * 5) / 9;
+
+console.log(area(3, 4), greet("Ada"), greet("Linus", "Hi", "?"), sum(1, 2, 3), toCelsius(212));
+// area(3);                     // error: Expected 2 arguments, but got 1</pre>
+
+<pre class="code" data-run>// Function types: describe a function's shape
+type Operation = (a: number, b: number) =&gt; number;
+
+const add: Operation = (a, b) =&gt; a + b;   // parameters inferred from the type
+const mul: Operation = (a, b) =&gt; a * b;
+
+function applyAll(ops: Operation[], a: number, b: number): number[] {
+  return ops.map(op =&gt; op(a, b));
+}
+console.log(applyAll([add, mul, Math.max], 6, 7));
+
+// Callbacks are checked too
+const words = ["delta", "alpha", "charlie"];
+words.sort((x, y) =&gt; x.localeCompare(y));
+console.log(words);</pre>
+
+<pre class="code" data-run>// Overloads: several call signatures, one implementation
+function format(value: number): string;
+function format(value: Date): string;
+function format(value: number | Date): string {
+  return typeof value === "number" ? value.toFixed(2) : value.toISOString().slice(0, 10);
+}
+console.log(format(3.14159), format(new Date(Date.UTC(2026, 10, 25))));</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Where must optional parameters go? <span class="ans">— After all required ones.</span></li>
+<li>What does <code>type Fn = (x: string) =&gt; void</code> describe? <span class="ans">— A function taking one string and returning nothing useful.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// A typed higher-order function: retry a function n times
+function times(n: number, fn: (i: number) =&gt; void): void {
+  for (let i = 0; i &lt; n; i++) fn(i);
+}
+times(3, i =&gt; console.log(`round ${i + 1}`));</pre>
+
+<pre class="code" data-run>// Object parameters with defaults and a typed return
+function createUser({ name, admin = false }: { name: string; admin?: boolean }): { name: string; role: string } {
+  return { name, role: admin ? "admin" : "member" };
+}
+console.log(createUser({ name: "Ada", admin: true }), createUser({ name: "Linus" }));</pre>
+</section>
+
+<section class="lesson" id="interfaces" data-level="b" data-group="Basics">
+<header><span class="lvl b">Basics</span><h2>Interfaces and type aliases</h2>
+<p class="lede">Give an object shape a name so you can reuse it. <code>interface User { … }</code> and <code>type User = { … }</code> are nearly interchangeable for objects. Interfaces can <code>extend</code> each other; type aliases can name <b>any</b> type, including unions and tuples.</p></header>
+
+<pre class="code" data-run>interface Address {
+  street: string;
+  city: string;
+}
+
+interface User {
+  readonly id: number;
+  name: string;
+  email?: string;
+  address: Address;
+}
+
+// extends: everything in User plus more
+interface Admin extends User {
+  permissions: string[];
+}
+
+const admin: Admin = {
+  id: 1,
+  name: "Ada",
+  address: { street: "1 Main St", city: "London" },
+  permissions: ["delete-users"],
+};
+
+function describe(user: User): string {
+  return `${user.name} from ${user.address.city}${user.email ? ` &lt;${user.email}&gt;` : ""}`;
+}
+console.log(describe(admin));     // an Admin is also a User</pre>
+
+<pre class="code" data-run>// type aliases name any type
+type ID = number | string;
+type Point = { x: number; y: number };
+type Pair = [Point, Point];
+type Callback = (error: Error | null, data?: string) =&gt; void;
+
+// &amp; (intersection) combines object types
+type Timestamped = { createdAt: Date };
+type Post = { title: string } &amp; Timestamped;
+
+const ids: ID[] = [1, "a2"];
+const line: Pair = [{ x: 0, y: 0 }, { x: 3, y: 4 }];
+const post: Post = { title: "Hello", createdAt: new Date(0) };
+const cb: Callback = (err, data) =&gt; console.log(err?.message ?? data);
+
+const length = Math.hypot(line[1].x - line[0].x, line[1].y - line[0].y);
+console.log(ids, length, post.title);
+cb(null, "callback ok");</pre>
+
+<div class="tbl"><table>
+<tr><th></th><th><code>interface</code></th><th><code>type</code></th></tr>
+<tr><td>Object shapes</td><td>✓</td><td>✓</td></tr>
+<tr><td>Unions, tuples, primitives</td><td>✗</td><td>✓</td></tr>
+<tr><td>Extend</td><td><code>extends</code></td><td><code>&amp;</code></td></tr>
+<tr><td>Reopen to add fields</td><td>✓ (declaration merging)</td><td>✗</td></tr>
+</table></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Can an interface describe <code>string | number</code>? <span class="ans">— No, use a type alias.</span></li>
+<li>Is an <code>Admin</code> accepted where a <code>User</code> is expected? <span class="ans">— Yes: it has everything a User has.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Interfaces can describe methods and callable things
+interface Shape {
+  name: string;
+  area(): number;
+}
+const shapes: Shape[] = [
+  { name: "square", area: () =&gt; 4 * 4 },
+  { name: "circle", area: () =&gt; Math.PI * 2 ** 2 },
+];
+for (const s of shapes) console.log(s.name, s.area().toFixed(2));</pre>
+
+<pre class="code" data-run>// Nested types for an API response
+interface ApiResponse {
+  status: "ok" | "error";
+  data: { items: { id: number; title: string }[]; total: number };
+}
+const res: ApiResponse = { status: "ok", data: { items: [{ id: 1, title: "First" }], total: 1 } };
+console.log(res.data.items.map(i =&gt; i.title), res.status);</pre>
+</section>
+
+<section class="lesson" id="unions" data-level="b" data-group="Basics">
+<header><span class="lvl b">Basics</span><h2>Union and literal types</h2>
+<p class="lede">A <b>union</b> <code>A | B</code> means "either A or B". A <b>literal type</b> is one exact value, like <code>"small"</code> or <code>42</code>. Together they describe a fixed set of allowed values, which is clearer and safer than a plain <code>string</code>.</p></header>
+
+<pre class="code" data-run>type Size = "small" | "medium" | "large";
+type Status = 200 | 404 | 500;
+
+function price(size: Size): number {
+  switch (size) {
+    case "small": return 2;
+    case "medium": return 3;
+    case "large": return 4;
+  }
+}
+
+console.log(price("medium"));
+// price("huge");                // error: "huge" is not assignable to type Size
+
+let code: Status = 404;
+console.log(code);
+
+// A union of different types
+function formatId(id: number | string): string {
+  // Only methods that exist on BOTH types are allowed until you check which one it is
+  return typeof id === "number" ? `#${id.toString().padStart(4, "0")}` : id.toUpperCase();
+}
+console.log(formatId(42), formatId("ab-7"));</pre>
+
+<pre class="code" data-run>// Literal types are inferred for const, widened for let
+const direction = "left";        // type "left"
+let heading = "left";            // type string
+
+type Direction = "left" | "right" | "up" | "down";
+function move(d: Direction, steps = 1) {
+  return `${d} × ${steps}`;
+}
+console.log(move(direction));
+// console.log(move(heading));   // error: string is not assignable to Direction
+
+// Union of objects: only shared properties are accessible directly
+type Cat = { kind: "cat"; meows: boolean };
+type Dog = { kind: "dog"; barks: boolean };
+const pet: Cat | Dog = { kind: "dog", barks: true };
+console.log(pet.kind);           // fine: both have kind</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What values does <code>type Bit = 0 | 1</code> allow? <span class="ans">— Only the numbers 0 and 1.</span></li>
+<li>On a value of type <code>string | number</code>, can you call <code>.toUpperCase()</code> directly? <span class="ans">— No, only after narrowing to string.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// A traffic light as a union of literals
+type Light = "red" | "yellow" | "green";
+const next: Record&lt;Light, Light&gt; = { red: "green", green: "yellow", yellow: "red" };
+let light: Light = "red";
+for (let i = 0; i &lt; 4; i++) {
+  console.log(light);
+  light = next[light];
+}</pre>
+
+<pre class="code" data-run>// Unions in arrays
+const mixed: (number | string)[] = [1, "two", 3, "four"];
+const numbers = mixed.filter((x): x is number =&gt; typeof x === "number");
+console.log(numbers, numbers.reduce((a, b) =&gt; a + b, 0));</pre>
+</section>
+
+<section class="lesson" id="narrowing" data-level="b" data-group="Basics">
+<header><span class="lvl b">Basics</span><h2>Narrowing</h2>
+<p class="lede">Inside an <code>if</code>, TypeScript follows your checks and <b>narrows</b> a wide type to a more specific one. <code>typeof</code>, <code>instanceof</code>, <code>in</code>, equality checks, truthiness and early <code>return</code>s all narrow. After narrowing you can use the specific type's methods safely.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Step through: the type of value, line by line</div>
+<div class="widget" data-w="narrow"></div>
+</figure>
+
+<pre class="code" data-run>function describe(value: string | number | boolean | null | Date | string[]): string {
+  if (value === null) return "nothing";                     // value: null
+  if (typeof value === "string") return `text of ${value.length}`;   // value: string
+  if (typeof value === "number") return value.toFixed(1);   // value: number
+  if (typeof value === "boolean") return value ? "yes" : "no";
+  if (value instanceof Date) return value.getUTCFullYear().toString();   // value: Date
+  return value.join("+");                                    // only string[] is left
+}
+
+for (const v of ["hi", 3.14159, true, null, new Date(Date.UTC(2026, 0, 1)), ["a", "b"]]) {
+  console.log(describe(v));
+}</pre>
+
+<pre class="code" data-run>// "in" narrows by checking for a property
+type Fish = { swim: () =&gt; string };
+type Bird = { fly: () =&gt; string };
+
+function move(animal: Fish | Bird): string {
+  if ("swim" in animal) return animal.swim();   // Fish
+  return animal.fly();                          // Bird
+}
+console.log(move({ swim: () =&gt; "splash" }), move({ fly: () =&gt; "flap" }));
+
+// Truthiness narrowing removes null and undefined
+function initials(name?: string | null): string {
+  if (!name) return "?";
+  return name.split(" ").map(w =&gt; w[0]).join("");  // name: string here
+}
+console.log(initials("Grace Hopper"), initials(undefined), initials(""));</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Which check narrows to a class instance? <span class="ans">— <code>instanceof</code>.</span></li>
+<li>After <code>if (typeof x === "string") return;</code>, what is x? <span class="ans">— Whatever was left in the union without string.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Narrowing with Array.isArray
+function toList(input: string | string[]): string[] {
+  return Array.isArray(input) ? input : input.split(",").map(s =&gt; s.trim());
+}
+console.log(toList("a, b ,c"), toList(["x", "y"]));</pre>
+
+<pre class="code" data-run>// Narrowing inside a loop over a union array
+const values: (number | string | undefined)[] = [3, "4", undefined, 5];
+let total = 0;
+for (const v of values) {
+  if (v === undefined) continue;
+  total += typeof v === "string" ? Number(v) : v;
+}
+console.log(total);</pre>
+</section>
+
+<section class="lesson" id="enums" data-level="b" data-group="Basics">
+<header><span class="lvl b">Basics</span><h2>Enums, as const and literal unions</h2>
+<p class="lede">An <code>enum</code> gives names to a set of constants. Enums are one of the few TypeScript features that produce real JavaScript (press <b>JS</b> to see). Many teams prefer a <b>union of string literals</b> or an object marked <code>as const</code>, which give the same safety with plain JavaScript.</p></header>
+
+<pre class="code" data-run>enum Direction {
+  Up,          // 0
+  Down,        // 1
+  Left,        // 2
+  Right,       // 3
+}
+
+enum Role {
+  Admin = "ADMIN",
+  Editor = "EDITOR",
+  Viewer = "VIEWER",
+}
+
+function canEdit(role: Role): boolean {
+  return role === Role.Admin || role === Role.Editor;
+}
+
+console.log(Direction.Left, Direction[2]);   // numeric enums map both ways
+console.log(Role.Editor, canEdit(Role.Viewer), canEdit(Role.Admin));</pre>
+
+<pre class="code" data-run>// as const: the most precise, read-only types
+const ROLES = ["admin", "editor", "viewer"] as const;   // readonly ["admin", "editor", "viewer"]
+type Role = (typeof ROLES)[number];                     // "admin" | "editor" | "viewer"
+
+const COLORS = { primary: "#3178c6", danger: "#e03131" } as const;
+type ColorName = keyof typeof COLORS;                   // "primary" | "danger"
+
+function badge(role: Role, color: ColorName): string {
+  return `${role.toUpperCase()} in ${COLORS[color]}`;
+}
+console.log(badge("editor", "primary"));
+console.log(ROLES.includes("viewer"));
+// COLORS.primary = "red";      // error: read-only</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does <code>as const</code> do to an array literal? <span class="ans">— Makes it a readonly tuple of literal types.</span></li>
+<li>Do enums disappear when compiled? <span class="ans">— No, regular enums become a JavaScript object.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Derive everything from one list
+const PLANS = { free: 0, pro: 12, team: 30 } as const;
+type Plan = keyof typeof PLANS;
+const plans = Object.keys(PLANS) as Plan[];
+for (const p of plans) console.log(p.padEnd(5), `$${PLANS[p]}/month`);</pre>
+
+<pre class="code" data-run>// String enums read well in logs and JSON
+enum Level { Debug = "debug", Info = "info", Error = "error" }
+function log(level: Level, msg: string) {
+  console.log(JSON.stringify({ level, msg }));
+}
+log(Level.Info, "server started");
+log(Level.Error, "disk full");</pre>
+</section>
+
+<section class="lesson" id="classes" data-level="b" data-group="Basics">
+<header><span class="lvl b">Basics</span><h2>Classes in TypeScript</h2>
+<p class="lede">TypeScript types class fields and adds <b>access modifiers</b>: <code>public</code> (default), <code>private</code> and <code>protected</code> (checked at compile time), plus <code>readonly</code>. <b>Parameter properties</b> declare and assign fields straight from the constructor. A class can <code>implements</code> an interface to promise it has a certain shape, and <code>abstract</code> classes leave methods for subclasses to fill in.</p></header>
+
+<pre class="code" data-run>interface Account {
+  readonly owner: string;
+  balance(): number;
+}
+
+class BankAccount implements Account {
+  private history: number[] = [];
+  static readonly MIN = 0;
+
+  // parameter properties: declare + assign in one place
+  constructor(public readonly owner: string, private amount = 0) {}
+
+  deposit(value: number): this {
+    if (value &lt;= 0) throw new RangeError("Deposit must be positive");
+    this.amount += value;
+    this.history.push(value);
+    return this;
+  }
+  balance(): number {
+    return this.amount;
+  }
+}
+
+const acc = new BankAccount("Ada").deposit(50).deposit(25);
+console.log(acc.owner, acc.balance());
+// acc.amount = 1e6;             // error: 'amount' is private
+// acc.owner = "Eve";            // error: owner is read-only</pre>
+
+<pre class="code" data-run>abstract class Shape {
+  constructor(protected readonly name: string) {}
+  abstract area(): number;                       // subclasses must implement
+  describe(): string {
+    return `${this.name} with area ${this.area().toFixed(2)}`;
+  }
+}
+
+class Circle extends Shape {
+  constructor(private r: number) { super("circle"); }
+  area() { return Math.PI * this.r ** 2; }
+}
+class Rect extends Shape {
+  constructor(private w: number, private h: number) { super("rectangle"); }
+  area() { return this.w * this.h; }
+}
+
+const shapes: Shape[] = [new Circle(1), new Rect(2, 3)];
+shapes.forEach(s =&gt; console.log(s.describe()));
+// new Shape("x");               // error: cannot create an instance of an abstract class</pre>
+
+<div class="callout warn"><b>private vs #private</b>
+<p>TypeScript's <code>private</code> is checked only by the compiler; the field is still visible at run time. JavaScript's <code>#field</code> is truly private at run time too. Both work in TypeScript.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does <code>constructor(private x: number) {}</code> do? <span class="ans">— Declares a private field x and assigns the argument to it.</span></li>
+<li>What does <code>implements</code> check? <span class="ans">— That the class has every member the interface requires.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// A typed stack class
+class Stack {
+  private items: string[] = [];
+  push(item: string) { this.items.push(item); }
+  pop(): string | undefined { return this.items.pop(); }
+  get size() { return this.items.length; }
+}
+const s = new Stack();
+s.push("a"); s.push("b");
+console.log(s.pop(), s.size);</pre>
+
+<pre class="code" data-run>// Two classes, one interface
+interface Notifier { send(to: string, msg: string): string }
+class EmailNotifier implements Notifier {
+  send(to: string, msg: string) { return `📧 ${to}: ${msg}`; }
+}
+class SmsNotifier implements Notifier {
+  send(to: string, msg: string) { return `📱 ${to}: ${msg.slice(0, 20)}`; }
+}
+const channels: Notifier[] = [new EmailNotifier(), new SmsNotifier()];
+channels.forEach(n =&gt; console.log(n.send("ada", "Your order has shipped today")));</pre>
+</section>
+
+<!-- ===================== INTERMEDIATE ===================== -->
+<section class="lesson" id="generics" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Generics</h2>
+<p class="lede">A <b>generic</b> is a type parameter, a placeholder like <code>T</code> that gets filled in when the code is used. <code>function first&lt;T&gt;(items: T[]): T | undefined</code> works for any array and still knows that the result has the same type as the items. Generics are how <code>Array&lt;T&gt;</code>, <code>Promise&lt;T&gt;</code> and <code>Map&lt;K, V&gt;</code> work.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Try it: TypeScript fills in T from the argument</div>
+<div class="widget" data-w="generic"></div>
+</figure>
+
+<pre class="code" data-run>function first&lt;T&gt;(items: T[]): T | undefined {
+  return items[0];
+}
+const n = first([10, 20]);        // T = number   → number | undefined
+const s = first(["a", "b"]);      // T = string   → string | undefined
+console.log(n, s?.toUpperCase());
+
+// Several type parameters
+function pair&lt;A, B&gt;(a: A, b: B): [A, B] {
+  return [a, b];
+}
+const p = pair("age", 36);        // [string, number]
+console.log(p);
+
+// Generic interfaces and classes
+interface Box&lt;T&gt; { value: T; label: string }
+const numberBox: Box&lt;number&gt; = { value: 42, label: "answer" };
+
+class Queue&lt;T&gt; {
+  private items: T[] = [];
+  enqueue(item: T) { this.items.push(item); }
+  dequeue(): T | undefined { return this.items.shift(); }
+  get length() { return this.items.length; }
+}
+const q = new Queue&lt;string&gt;();
+q.enqueue("first"); q.enqueue("second");
+// q.enqueue(3);                  // error: number is not assignable to string
+console.log(numberBox, q.dequeue(), q.length);</pre>
+
+<h3>Constraints: T must have something</h3>
+<pre class="code" data-run>// extends limits what T can be, so you can use its properties
+function longest&lt;T extends { length: number }&gt;(a: T, b: T): T {
+  return a.length &gt;= b.length ? a : b;
+}
+console.log(longest("apple", "kiwi"), longest([1, 2, 3], [4]));
+// longest(10, 20);               // error: number has no length
+
+// keyof constraint: K must be one of T's keys
+function pluck&lt;T, K extends keyof T&gt;(items: T[], key: K): T[K][] {
+  return items.map(item =&gt; item[key]);
+}
+const users = [{ name: "Ada", age: 36 }, { name: "Linus", age: 54 }];
+console.log(pluck(users, "name"), pluck(users, "age"));
+// pluck(users, "email");         // error: "email" is not a key
+
+// Default type parameters
+interface ApiResult&lt;T = unknown&gt; { ok: boolean; data: T }
+const r: ApiResult&lt;string[]&gt; = { ok: true, data: ["x"] };
+console.log(r.data.length);</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Why not write <code>first(items: any[]): any</code>? <span class="ans">— You'd lose the link between input and output types.</span></li>
+<li>What does <code>T extends { length: number }</code> mean? <span class="ans">— T can be any type that has a numeric length property.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// A generic groupBy
+function groupBy&lt;T, K extends string&gt;(items: T[], keyOf: (item: T) =&gt; K): Record&lt;K, T[]&gt; {
+  const out = {} as Record&lt;K, T[]&gt;;
+  for (const item of items) (out[keyOf(item)] ??= []).push(item);
+  return out;
+}
+const words = ["apple", "avocado", "banana", "blueberry", "cherry"];
+console.log(groupBy(words, w =&gt; w[0]));</pre>
+
+<pre class="code" data-run>// A typed cache that remembers results of an async loader
+class Cache&lt;K, V&gt; {
+  private store = new Map&lt;K, V&gt;();
+  constructor(private load: (key: K) =&gt; V) {}
+  get(key: K): V {
+    if (!this.store.has(key)) this.store.set(key, this.load(key));
+    return this.store.get(key)!;
+  }
+}
+const squares = new Cache&lt;number, number&gt;(n =&gt; { console.log("computing", n); return n * n; });
+console.log(squares.get(4), squares.get(4), squares.get(5));</pre>
+</section>
+
+<section class="lesson" id="utility" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Utility types</h2>
+<p class="lede">TypeScript ships with generic types that <b>transform</b> other types. Instead of writing a second interface for "a User where every field is optional", write <code>Partial&lt;User&gt;</code>. If the original changes, the derived types follow automatically.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Try it: transform the User type</div>
+<div class="widget" data-w="mapped"></div>
+</figure>
+
+<pre class="code" data-run>interface User {
+  id: number;
+  name: string;
+  email: string;
+  bio?: string;
+}
+
+// Partial: every property optional (great for updates)
+function updateUser(user: User, changes: Partial&lt;User&gt;): User {
+  return { ...user, ...changes };
+}
+
+// Pick / Omit: choose or drop properties
+type UserPreview = Pick&lt;User, "id" | "name"&gt;;
+type NewUser = Omit&lt;User, "id"&gt;;                 // the server assigns ids
+
+// Readonly and Required
+const frozen: Readonly&lt;User&gt; = { id: 1, name: "Ada", email: "ada@x.dev" };
+// frozen.name = "Grace";                         // error: read-only
+const complete: Required&lt;User&gt; = { id: 2, name: "Linus", email: "l@x.dev", bio: "Kernel" };
+
+// Record: an object with known keys and one value type
+const roles: Record&lt;"admin" | "editor", string[]&gt; = { admin: ["*"], editor: ["posts"] };
+
+const ada: User = { id: 1, name: "Ada", email: "ada@x.dev" };
+const preview: UserPreview = { id: ada.id, name: ada.name };
+const draft: NewUser = { name: "Grace", email: "g@x.dev" };
+console.log(updateUser(ada, { bio: "First programmer" }), preview, draft, frozen.id, complete.bio, roles);</pre>
+
+<pre class="code" data-run>// Types derived from functions and unions
+function createOrder(item: string, qty: number) {
+  return { item, qty, createdAt: new Date(0), status: "new" as const };
+}
+type Order = ReturnType&lt;typeof createOrder&gt;;      // the inferred return type, named
+type OrderArgs = Parameters&lt;typeof createOrder&gt;;  // [item: string, qty: number]
+
+type Status = "new" | "paid" | "shipped" | "cancelled";
+type Active = Exclude&lt;Status, "cancelled"&gt;;       // "new" | "paid" | "shipped"
+type MaybeName = string | null | undefined;
+type Name = NonNullable&lt;MaybeName&gt;;               // string
+
+const args: OrderArgs = ["pen", 3];
+const order: Order = createOrder(...args);
+const s: Active = "paid";
+const nm: Name = "Ada";
+async function load() { return 42; }
+type Loaded = Awaited&lt;ReturnType&lt;typeof load&gt;&gt;;   // number
+const v: Loaded = await load();
+console.log(order, s, nm, v);</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Which utility makes every property optional? <span class="ans">— <code>Partial&lt;T&gt;</code>.</span></li>
+<li>How do you get the type a function returns? <span class="ans">— <code>ReturnType&lt;typeof fn&gt;</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Record for a lookup table with exhaustive keys
+type Weekday = "mon" | "tue" | "wed" | "thu" | "fri";
+const hours: Record&lt;Weekday, number&gt; = { mon: 8, tue: 7, wed: 8, thu: 6, fri: 4 };
+const total = Object.values(hours).reduce((a, b) =&gt; a + b, 0);
+console.log(`${total} hours this week`);</pre>
+
+<pre class="code" data-run>// Omit + intersection to build a form type from a model
+interface Product { id: number; name: string; price: number; createdAt: Date }
+type ProductForm = Omit&lt;Product, "id" | "createdAt"&gt; &amp; { confirm: boolean };
+const form: ProductForm = { name: "Mug", price: 9.5, confirm: true };
+console.log(form);</pre>
+</section>
+
+<section class="lesson" id="structural" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Structural typing</h2>
+<p class="lede">TypeScript compares types by their <b>shape</b>, not their name. If a value has all the properties a type requires (with compatible types), it fits, even if it was never declared as that type and has extra properties. This is sometimes called "duck typing, checked at compile time".</p></header>
+
+<figure class="viz">
+<div class="viz-title">Try it: does this value fit Point?</div>
+<div class="widget" data-w="structural"></div>
+</figure>
+
+<pre class="code" data-run>interface Point { x: number; y: number }
+
+function distance(p: Point): number {
+  return Math.hypot(p.x, p.y);
+}
+
+class Vector { constructor(public x: number, public y: number, public z = 0) {} }
+const fromJson = JSON.parse('{"x": 3, "y": 4}') as Point;
+const location3d = { x: 3, y: 4, z: 12, label: "peak" };
+
+console.log(distance(new Vector(3, 4)));    // a class with the right shape fits
+console.log(distance(fromJson));
+console.log(distance(location3d));          // extra properties are fine for variables…
+// distance({ x: 3, y: 4, z: 12 });        // …but not in an object literal written inline (excess property check)</pre>
+
+<div class="callout"><b>Excess property checks</b>
+<p>When you pass an object literal <b>directly</b>, TypeScript flags unknown properties, because that is almost always a typo. A variable holding the same object passes, because it may legitimately be used elsewhere with more fields.</p></div>
+
+<pre class="code" data-run>// Functions are compared by parameters and return type too
+type Handler = (event: { type: string; time: number }) =&gt; void;
+
+const logType: Handler = e =&gt; console.log("type:", e.type);   // uses less: fine
+const noArgs: Handler = () =&gt; console.log("called");          // fewer parameters: fine
+
+[logType, noArgs].forEach(h =&gt; h({ type: "click", time: 0 }));
+
+// Branding (see the Advanced part) is how you opt OUT of structural typing:
+type UserId = number &amp; { readonly __brand: "UserId" };
+const asUserId = (n: number) =&gt; n as UserId;
+function loadUser(id: UserId) { return `user ${id}`; }
+console.log(loadUser(asUserId(7)));
+// loadUser(7);                             // error: number is not a UserId</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>Does a <code>{ x, y, z }</code> object fit <code>{ x: number; y: number }</code>? <span class="ans">— Yes when it's a variable; an inline literal with extra properties is flagged.</span></li>
+<li>Do two interfaces with different names but identical members match? <span class="ans">— Yes, only the shape matters.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Anything with a name works
+interface Named { name: string }
+const things = [{ name: "file.txt", size: 12 }, { name: "Ada", age: 36 }];
+const label = (n: Named) =&gt; n.name.toUpperCase();
+console.log(things.map(label));</pre>
+
+<pre class="code" data-run>// Optional properties make shapes more flexible
+interface Options { verbose?: boolean; retries?: number }
+function run(opts: Options) { return { verbose: opts.verbose ?? false, retries: opts.retries ?? 3 }; }
+const cliArgs = { verbose: true, file: "a.ts" };
+console.log(run(cliArgs), run({}));</pre>
+</section>
+
+<section class="lesson" id="discriminated" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Discriminated unions</h2>
+<p class="lede">Give each member of a union a shared literal property, the <b>discriminant</b> (often <code>kind</code> or <code>type</code>). Checking it narrows to exactly one member. Add a <code>never</code> check in the default case and the compiler tells you every place to update when you add a new member. This is the most useful pattern in TypeScript.</p></header>
+
+<pre class="code" data-run>type Shape =
+  | { kind: "circle"; radius: number }
+  | { kind: "square"; side: number }
+  | { kind: "rect"; width: number; height: number };
+
+function area(shape: Shape): number {
+  switch (shape.kind) {
+    case "circle": return Math.PI * shape.radius ** 2;   // shape is the circle member here
+    case "square": return shape.side ** 2;
+    case "rect": return shape.width * shape.height;
+    default: {
+      const unreachable: never = shape;                  // fails to compile if a case is missing
+      return unreachable;
+    }
+  }
+}
+
+const shapes: Shape[] = [{ kind: "circle", radius: 1 }, { kind: "square", side: 2 }, { kind: "rect", width: 2, height: 5 }];
+console.log(shapes.map(area).map(a =&gt; a.toFixed(2)));
+// Now add  | { kind: "triangle"; base: number; height: number }  to Shape and Run.</pre>
+
+<pre class="code" data-run>// Model states that can't be mixed up: no "loading AND error"
+type RequestState&lt;T&gt; =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; data: T }
+  | { status: "error"; error: string };
+
+function render(state: RequestState&lt;string[]&gt;): string {
+  switch (state.status) {
+    case "idle": return "Press search";
+    case "loading": return "Loading…";
+    case "success": return `Found ${state.data.length}: ${state.data.join(", ")}`;
+    case "error": return `⚠️ ${state.error}`;
+  }
+}
+
+const states: RequestState&lt;string[]&gt;[] = [
+  { status: "idle" }, { status: "loading" },
+  { status: "success", data: ["ts", "js"] }, { status: "error", error: "Timeout" },
+];
+states.forEach(s =&gt; console.log(render(s)));</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What makes a union "discriminated"? <span class="ans">— Every member has the same property with a different literal type.</span></li>
+<li>What does <code>const x: never = shape</code> in the default case buy you? <span class="ans">— A compile error whenever a union member isn't handled.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Events in an app, handled exhaustively
+type AppEvent =
+  | { type: "login"; user: string }
+  | { type: "logout" }
+  | { type: "purchase"; amount: number };
+
+function describe(e: AppEvent): string {
+  switch (e.type) {
+    case "login": return `${e.user} logged in`;
+    case "logout": return "logged out";
+    case "purchase": return `bought for $${e.amount.toFixed(2)}`;
+  }
+}
+console.log([{ type: "login", user: "ada" }, { type: "purchase", amount: 9.5 }, { type: "logout" }].map(e =&gt; describe(e as AppEvent)));</pre>
+
+<pre class="code" data-run>// A Result type instead of throwing
+type Result&lt;T&gt; = { ok: true; value: T } | { ok: false; error: string };
+
+function parsePort(text: string): Result&lt;number&gt; {
+  const n = Number(text);
+  if (!Number.isInteger(n) || n &lt; 1 || n &gt; 65535) return { ok: false, error: `"${text}" is not a valid port` };
+  return { ok: true, value: n };
+}
+for (const t of ["8080", "http", "70000"]) {
+  const r = parsePort(t);
+  console.log(r.ok ? `port ${r.value}` : r.error);
+}</pre>
+</section>
+
+<section class="lesson" id="unknown" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>unknown, type guards and assertions</h2>
+<p class="lede">Data from outside your program (JSON, user input, <code>catch</code> blocks) has no trustworthy type. Type it as <code>unknown</code> and check it. A <b>type guard</b> (<code>x is T</code>) packages a check so it narrows wherever you call it; an <b>assertion function</b> (<code>asserts x is T</code>) throws if the check fails. Avoid <code>as</code> casts: they tell the compiler to trust you without checking anything.</p></header>
+
+<pre class="code" data-run>interface User { name: string; age: number }
+
+// A type guard: returns boolean, but narrows the caller's variable
+function isUser(value: unknown): value is User {
+  return (
+    typeof value === "object" &amp;&amp; value !== null &amp;&amp;
+    "name" in value &amp;&amp; typeof value.name === "string" &amp;&amp;
+    "age" in value &amp;&amp; typeof value.age === "number"
+  );
+}
+
+const inputs: unknown[] = [
+  JSON.parse('{"name": "Ada", "age": 36}'),
+  JSON.parse('{"name": "Bob"}'),
+  "just a string",
+];
+
+for (const data of inputs) {
+  if (isUser(data)) console.log(`✓ ${data.name} is ${data.age}`);   // data: User
+  else console.log("✗ not a user:", data);
+}</pre>
+
+<pre class="code" data-run>// Assertion functions throw instead of returning false
+interface User { name: string; age: number }
+
+function assertIsString(value: unknown, name: string): asserts value is string {
+  if (typeof value !== "string") throw new TypeError(`${name} must be a string, got ${typeof value}`);
+}
+
+function shout(input: unknown) {
+  assertIsString(input, "input");
+  return input.toUpperCase();        // input: string after the assertion
+}
+console.log(shout("hey"));
+
+// catch variables are unknown: check before using
+try {
+  shout(42);
+} catch (err) {
+  if (err instanceof Error) console.log(err.name, "→", err.message);
+}
+
+// "as" only silences the compiler. This compiles and is still wrong:
+const fake = JSON.parse('{"nme": "typo"}') as User;
+console.log(fake.name);   // undefined at run time!</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What is the return type annotation of a type guard? <span class="ans">— <code>value is SomeType</code>.</span></li>
+<li>Does <code>x as User</code> check anything at run time? <span class="ans">— No, it's erased; it only changes what the compiler believes.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// A guard for arrays of a type
+const isStringArray = (v: unknown): v is string[] =&gt; Array.isArray(v) &amp;&amp; v.every(x =&gt; typeof x === "string");
+const payloads: unknown[] = [["a", "b"], [1, 2], "x"];
+payloads.forEach(p =&gt; console.log(isStringArray(p) ? p.join("|") : "rejected"));</pre>
+
+<pre class="code" data-run>// Filtering with a guard keeps the narrowed type
+type Item = { id: number; tag?: string };
+const items: Item[] = [{ id: 1, tag: "a" }, { id: 2 }, { id: 3, tag: "c" }];
+const hasTag = (i: Item): i is Item &amp; { tag: string } =&gt; typeof i.tag === "string";
+const tags = items.filter(hasTag).map(i =&gt; i.tag.toUpperCase());   // no "possibly undefined"
+console.log(tags);</pre>
+</section>
+
+<section class="lesson" id="nullsafety" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>null, undefined and strict checks</h2>
+<p class="lede">With <code>strict</code> mode on (always use it), <code>null</code> and <code>undefined</code> are separate types. A value that might be missing must say so (<code>string | undefined</code>), and TypeScript makes you handle that case before using it. That removes the most common JavaScript crash: "cannot read properties of undefined".</p></header>
+
+<pre class="code" data-run>const users = [{ id: 1, name: "Ada", manager: { name: "Babbage" } }, { id: 2, name: "Linus" }];
+
+const found = users.find(u =&gt; u.id === 2);   // type includes undefined
+// console.log(found.name);                   // error: 'found' is possibly 'undefined'
+
+// Ways to handle it:
+if (found) console.log(found.name);                          // 1. narrow with if
+console.log(found?.name ?? "nobody");                        // 2. ?. and ??
+const managerName = users[0].manager?.name ?? "no manager";  // 3. optional chaining deeper
+console.log(managerName);
+
+// 4. The non-null assertion ! says "trust me, it's there". Use rarely.
+const ada = users.find(u =&gt; u.id === 1)!;
+console.log(ada.name);
+
+// Optional parameters are T | undefined
+function greet(name?: string) {
+  return `Hi ${name?.trim() || "there"}`;
+}
+console.log(greet(), greet("  Grace "));</pre>
+
+<pre class="code" data-run>// noUncheckedIndexedAccess (a stricter flag) treats arr[i] as possibly undefined.
+// Even without it, prefer methods that admit "might be missing":
+const queue: string[] = [];
+const next = queue.shift();        // string | undefined
+console.log(next ?? "queue empty");
+
+const scores = new Map&lt;string, number&gt;();
+scores.set("ada", 3);
+const current = scores.get("linus") ?? 0;   // Map.get is T | undefined
+scores.set("linus", current + 1);
+console.log([...scores]);</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What type does <code>array.find(...)</code> return? <span class="ans">— <code>T | undefined</code>.</span></li>
+<li>What does the <code>!</code> after an expression do? <span class="ans">— Removes null/undefined from its type without checking. Risky.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Safe nested access on optional data
+interface Config { db?: { host?: string; port?: number } }
+const configs: Config[] = [{ db: { host: "db.local", port: 5432 } }, { db: {} }, {}];
+for (const c of configs) console.log(`${c.db?.host ?? "localhost"}:${c.db?.port ?? 5432}`);</pre>
+
+<pre class="code" data-run>// Return undefined explicitly and let callers decide
+function parseIntSafe(text: string): number | undefined {
+  const n = Number.parseInt(text, 10);
+  return Number.isNaN(n) ? undefined : n;
+}
+const values = ["12", "x", "7"].map(parseIntSafe);
+console.log(values, values.filter((v): v is number =&gt; v !== undefined));</pre>
+</section>
+
+<section class="lesson" id="asyncts" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Async code and typed APIs</h2>
+<p class="lede">An async function returning <code>T</code> has the type <code>Promise&lt;T&gt;</code>, and <code>await</code> unwraps it. The catch with APIs: <code>res.json()</code> returns <code>any</code>, because TypeScript can't know what a server sends. Declare the shape you expect and, for anything important, <b>validate</b> it at run time.</p></header>
+
+<pre class="code" data-run>interface Todo { userId: number; id: number; title: string; completed: boolean }
+
+async function getJSON&lt;T&gt;(url: string): Promise&lt;T&gt; {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json() as Promise&lt;T&gt;;   // a promise you make: the server is trusted here
+}
+
+const todos = await getJSON&lt;Todo[]&gt;("https://jsonplaceholder.typicode.com/todos?userId=1");
+const open = todos.filter(t =&gt; !t.completed).map(t =&gt; t.title);
+console.log(`${open.length} open, first: ${open[0]}`);
+// todos[0].titel;                     // error: did you mean 'title'?</pre>
+
+<pre class="code" data-run>// Validate untrusted data and return a Result instead of throwing
+type Result&lt;T&gt; = { ok: true; value: T } | { ok: false; error: string };
+interface Post { id: number; title: string }
+
+function parsePost(data: unknown): Result&lt;Post&gt; {
+  if (typeof data !== "object" || data === null) return { ok: false, error: "not an object" };
+  const d = data as Record&lt;string, unknown&gt;;
+  if (typeof d.id !== "number") return { ok: false, error: "id must be a number" };
+  if (typeof d.title !== "string") return { ok: false, error: "title must be a string" };
+  return { ok: true, value: { id: d.id, title: d.title } };
+}
+
+const wait = (ms: number) =&gt; new Promise&lt;void&gt;(r =&gt; setTimeout(r, ms));
+async function fakeServer(body: string): Promise&lt;unknown&gt; {
+  await wait(50);
+  return JSON.parse(body);
+}
+
+for (const body of ['{"id": 1, "title": "Hello"}', '{"id": "1"}']) {
+  const result = parsePost(await fakeServer(body));
+  console.log(result.ok ? `post: ${result.value.title}` : `invalid: ${result.error}`);
+}
+
+// Promise.all keeps each element's type
+const [n, s] = await Promise.all([Promise.resolve(1), Promise.resolve("two")]);   // [number, string]
+console.log(n + 1, s.toUpperCase());</pre>
+
+<div class="callout tip"><b>Schema libraries</b>
+<p>In real projects, libraries like Zod or Valibot let you declare a schema once and get both the run-time validator and the TypeScript type from it. The validator project later in this tab builds a small version of that idea.</p></div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What is the type of <code>async function f() { return "x" }</code>? <span class="ans">— <code>() =&gt; Promise&lt;string&gt;</code>.</span></li>
+<li>Why validate API data even with interfaces? <span class="ans">— Interfaces are erased; the server could send anything.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// A typed timeout helper
+function withTimeout&lt;T&gt;(promise: Promise&lt;T&gt;, ms: number): Promise&lt;T&gt; {
+  return Promise.race([
+    promise,
+    new Promise&lt;never&gt;((_, reject) =&gt; setTimeout(() =&gt; reject(new Error(`timeout after ${ms}ms`)), ms)),
+  ]);
+}
+const slow = new Promise&lt;string&gt;(r =&gt; setTimeout(() =&gt; r("done"), 300));
+try { console.log(await withTimeout(slow, 100)); } catch (e) { console.log((e as Error).message); }
+console.log(await withTimeout(Promise.resolve(42), 100));</pre>
+
+<pre class="code" data-run>// Typing an async callback-based retry
+async function retry&lt;T&gt;(fn: () =&gt; Promise&lt;T&gt;, attempts: number): Promise&lt;T&gt; {
+  let lastError: unknown;
+  for (let i = 1; i &lt;= attempts; i++) {
+    try { return await fn(); }
+    catch (e) { lastError = e; console.log(`attempt ${i} failed`); }
+  }
+  throw lastError;
+}
+let calls = 0;
+const value = await retry(async () =&gt; { if (++calls &lt; 3) throw new Error("flaky"); return "ok on " + calls; }, 5);
+console.log(value);</pre>
+</section>
+
+<section class="lesson" id="modules" data-level="i" data-group="Intermediate">
+<header><span class="lvl i">Intermediate</span><h2>Modules and declaration files</h2>
+<p class="lede">TypeScript uses the same <code>import</code>/<code>export</code> as JavaScript, plus <code>import type</code> for imports that only exist for the checker. Libraries describe their types in <b>declaration files</b> (<code>.d.ts</code>): either bundled with the package or installed from DefinitelyTyped as <code>@types/…</code>.</p></header>
+
+<div class="two">
+<div><p><b>models.ts</b></p>
+<pre class="code">export interface Product {
+  id: number;
+  name: string;
+  price: number;
+}
+
+export type Currency = "USD" | "EUR";
+
+export function formatPrice(p: Product, c: Currency = "USD"): string {
+  return new Intl.NumberFormat("en", { style: "currency", currency: c }).format(p.price);
+}</pre></div>
+<div><p><b>app.ts</b></p>
+<pre class="code">// type-only import: removed completely from the JavaScript output
+import type { Product, Currency } from "./models.js";
+import { formatPrice } from "./models.js";
+
+const lamp: Product = { id: 1, name: "Lamp", price: 45 };
+const c: Currency = "EUR";
+console.log(formatPrice(lamp, c));</pre></div>
+</div>
+
+<div class="two">
+<div><p><b>legacy-math.d.ts</b>: types for plain JavaScript</p>
+<pre class="code">// Describes a JavaScript file that has no types
+declare module "legacy-math" {
+  export function clamp(value: number, min: number, max: number): number;
+  export const VERSION: string;
+}
+
+// Globals added by a script tag
+declare const ANALYTICS_ID: string;</pre></div>
+<div><p><b>Using packages</b></p>
+<pre class="code"># Packages that ship their own types: just install
+npm install zod
+
+# Packages without types: add them from DefinitelyTyped
+npm install lodash
+npm install -D @types/lodash</pre></div>
+</div>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What's special about <code>import type</code>? <span class="ans">— It's erased from the output, so it can't cause a runtime import.</span></li>
+<li>Where do types for a JavaScript-only package come from? <span class="ans">— A <code>@types/&lt;package&gt;</code> package or your own <code>.d.ts</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Declaring the type of something provided from outside the program
+declare const BUILD_INFO: { version: string; date: string } | undefined;
+const info = typeof BUILD_INFO === "undefined" ? { version: "dev", date: "today" } : BUILD_INFO;
+console.log(`v${info.version} (${info.date})`);</pre>
+
+<pre class="code" data-run>// A namespace-like module object with typed exports
+const MathUtils = {
+  clamp: (v: number, min: number, max: number) =&gt; Math.min(max, Math.max(min, v)),
+  lerp: (a: number, b: number, t: number) =&gt; a + (b - a) * t,
+} as const;
+type MathUtilsType = typeof MathUtils;
+const utils: MathUtilsType = MathUtils;
+console.log(utils.clamp(15, 0, 10), utils.lerp(0, 100, 0.25));</pre>
+</section>
+
+<!-- ===================== ADVANCED ===================== -->
+<section class="lesson" id="keyof" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>keyof, typeof and indexed access</h2>
+<p class="lede">Types can be computed from other types and from values. <code>keyof T</code> is the union of T's keys. <code>typeof value</code> (in a type position) gives the type of a value. <code>T["key"]</code> looks up the type of one property. Together they keep types in sync with your data automatically.</p></header>
+
+<pre class="code" data-run>interface User { id: number; name: string; active: boolean }
+
+type UserKey = keyof User;               // "id" | "name" | "active"
+type NameType = User["name"];            // string
+type IdOrName = User["id" | "name"];     // number | string
+
+// A type-safe getter: the return type follows the key
+function get&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+  return obj[key];
+}
+const u: User = { id: 1, name: "Ada", active: true };
+const n = get(u, "name");                // string
+const a = get(u, "active");              // boolean
+console.log(n.toUpperCase(), a);
+// get(u, "email");                      // error: not a key of User
+
+// typeof: get a type FROM a value
+const defaults = { theme: "light", fontSize: 14, sound: true };
+type Settings = typeof defaults;         // { theme: string; fontSize: number; sound: boolean }
+function applySettings(s: Partial&lt;Settings&gt;): Settings {
+  return { ...defaults, ...s };
+}
+console.log(applySettings({ fontSize: 18 }));</pre>
+
+<pre class="code" data-run>// Element types of arrays and tuples
+const palette = ["red", "green", "blue"] as const;
+type Color = (typeof palette)[number];   // "red" | "green" | "blue"
+
+const routes = {
+  home: "/",
+  profile: "/user/:id",
+  settings: "/settings",
+} as const;
+type RouteName = keyof typeof routes;           // "home" | "profile" | "settings"
+type RoutePath = (typeof routes)[RouteName];    // "/" | "/user/:id" | "/settings"
+
+function navigate(name: RouteName): RoutePath {
+  return routes[name];
+}
+const c: Color = "green";
+console.log(navigate("profile"), c, palette.length);</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What is <code>keyof { a: 1; b: 2 }</code>? <span class="ans">— <code>"a" | "b"</code>.</span></li>
+<li>How do you get the item type of a <code>const</code> array? <span class="ans">— <code>(typeof arr)[number]</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Sort any array of objects by a key, type-safely
+function sortBy&lt;T, K extends keyof T&gt;(items: T[], key: K): T[] {
+  return [...items].sort((a, b) =&gt; (a[key] &lt; b[key] ? -1 : a[key] &gt; b[key] ? 1 : 0));
+}
+const books = [{ title: "Dune", year: 1965 }, { title: "Neuromancer", year: 1984 }, { title: "Emma", year: 1815 }];
+console.log(sortBy(books, "year").map(b =&gt; b.title), sortBy(books, "title").map(b =&gt; b.year));</pre>
+
+<pre class="code" data-run>// Keep a lookup table in sync with a union
+const ICONS = { info: "ℹ️", warn: "⚠️", error: "⛔" } as const;
+type Level = keyof typeof ICONS;
+const messages: [Level, string][] = [["info", "started"], ["warn", "slow"], ["error", "crashed"]];
+for (const [level, msg] of messages) console.log(ICONS[level], msg);</pre>
+</section>
+
+<section class="lesson" id="mapped" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Mapped types</h2>
+<p class="lede">A <b>mapped type</b> builds a new object type by looping over keys: <code>{ [K in keyof T]: … }</code>. It's how <code>Partial</code>, <code>Readonly</code> and <code>Record</code> are written. You can add or remove <code>?</code> and <code>readonly</code>, change each property's type, and even rename keys with <code>as</code>.</p></header>
+
+<pre class="code" data-run>interface Product { name: string; price: number; inStock: boolean }
+
+// Rebuild Partial and Readonly yourself
+type MyPartial&lt;T&gt; = { [K in keyof T]?: T[K] };
+type MyReadonly&lt;T&gt; = { readonly [K in keyof T]: T[K] };
+type Mutable&lt;T&gt; = { -readonly [K in keyof T]: T[K] };     // "-" removes a modifier
+
+// Change every property's type
+type Flags&lt;T&gt; = { [K in keyof T]: boolean };
+type Validators&lt;T&gt; = { [K in keyof T]: (value: T[K]) =&gt; string | null };
+
+const touched: Flags&lt;Product&gt; = { name: true, price: false, inStock: false };
+const rules: Validators&lt;Product&gt; = {
+  name: v =&gt; (v.trim() ? null : "Name is required"),
+  price: v =&gt; (v &gt; 0 ? null : "Price must be positive"),
+  inStock: () =&gt; null,
+};
+
+const draft: MyPartial&lt;Product&gt; = { price: -3 };
+const p: Product = { name: "", price: -3, inStock: true };
+const errors = (Object.keys(rules) as (keyof Product)[])
+  .map(k =&gt; [k, (rules[k] as (v: unknown) =&gt; string | null)(p[k])] as const)
+  .filter(([, msg]) =&gt; msg !== null);
+console.log(touched, draft, errors);</pre>
+
+<pre class="code" data-run>// Key remapping with "as" and template literal types
+interface State { count: number; label: string }
+
+type Getters&lt;T&gt; = { [K in keyof T as `get${Capitalize&lt;string &amp; K&gt;}`]: () =&gt; T[K] };
+type Setters&lt;T&gt; = { [K in keyof T as `set${Capitalize&lt;string &amp; K&gt;}`]: (value: T[K]) =&gt; void };
+
+function createStore(initial: State): Getters&lt;State&gt; &amp; Setters&lt;State&gt; {
+  let state = { ...initial };
+  return {
+    getCount: () =&gt; state.count,
+    getLabel: () =&gt; state.label,
+    setCount: v =&gt; { state = { ...state, count: v }; },
+    setLabel: v =&gt; { state = { ...state, label: v }; },
+  };
+}
+
+const store = createStore({ count: 0, label: "clicks" });
+store.setCount(store.getCount() + 5);
+console.log(store.getLabel(), store.getCount());
+// store.setCount("5");          // error: string is not assignable to number</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does <code>-?</code> do in a mapped type? <span class="ans">— Removes optionality (that's how <code>Required</code> works).</span></li>
+<li>What does <code>as</code> do inside <code>[K in keyof T as …]</code>? <span class="ans">— Renames (or filters out, with never) each key.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Filter keys by value type: only the string properties
+type StringKeys&lt;T&gt; = { [K in keyof T as T[K] extends string ? K : never]: T[K] };
+interface User { id: number; name: string; email: string; active: boolean }
+const text: StringKeys&lt;User&gt; = { name: "Ada", email: "ada@x.dev" };
+console.log(Object.keys(text));</pre>
+
+<pre class="code" data-run>// Nullable version of any type
+type Nullable&lt;T&gt; = { [K in keyof T]: T[K] | null };
+interface Profile { bio: string; site: string }
+const blank: Nullable&lt;Profile&gt; = { bio: null, site: "https://example.com" };
+console.log(blank.bio ?? "(no bio)", blank.site);</pre>
+</section>
+
+<section class="lesson" id="conditional" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Conditional types and infer</h2>
+<p class="lede">A <b>conditional type</b> chooses between two types: <code>T extends U ? X : Y</code>. Applied to a union it runs once per member (<b>distributive</b>). Inside the condition, <code>infer</code> captures part of a type into a new name, which is how <code>ReturnType</code>, <code>Awaited</code> and <code>Parameters</code> are built.</p></header>
+
+<figure class="viz">
+<div class="viz-title">Try it: evaluate a conditional type</div>
+<div class="widget" data-w="cond"></div>
+</figure>
+
+<pre class="code" data-run>type IsString&lt;T&gt; = T extends string ? "yes" : "no";
+type A = IsString&lt;"hi"&gt;;          // "yes"
+type B = IsString&lt;42&gt;;            // "no"
+
+// Distributive: runs per union member
+type NonNull&lt;T&gt; = T extends null | undefined ? never : T;
+type C = NonNull&lt;string | null | number | undefined&gt;;   // string | number
+
+// infer: pull a type out
+type ElementOf&lt;T&gt; = T extends (infer E)[] ? E : never;
+type MyReturn&lt;F&gt; = F extends (...args: any[]) =&gt; infer R ? R : never;
+type Unpromise&lt;T&gt; = T extends Promise&lt;infer V&gt; ? V : T;
+
+type D = ElementOf&lt;string[]&gt;;                    // string
+type E = MyReturn&lt;(x: number) =&gt; boolean&gt;;       // boolean
+type F = Unpromise&lt;Promise&lt;{ ok: true }&gt;&gt;;       // { ok: true }
+
+const a: A = "yes", b: B = "no", c: C[] = ["text", 7], d: D = "item", e: E = true, f: F = { ok: true };
+console.log(a, b, c, d, e, f);
+// const wrong: B = "yes";        // error: "yes" is not assignable to "no"</pre>
+
+<pre class="code" data-run>// A practical one: the type of an event's payload, looked up by name
+type Events = {
+  login: { user: string };
+  logout: undefined;
+  purchase: { amount: number; currency: "USD" | "EUR" };
+};
+
+// Events whose payload is undefined take no argument
+type EmitArgs&lt;K extends keyof Events&gt; = Events[K] extends undefined ? [] : [payload: Events[K]];
+
+function emit&lt;K extends keyof Events&gt;(name: K, ...args: EmitArgs&lt;K&gt;): void {
+  console.log(`emit ${name}`, ...args);
+}
+
+emit("login", { user: "ada" });
+emit("logout");
+emit("purchase", { amount: 9.5, currency: "EUR" });
+// emit("logout", {});            // error: expected 1 argument
+// emit("purchase", { amount: 9.5 });   // error: currency is missing</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does <code>infer R</code> do? <span class="ans">— Captures the matched part of the type as R, usable in the true branch.</span></li>
+<li>What is <code>(string | number) extends string ? 1 : 0</code> written as a generic over a union? <span class="ans">— Distributive: <code>1 | 0</code> (string → 1, number → 0).</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Flatten nested arrays at the type level
+type Flatten&lt;T&gt; = T extends (infer E)[] ? Flatten&lt;E&gt; : T;
+type Deep = Flatten&lt;number[][][]&gt;;     // number
+const x: Deep = 5;
+const nested = [[[1, 2]], [[3]]];
+console.log(x, nested.flat(2));</pre>
+
+<pre class="code" data-run>// Pick only function-valued keys
+type MethodNames&lt;T&gt; = { [K in keyof T]: T[K] extends (...a: any[]) =&gt; unknown ? K : never }[keyof T];
+class Player { name = "p1"; score = 0; jump() { return "jump"; } run() { return "run"; } }
+const actions: MethodNames&lt;Player&gt;[] = ["jump", "run"];
+const p = new Player();
+console.log(actions.map(m =&gt; p[m]()));</pre>
+</section>
+
+<section class="lesson" id="templatelit" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Template literal types</h2>
+<p class="lede">Template literal <b>types</b> build string types the way template strings build strings: <code>`on${Capitalize&lt;E&gt;}`</code>. Combined with unions they generate every combination, and with <code>infer</code> they can parse strings like route patterns at the type level.</p></header>
+
+<pre class="code" data-run>type Size = "sm" | "md" | "lg";
+type Color = "red" | "blue";
+type ClassName = `btn-${Color}-${Size}`;     // 6 combinations, all checked
+
+const cls: ClassName = "btn-blue-lg";
+// const bad: ClassName = "btn-green-sm";    // error
+
+type EventName = "click" | "focus";
+type Handler = `on${Capitalize&lt;EventName&gt;}`; // "onClick" | "onFocus"
+const props: Record&lt;Handler, () =&gt; string&gt; = { onClick: () =&gt; "clicked", onFocus: () =&gt; "focused" };
+
+// CSS-like units
+type Px = `${number}px`;
+const width: Px = "120px";
+// const w2: Px = "120em";                   // error
+
+console.log(cls, props.onClick(), width);</pre>
+
+<pre class="code" data-run>// Parse route parameters out of a path string
+type Params&lt;Path extends string&gt; =
+  Path extends `${string}:${infer Param}/${infer Rest}` ? { [K in Param | keyof Params&lt;Rest&gt;]: string }
+  : Path extends `${string}:${infer Param}` ? { [K in Param]: string }
+  : {};
+
+function buildUrl&lt;P extends string&gt;(pattern: P, params: Params&lt;P&gt;): string {
+  return pattern.replace(/:(\w+)/g, (_, key: string) =&gt; (params as Record&lt;string, string&gt;)[key]);
+}
+
+console.log(buildUrl("/users/:userId/posts/:postId", { userId: "7", postId: "42" }));
+console.log(buildUrl("/about", {}));
+// buildUrl("/users/:userId", {});           // error: userId is missing</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>How many members does <code>`${"a"|"b"}-${"x"|"y"}`</code> have? <span class="ans">— Four: a-x, a-y, b-x, b-y.</span></li>
+<li>Which built-ins change the case of string types? <span class="ans">— Uppercase, Lowercase, Capitalize, Uncapitalize.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Typed environment variable names
+type Env = "dev" | "prod";
+type Service = "api" | "db";
+type EnvVar = `${Uppercase&lt;Service&gt;}_URL_${Uppercase&lt;Env&gt;}`;
+const vars: Partial&lt;Record&lt;EnvVar, string&gt;&gt; = { API_URL_DEV: "http://localhost:3000", DB_URL_PROD: "postgres://db" };
+console.log(Object.entries(vars));</pre>
+
+<pre class="code" data-run>// Dotted paths into an object
+type Paths&lt;T&gt; = { [K in keyof T &amp; string]: T[K] extends object ? K | `${K}.${Paths&lt;T[K]&gt;}` : K }[keyof T &amp; string];
+const config = { server: { port: 80, host: "x" }, debug: true };
+const path: Paths&lt;typeof config&gt; = "server.port";
+const value = path.split(".").reduce&lt;any&gt;((o, k) =&gt; o[k], config);
+console.log(path, value);</pre>
+</section>
+
+<section class="lesson" id="tspatterns" data-level="a" data-group="Advanced">
+<header><span class="lvl a">Advanced</span><h2>Type-safe patterns</h2>
+<p class="lede">A few patterns make whole classes of bugs impossible: <code>satisfies</code> checks a value against a type without widening it; <b>branded types</b> stop you mixing up values with the same underlying type (user ids vs order ids); <b>const type parameters</b> keep literal types; and <b>builders</b> track what's been set in the type itself.</p></header>
+
+<pre class="code" data-run>// satisfies: checked against the type, but keeps the precise inferred type
+type Theme = Record&lt;string, `#${string}`&gt;;
+const theme = {
+  primary: "#3178c6",
+  danger: "#e03131",
+} satisfies Theme;
+
+theme.primary.toUpperCase();          // still known to be a string literal type
+// const bad = { primary: "blue" } satisfies Theme;    // error: not a #hex string
+console.log(theme.primary, Object.keys(theme));
+
+// Branded types: same runtime value, different compile-time type
+type UserId = string &amp; { readonly __brand: "UserId" };
+type OrderId = string &amp; { readonly __brand: "OrderId" };
+const UserId = (s: string) =&gt; s as UserId;
+const OrderId = (s: string) =&gt; s as OrderId;
+
+function cancelOrder(id: OrderId) { return `order ${id} cancelled`; }
+const uid = UserId("u-1"), oid = OrderId("o-9");
+console.log(cancelOrder(oid));
+// cancelOrder(uid);                  // error: UserId is not an OrderId</pre>
+
+<pre class="code" data-run>// const type parameters keep literals without "as const" at the call site
+function makeEnum&lt;const T extends readonly string[]&gt;(values: T) {
+  return Object.fromEntries(values.map(v =&gt; [v, v])) as { [K in T[number]]: K };
+}
+const Status = makeEnum(["draft", "published", "archived"]);
+const s: "draft" | "published" | "archived" = Status.published;
+console.log(Status, s);
+
+// A builder whose type records which required fields were set
+type Req = { url: string; method: "GET" | "POST" };
+class RequestBuilder&lt;S extends Partial&lt;Req&gt; = {}&gt; {
+  constructor(private parts: S) {}
+  url(url: string) { return new RequestBuilder({ ...this.parts, url }); }
+  method(method: Req["method"]) { return new RequestBuilder({ ...this.parts, method }); }
+  build(this: RequestBuilder&lt;Req&gt;): string { return `${this.parts.method} ${this.parts.url}`; }
+}
+console.log(new RequestBuilder({}).url("/api").method("POST").build());
+// new RequestBuilder({}).url("/api").build();   // error: method was never set</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>How is <code>satisfies</code> different from a type annotation? <span class="ans">— It checks without changing the inferred type, so literal details are kept.</span></li>
+<li>Do brands exist at run time? <span class="ans">— No, they're a compile-time trick; the value is a plain string.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Exhaustive object maps with satisfies
+type Lang = "en" | "fr" | "de";
+const hello = { en: "Hello", fr: "Bonjour", de: "Hallo" } satisfies Record&lt;Lang, string&gt;;
+for (const [lang, word] of Object.entries(hello)) console.log(lang, word);</pre>
+
+<pre class="code" data-run>// Units as brands prevent mixing meters and feet
+type Meters = number &amp; { readonly unit: "m" };
+type Feet = number &amp; { readonly unit: "ft" };
+const meters = (n: number) =&gt; n as Meters;
+const toFeet = (m: Meters) =&gt; (m * 3.28084) as Feet;
+const height = meters(1.8);
+console.log(toFeet(height).toFixed(2), "ft");
+// toFeet(6 as Feet);                 // error</pre>
+</section>
+
+<!-- ===================== DEVELOPMENT ===================== -->
+<section class="lesson" id="tsconfig" data-level="d" data-group="Development">
+<header><span class="lvl d">Development</span><h2>tsconfig, strict mode and tooling</h2>
+<p class="lede">A <code>tsconfig.json</code> file tells the compiler which files to check and how strict to be. Turn on <code>strict</code> from day one. Most projects don't run <code>tsc</code> to produce JavaScript: a bundler (Vite, esbuild) or runtime (Node.js, Bun, Deno) strips the types, and <code>tsc --noEmit</code> runs in CI purely as the type checker.</p></header>
+
+<div class="two">
+<div><p><b>tsconfig.json</b> for a modern app</p>
+<pre class="code">{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["src"]
+}</pre></div>
+<div><p><b>Commands</b></p>
+<pre class="code">npm create vite@latest app -- --template vanilla-ts
+cd app &amp;&amp; npm install
+npm run dev              # dev server: types stripped instantly
+npx tsc --noEmit         # type-check the whole project
+npx tsc --watch --noEmit # keep checking while you work
+
+# Node.js 23+ runs .ts directly (types stripped)
+node app.ts
+# or with older Node:
+npx tsx app.ts</pre></div>
+</div>
+
+<div class="tbl"><table>
+<tr><th>Flag</th><th>What it catches</th></tr>
+<tr><td><code>strict</code></td><td>Turns on the important checks: implicit any, null checks, strict function types and more</td></tr>
+<tr><td><code>noUncheckedIndexedAccess</code></td><td><code>arr[i]</code> and <code>obj[key]</code> may be undefined</td></tr>
+<tr><td><code>exactOptionalPropertyTypes</code></td><td>Distinguishes "missing" from "explicitly undefined"</td></tr>
+<tr><td><code>noImplicitOverride</code></td><td>Requires <code>override</code> when a subclass replaces a method</td></tr>
+</table></div>
+
+<pre class="code" data-run>// This page compiles with strict: true. Each line below would be an error;
+// remove the // from one at a time and press Run to see the message.
+function add(a: number, b: number) { return a + b; }
+// function implicit(x) { return x; }            // noImplicitAny
+// const len: number = (null as string | null).length;   // strictNullChecks
+class Base { greet() { return "hi"; } }
+class Child extends Base { override greet() { return "hello"; } }
+console.log(add(1, 2), new Child().greet());</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What does <code>tsc --noEmit</code> do? <span class="ans">— Type-checks without writing any JavaScript files.</span></li>
+<li>Which single flag turns on the main safety checks? <span class="ans">— <code>"strict": true</code>.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run>// Migrating JavaScript: start loose, tighten later. JSDoc types work in .js files too:
+/**
+ * @param {number} price
+ * @param {number} [taxRate]
+ * @returns {number}
+ */
+function withTax(price: number, taxRate = 0.2): number {
+  return Math.round(price * (1 + taxRate) * 100) / 100;
+}
+console.log(withTax(10), withTax(10, 0.07));</pre>
+
+<pre class="code" data-run>// The @ts-expect-error comment documents an error you mean to have (and fails if the error goes away)
+function onlyNumbers(n: number) { return n * 2; }
+// @ts-expect-error: testing that strings are rejected
+const bad = onlyNumbers("2");
+console.log("still runs:", bad);</pre>
+</section>
+
+<section class="lesson" id="tsdom" data-level="d" data-group="Development">
+<header><span class="lvl d">Development</span><h2>TypeScript with the DOM</h2>
+<p class="lede">The DOM comes fully typed. <code>querySelector("button")</code> returns <code>HTMLButtonElement | null</code>, and a generic version like <code>querySelector&lt;HTMLInputElement&gt;("#email")</code> lets you say what a CSS selector finds. Event handlers know their event types (<code>MouseEvent</code>, <code>KeyboardEvent</code>). These examples are <b>runnable pages</b>: the script is type-checked with the browser's DOM types before it runs.</p></header>
+
+<pre class="code" data-run="page">&lt;input id="name" placeholder="Your name"&gt;
+&lt;button id="greet"&gt;Greet&lt;/button&gt;
+&lt;p id="out"&gt;&lt;/p&gt;
+
+&lt;script&gt;
+  // Tag-name selectors are typed automatically
+  const button = document.querySelector("button");          // HTMLButtonElement | null
+  // Other selectors: say what you expect with a type argument
+  const input = document.querySelector&lt;HTMLInputElement&gt;("#name");
+  const out = document.querySelector&lt;HTMLParagraphElement&gt;("#out");
+
+  if (!button || !input || !out) throw new Error("Missing elements");   // narrows all three
+
+  button.addEventListener("click", (event: MouseEvent) =&gt; {
+    out.textContent = `Hello, ${input.value || "stranger"}! (clicked at ${event.clientX}, ${event.clientY})`;
+  });
+  input.addEventListener("keydown", event =&gt; {               // event: KeyboardEvent, inferred
+    if (event.key === "Enter") button.click();
+  });
+  console.log("typed DOM ready:", button.tagName, input.type);
+&lt;/script&gt;</pre>
+
+<pre class="code" data-run="page">&lt;form id="f"&gt;
+  &lt;label&gt;Age &lt;input name="age" type="number" value="30"&gt;&lt;/label&gt;
+  &lt;label&gt;&lt;input name="newsletter" type="checkbox" checked&gt; Newsletter&lt;/label&gt;
+  &lt;button&gt;Save&lt;/button&gt;
+&lt;/form&gt;
+&lt;div id="result" style="white-space: pre; font-family: monospace"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  interface Prefs { age: number; newsletter: boolean }
+
+  // A small helper: find an element or fail loudly, with the right type
+  function $&lt;T extends Element&gt;(selector: string): T {
+    const el = document.querySelector&lt;T&gt;(selector);
+    if (!el) throw new Error(`No element matches ${selector}`);
+    return el;
+  }
+
+  const form = $&lt;HTMLFormElement&gt;("#f");
+  form.addEventListener("submit", e =&gt; {
+    e.preventDefault();
+    const data = new FormData(form);
+    const prefs: Prefs = {
+      age: Number(data.get("age")),
+      newsletter: data.get("newsletter") === "on",
+    };
+    $&lt;HTMLDivElement&gt;("#result").textContent = JSON.stringify(prefs, null, 2);
+    console.log(prefs);
+  });
+&lt;/script&gt;</pre>
+
+<details class="check"><summary>Check yourself</summary><ol>
+<li>What type does <code>document.querySelector("#x")</code> return? <span class="ans">— <code>Element | null</code>: narrow it or pass a type argument.</span></li>
+<li>Why check for <code>null</code> before using an element? <span class="ans">— The selector may match nothing; strict mode makes you handle it.</span></li>
+</ol></details>
+
+<h3>Practice: two more runnable examples</h3>
+<pre class="code" data-run="page">&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+  // Creating elements: createElement("li") returns HTMLLIElement
+  const list = document.querySelector&lt;HTMLUListElement&gt;("#list")!;
+  const langs: { name: string; typed: boolean }[] = [{ name: "TypeScript", typed: true }, { name: "JavaScript", typed: false }];
+  for (const lang of langs) {
+    const li = document.createElement("li");
+    li.textContent = `${lang.name}${lang.typed ? " ✓ static types" : ""}`;
+    list.append(li);
+  }
+  console.log(list.children.length);
+&lt;/script&gt;</pre>
+
+<pre class="code" data-run="page">&lt;div id="box"&gt;Hover or click me&lt;/div&gt;
+&lt;script&gt;
+  // Event maps: addEventListener knows the event type for each name
+  const box = document.getElementById("box") as HTMLDivElement;
+  const log = (e: Event) =&gt; console.log(e.type);
+  box.addEventListener("mouseenter", log);
+  box.addEventListener("click", (e) =&gt; { box.style.background = e.shiftKey ? "gold" : "lightblue"; log(e); });
+&lt;/script&gt;
+&lt;style&gt;#box { padding: 20px; background: #eef; border-radius: 8px; cursor: pointer; }&lt;/style&gt;</pre>
+</section>
+
+<!-- ===================== PROJECTS ===================== -->
+<section class="lesson" id="p-grades" data-level="p" data-group="Projects">
+<header><span class="lvl p">Project 1</span><h2>Typed grade book</h2>
+<p class="lede">Turn raw test scores into report cards and class statistics. The first TypeScript project is about <b>modelling data</b>: describe students and subjects with types, and let the compiler guarantee that every subject is handled, every letter grade is valid and every function gets what it expects.</p>
+<div class="proj-meta"><span>⏱ about 30 minutes</span><span>Uses: interfaces, literal unions, Record, as const, typed functions</span></div></header>
+
+<h3>What you'll build</h3>
+<ul class="feat">
+<li>Student and subject types that can't drift apart</li>
+<li>Average, letter grade, best and worst subject</li>
+<li>A report card per student</li>
+<li>Class statistics and a ranking table</li>
+</ul>
+
+<h3>Build it step by step</h3>
+<ol class="steps">
+<li class="step"><h4>Model the data</h4>
+<p>Start from a single list of subjects marked <code>as const</code> and derive the <code>Subject</code> union from it, so adding a subject in one place updates every type. <code>Record&lt;Subject, number&gt;</code> means "a score for <b>every</b> subject": leaving one out is a compile error.</p>
+<pre class="code" data-run>const SUBJECTS = ["math", "science", "english", "history"] as const;
+type Subject = (typeof SUBJECTS)[number];         // "math" | "science" | "english" | "history"
+type Letter = "A" | "B" | "C" | "D" | "F";
+
+interface Student {
+  id: number;
+  name: string;
+  scores: Record&lt;Subject, number&gt;;
+}
+
+const ada: Student = { id: 1, name: "Ada", scores: { math: 98, science: 91, english: 85, history: 88 } };
+console.log(ada.name, ada.scores.math);
+
+// Try it: delete "history: 88" above and press Run.</pre></li>
+
+<li class="step"><h4>Write small, typed functions</h4>
+<p>Each function does one job and states its input and output. <code>letter()</code> returns <code>Letter</code>, so a typo like <code>"E"</code> is caught. <code>bestAndWorst()</code> walks the subject list and its return type is a labelled tuple.</p>
+<pre class="code" data-run>const SUBJECTS = ["math", "science", "english", "history"] as const;
+type Subject = (typeof SUBJECTS)[number];
+type Letter = "A" | "B" | "C" | "D" | "F";
+
+function average(nums: readonly number[]): number {
+  return nums.length ? nums.reduce((a, b) =&gt; a + b, 0) / nums.length : 0;
+}
+
+function letter(score: number): Letter {
+  if (score &gt;= 90) return "A";
+  if (score &gt;= 80) return "B";
+  if (score &gt;= 70) return "C";
+  if (score &gt;= 60) return "D";
+  return "F";
+}
+
+function bestAndWorst(scores: Record&lt;Subject, number&gt;): [best: Subject, worst: Subject] {
+  let best: Subject = SUBJECTS[0], worst: Subject = SUBJECTS[0];
+  for (const s of SUBJECTS) {
+    if (scores[s] &gt; scores[best]) best = s;
+    if (scores[s] &lt; scores[worst]) worst = s;
+  }
+  return [best, worst];
+}
+
+const scores = { math: 72, science: 95, english: 64, history: 81 };
+console.log(average(Object.values(scores)), letter(average(Object.values(scores))), bestAndWorst(scores));</pre></li>
+
+<li class="step" id="p-grades-final"><h4>The finished grade book</h4>
+<p>A <code>ReportCard</code> type describes the output; <code>reportCard()</code> builds one per student and <code>classStats()</code> uses a mapped object over subjects. <code>console.table</code> prints the results.</p>
+<pre class="code" data-run>const SUBJECTS = ["math", "science", "english", "history"] as const;
+type Subject = (typeof SUBJECTS)[number];
+type Letter = "A" | "B" | "C" | "D" | "F";
+
+interface Student { id: number; name: string; scores: Record&lt;Subject, number&gt; }
+
+interface ReportCard {
+  name: string;
+  average: number;
+  letter: Letter;
+  best: Subject;
+  worst: Subject;
+}
+
+interface SubjectStats { average: number; top: string; failing: number }
+
+const average = (nums: readonly number[]): number =&gt;
+  nums.length ? nums.reduce((a, b) =&gt; a + b, 0) / nums.length : 0;
+
+const round1 = (n: number) =&gt; Math.round(n * 10) / 10;
+
+function letter(score: number): Letter {
+  if (score &gt;= 90) return "A";
+  if (score &gt;= 80) return "B";
+  if (score &gt;= 70) return "C";
+  if (score &gt;= 60) return "D";
+  return "F";
+}
+
+function reportCard(student: Student): ReportCard {
+  const values = SUBJECTS.map(s =&gt; student.scores[s]);
+  const avg = average(values);
+  const sorted = [...SUBJECTS].sort((a, b) =&gt; student.scores[b] - student.scores[a]);
+  return { name: student.name, average: round1(avg), letter: letter(avg), best: sorted[0], worst: sorted[sorted.length - 1] };
+}
+
+function classStats(students: Student[]): Record&lt;Subject, SubjectStats&gt; {
+  const stats = {} as Record&lt;Subject, SubjectStats&gt;;
+  for (const subject of SUBJECTS) {
+    const top = students.reduce((a, b) =&gt; (b.scores[subject] &gt; a.scores[subject] ? b : a));
+    stats[subject] = {
+      average: round1(average(students.map(s =&gt; s.scores[subject]))),
+      top: top.name,
+      failing: students.filter(s =&gt; s.scores[subject] &lt; 60).length,
+    };
+  }
+  return stats;
+}
+
+const students: Student[] = [
+  { id: 1, name: "Ada", scores: { math: 98, science: 91, english: 85, history: 88 } },
+  { id: 2, name: "Linus", scores: { math: 84, science: 79, english: 58, history: 70 } },
+  { id: 3, name: "Grace", scores: { math: 90, science: 96, english: 92, history: 81 } },
+  { id: 4, name: "Ken", scores: { math: 61, science: 55, english: 77, history: 49 } },
+];
+
+const cards = students.map(reportCard).sort((a, b) =&gt; b.average - a.average);
+console.log("Report cards (ranked):");
+console.table(cards);
+
+console.log("Class statistics:");
+console.table(classStats(students));
+
+const honorRoll = cards.filter(c =&gt; c.letter === "A").map(c =&gt; c.name);
+console.log("Honor roll:", honorRoll.join(", ") || "nobody yet");</pre></li>
+</ol>
+
+<h3>How the code works</h3>
+<ul class="walk">
+<li><code>(typeof SUBJECTS)[number]</code> Turns the array into a union type. The list is the single source of truth for both the loops (values) and the checks (types).</li>
+<li><code>Record&lt;Subject, number&gt;</code> Forces a score for every subject. Add <code>"art"</code> to <code>SUBJECTS</code> and the compiler points at every student that lacks it.</li>
+<li><code>function letter(score: number): Letter</code> The declared return type is checked against every <code>return</code>, so an invalid grade can't slip out.</li>
+<li><code>{} as Record&lt;Subject, SubjectStats&gt;</code> The object starts empty and the loop fills every key. <code>as</code> is acceptable here because the very next lines make it true; keep casts this local.</li>
+<li><code>[...SUBJECTS].sort(...)</code> <code>SUBJECTS</code> is readonly, so it's copied before sorting. TypeScript would reject <code>SUBJECTS.sort()</code>.</li>
+</ul>
+
+<h3>Ideas to extend it</h3>
+<ul>
+<li>Allow missing scores with <code>Partial&lt;Record&lt;Subject, number&gt;&gt;</code> and handle them in <code>average</code>.</li>
+<li>Add weights per subject with <code>Record&lt;Subject, number&gt;</code>.</li>
+<li>Export the report as CSV text.</li>
+</ul>
+</section>
+
+<section class="lesson" id="p-bank" data-level="p" data-group="Projects">
+<header><span class="lvl p">Project 2</span><h2>Bank accounts with safe errors</h2>
+<p class="lede">Model a small bank: accounts with private balances, a typed transaction history, and transfers between accounts. Instead of throwing for expected problems (not enough money, frozen account), every operation returns a <b>Result</b> that the compiler forces callers to check.</p>
+<div class="proj-meta"><span>⏱ about 45 minutes</span><span>Uses: classes, private fields, discriminated unions, generics, Map</span></div></header>
+
+<h3>What you'll build</h3>
+<ul class="feat">
+<li>Accounts with a hidden balance in cents</li>
+<li>Deposits, withdrawals and transfers</li>
+<li>Typed error codes, no surprise exceptions</li>
+<li>Statements with a running balance</li>
+</ul>
+
+<h3>Build it step by step</h3>
+<ol class="steps">
+<li class="step"><h4>Design the Result and error types</h4>
+<p>A <code>Result&lt;T, E&gt;</code> is either success with a value or failure with an error. Each error is a member of a discriminated union with its own data, so a caller can show "you need $12.50 more" instead of a vague message.</p>
+<pre class="code" data-run>type Result&lt;T, E&gt; = { ok: true; value: T } | { ok: false; error: E };
+const ok = &lt;T&gt;(value: T): Result&lt;T, never&gt; =&gt; ({ ok: true, value });
+const err = &lt;E&gt;(error: E): Result&lt;never, E&gt; =&gt; ({ ok: false, error });
+
+type BankError =
+  | { code: "INVALID_AMOUNT"; amount: number }
+  | { code: "INSUFFICIENT_FUNDS"; balance: number; requested: number }
+  | { code: "ACCOUNT_FROZEN"; accountId: string }
+  | { code: "NOT_FOUND"; accountId: string };
+
+function explain(e: BankError): string {
+  switch (e.code) {
+    case "INVALID_AMOUNT": return `Amount must be positive (got ${e.amount})`;
+    case "INSUFFICIENT_FUNDS": return `Not enough money: need ${e.requested - e.balance} more cents`;
+    case "ACCOUNT_FROZEN": return `Account ${e.accountId} is frozen`;
+    case "NOT_FOUND": return `No account ${e.accountId}`;
+  }
+}
+
+const r: Result&lt;number, BankError&gt; = err({ code: "INSUFFICIENT_FUNDS", balance: 500, requested: 1750 });
+console.log(r.ok ? r.value : explain(r.error));
+console.log(ok(42));</pre></li>
+
+<li class="step"><h4>The Account class</h4>
+<p>The balance is a <code>#private</code> field in cents: no code outside the class can change it, at compile time <b>or</b> run time. Every change goes through a method that validates first and records a <code>Transaction</code>.</p>
+<pre class="code" data-run>type Result&lt;T, E&gt; = { ok: true; value: T } | { ok: false; error: E };
+type BankError = { code: "INVALID_AMOUNT"; amount: number } | { code: "INSUFFICIENT_FUNDS"; balance: number; requested: number };
+interface Transaction { kind: "deposit" | "withdrawal"; cents: number; balanceAfter: number }
+
+class Account {
+  #balance = 0;
+  readonly history: Transaction[] = [];
+  constructor(readonly id: string, readonly owner: string) {}
+
+  get balance(): number { return this.#balance; }
+
+  deposit(cents: number): Result&lt;number, BankError&gt; {
+    if (!Number.isInteger(cents) || cents &lt;= 0) return { ok: false, error: { code: "INVALID_AMOUNT", amount: cents } };
+    this.#balance += cents;
+    this.history.push({ kind: "deposit", cents, balanceAfter: this.#balance });
+    return { ok: true, value: this.#balance };
+  }
+
+  withdraw(cents: number): Result&lt;number, BankError&gt; {
+    if (!Number.isInteger(cents) || cents &lt;= 0) return { ok: false, error: { code: "INVALID_AMOUNT", amount: cents } };
+    if (cents &gt; this.#balance) return { ok: false, error: { code: "INSUFFICIENT_FUNDS", balance: this.#balance, requested: cents } };
+    this.#balance -= cents;
+    this.history.push({ kind: "withdrawal", cents, balanceAfter: this.#balance });
+    return { ok: true, value: this.#balance };
+  }
+}
+
+const acc = new Account("A-1", "Ada");
+console.log(acc.deposit(10_000), acc.withdraw(2_500), acc.withdraw(99_999), acc.deposit(-5));
+console.log(acc.balance, acc.history);
+// acc.#balance = 1e9;          // error: private field</pre></li>
+
+<li class="step" id="p-bank-final"><h4>The finished bank</h4>
+<p>A <code>Bank</code> keeps accounts in a <code>Map&lt;string, Account&gt;</code>. <code>transfer()</code> looks up both accounts, withdraws, then deposits, and <b>rolls back</b> if the second step fails, so money is never lost halfway. <code>statement()</code> formats the history with <code>Intl.NumberFormat</code>.</p>
+<pre class="code" data-run>type Result&lt;T, E&gt; = { ok: true; value: T } | { ok: false; error: E };
+const ok = &lt;T&gt;(value: T): Result&lt;T, never&gt; =&gt; ({ ok: true, value });
+const fail = &lt;E&gt;(error: E): Result&lt;never, E&gt; =&gt; ({ ok: false, error });
+
+type BankError =
+  | { code: "INVALID_AMOUNT"; amount: number }
+  | { code: "INSUFFICIENT_FUNDS"; balance: number; requested: number }
+  | { code: "ACCOUNT_FROZEN"; accountId: string }
+  | { code: "NOT_FOUND"; accountId: string };
+
+interface Transaction {
+  kind: "deposit" | "withdrawal" | "transfer-in" | "transfer-out";
+  cents: number;
+  balanceAfter: number;
+  note?: string;
+}
+
+const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+const fmt = (cents: number) =&gt; money.format(cents / 100);
+
+class Account {
+  #balance = 0;
+  #frozen = false;
+  readonly history: Transaction[] = [];
+  constructor(readonly id: string, readonly owner: string) {}
+
+  get balance() { return this.#balance; }
+  freeze() { this.#frozen = true; }
+
+  #check(cents: number): BankError | null {
+    if (this.#frozen) return { code: "ACCOUNT_FROZEN", accountId: this.id };
+    if (!Number.isInteger(cents) || cents &lt;= 0) return { code: "INVALID_AMOUNT", amount: cents };
+    return null;
+  }
+
+  deposit(cents: number, kind: "deposit" | "transfer-in" = "deposit", note?: string): Result&lt;number, BankError&gt; {
+    const problem = this.#check(cents);
+    if (problem) return fail(problem);
+    this.#balance += cents;
+    this.history.push({ kind, cents, balanceAfter: this.#balance, note });
+    return ok(this.#balance);
+  }
+
+  withdraw(cents: number, kind: "withdrawal" | "transfer-out" = "withdrawal", note?: string): Result&lt;number, BankError&gt; {
+    const problem = this.#check(cents);
+    if (problem) return fail(problem);
+    if (cents &gt; this.#balance) return fail({ code: "INSUFFICIENT_FUNDS", balance: this.#balance, requested: cents });
+    this.#balance -= cents;
+    this.history.push({ kind, cents, balanceAfter: this.#balance, note });
+    return ok(this.#balance);
+  }
+}
+
+class Bank {
+  private accounts = new Map&lt;string, Account&gt;();
+  private nextId = 1;
+
+  open(owner: string, initialCents = 0): Account {
+    const account = new Account(`ACC-${String(this.nextId++).padStart(3, "0")}`, owner);
+    if (initialCents &gt; 0) account.deposit(initialCents);
+    this.accounts.set(account.id, account);
+    return account;
+  }
+
+  find(id: string): Result&lt;Account, BankError&gt; {
+    const account = this.accounts.get(id);
+    return account ? ok(account) : fail({ code: "NOT_FOUND", accountId: id });
+  }
+
+  transfer(fromId: string, toId: string, cents: number): Result&lt;string, BankError&gt; {
+    const from = this.find(fromId);
+    if (!from.ok) return from;
+    const to = this.find(toId);
+    if (!to.ok) return to;
+
+    const out = from.value.withdraw(cents, "transfer-out", `to ${to.value.owner}`);
+    if (!out.ok) return out;
+    const inn = to.value.deposit(cents, "transfer-in", `from ${from.value.owner}`);
+    if (!inn.ok) {
+      from.value.deposit(cents, "deposit", "refund: transfer failed");   // roll back
+      return inn;
+    }
+    return ok(`Sent ${fmt(cents)} from ${from.value.owner} to ${to.value.owner}`);
+  }
+
+  statement(id: string): string {
+    const found = this.find(id);
+    if (!found.ok) return explain(found.error);
+    const a = found.value;
+    const lines = a.history.map(t =&gt; {
+      const sign = t.kind === "deposit" || t.kind === "transfer-in" ? "+" : "-";
+      return `  ${t.kind.padEnd(12)} ${(sign + fmt(t.cents)).padStart(11)}  ${fmt(t.balanceAfter).padStart(10)}  ${t.note ?? ""}`;
+    });
+    return [`${a.id} · ${a.owner}`, ...lines, `  balance: ${fmt(a.balance)}`].join("\n");
+  }
+}
+
+function explain(e: BankError): string {
+  switch (e.code) {
+    case "INVALID_AMOUNT": return `✗ Amount must be a positive number of cents (got ${e.amount})`;
+    case "INSUFFICIENT_FUNDS": return `✗ Not enough money: balance ${fmt(e.balance)}, requested ${fmt(e.requested)}`;
+    case "ACCOUNT_FROZEN": return `✗ Account ${e.accountId} is frozen`;
+    case "NOT_FOUND": return `✗ No account called ${e.accountId}`;
+  }
+}
+
+const bank = new Bank();
+const ada = bank.open("Ada", 50_000);
+const linus = bank.open("Linus", 2_000);
+
+const attempts: [string, string, number][] = [
+  [ada.id, linus.id, 12_550],
+  [linus.id, ada.id, 99_000],
+  [ada.id, "ACC-999", 100],
+  [ada.id, linus.id, -5],
+];
+for (const [from, to, cents] of attempts) {
+  const r = bank.transfer(from, to, cents);
+  console.log(r.ok ? `✓ ${r.value}` : explain(r.error));
+}
+
+linus.freeze();
+const frozen = bank.transfer(ada.id, linus.id, 100);
+console.log(frozen.ok ? frozen.value : explain(frozen.error), "| Ada still has", fmt(ada.balance));
+
+console.log("\n" + bank.statement(ada.id));
+console.log("\n" + bank.statement(linus.id));</pre></li>
+</ol>
+
+<h3>How the code works</h3>
+<ul class="walk">
+<li><code>Result&lt;never, E&gt;</code> from <code>fail()</code> <code>never</code> fits into any <code>Result&lt;T, E&gt;</code>, so one helper works for every function's error.</li>
+<li><code>if (!from.ok) return from;</code> After the check TypeScript knows <code>from</code> is the failure member, so returning it as this function's result is type-correct. No re-wrapping needed.</li>
+<li><code>#balance</code> and <code>#check</code> Truly private (JavaScript <code>#</code>), not just compiler-private. Only the methods can change the balance.</li>
+<li>The rollback in <code>transfer</code> If the deposit fails (the target is frozen), the money goes straight back. Run the code: Ada's balance is unchanged after the frozen transfer.</li>
+<li><code>explain()</code> has no default case The switch covers every <code>code</code>; add a new error kind and the function stops compiling until you handle it.</li>
+</ul>
+
+<h3>Ideas to extend it</h3>
+<ul>
+<li>Add a daily withdrawal limit with a new <code>LIMIT_EXCEEDED</code> error.</li>
+<li>Add interest for savings accounts with a <code>SavingsAccount extends Account</code>.</li>
+<li>Store <code>Date</code>s on transactions and filter statements by month.</li>
+</ul>
+</section>
+
+<section class="lesson" id="p-store" data-level="p" data-group="Projects">
+<header><span class="lvl p">Project 3</span><h2>A typed state store (mini Redux)</h2>
+<p class="lede">Build the core of a state-management library: a single <b>state</b> object, <b>actions</b> described by a discriminated union, a pure <b>reducer</b> that computes the next state, and a generic <b>store</b> with subscriptions and middleware. TypeScript makes impossible actions impossible to write.</p>
+<div class="proj-meta"><span>⏱ about 45 minutes</span><span>Uses: discriminated unions, never, generics, readonly, function types</span></div></header>
+
+<h3>What you'll build</h3>
+<ul class="feat">
+<li>Actions that can only carry valid data</li>
+<li>An exhaustive, pure reducer</li>
+<li>A generic <code>createStore&lt;S, A&gt;</code></li>
+<li>Selectors, subscriptions and a logger middleware</li>
+</ul>
+
+<h3>Build it step by step</h3>
+<ol class="steps">
+<li class="step"><h4>State and actions</h4>
+<p>The state is <code>readonly</code> all the way down, so nothing can change it in place by accident. Each action has a <code>type</code> and exactly the data it needs: an <code>"added"</code> action without <code>text</code> doesn't compile.</p>
+<pre class="code" data-run>interface Todo { readonly id: number; readonly text: string; readonly done: boolean }
+type Filter = "all" | "active" | "done";
+interface State { readonly todos: readonly Todo[]; readonly filter: Filter; readonly nextId: number }
+
+type Action =
+  | { type: "added"; text: string }
+  | { type: "toggled"; id: number }
+  | { type: "removed"; id: number }
+  | { type: "filterChanged"; filter: Filter }
+  | { type: "clearedDone" };
+
+const actions: Action[] = [
+  { type: "added", text: "Learn TypeScript" },
+  { type: "toggled", id: 1 },
+  { type: "filterChanged", filter: "done" },
+];
+// @ts-expect-error: "added" needs text
+const broken: Action = { type: "added" };
+console.log(actions, broken);</pre></li>
+
+<li class="step"><h4>An exhaustive reducer</h4>
+<p>The reducer is a pure function <code>(state, action) =&gt; newState</code>. In each <code>case</code>, TypeScript has narrowed <code>action</code> to that member, so <code>action.text</code> is only allowed where it exists. The <code>assertNever</code> default turns "forgot to handle an action" into a compile error.</p>
+<pre class="code" data-run>interface Todo { readonly id: number; readonly text: string; readonly done: boolean }
+type Filter = "all" | "active" | "done";
+interface State { readonly todos: readonly Todo[]; readonly filter: Filter; readonly nextId: number }
+type Action =
+  | { type: "added"; text: string }
+  | { type: "toggled"; id: number }
+  | { type: "removed"; id: number }
+  | { type: "filterChanged"; filter: Filter }
+  | { type: "clearedDone" };
+
+function assertNever(x: never): never {
+  throw new Error("Unhandled action: " + JSON.stringify(x));
+}
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "added":
+      return { ...state, todos: [...state.todos, { id: state.nextId, text: action.text, done: false }], nextId: state.nextId + 1 };
+    case "toggled":
+      return { ...state, todos: state.todos.map(t =&gt; (t.id === action.id ? { ...t, done: !t.done } : t)) };
+    case "removed":
+      return { ...state, todos: state.todos.filter(t =&gt; t.id !== action.id) };
+    case "filterChanged":
+      return { ...state, filter: action.filter };
+    case "clearedDone":
+      return { ...state, todos: state.todos.filter(t =&gt; !t.done) };
+    default:
+      return assertNever(action);
+  }
+}
+
+let state: State = { todos: [], filter: "all", nextId: 1 };
+state = reducer(state, { type: "added", text: "Write types" });
+state = reducer(state, { type: "added", text: "Write reducer" });
+state = reducer(state, { type: "toggled", id: 1 });
+console.log(state);</pre></li>
+
+<li class="step" id="p-store-final"><h4>The finished store</h4>
+<p><code>createStore</code> is generic over any state <code>S</code> and action <code>A</code>, so the same code works for a to-do app, a shopping cart or a game. <b>Middleware</b> wraps <code>dispatch</code> (here: a logger), and <b>selectors</b> compute derived data from the state.</p>
+<pre class="code" data-run>// ---------- a generic store, reusable for any app ----------
+type Reducer&lt;S, A&gt; = (state: S, action: A) =&gt; S;
+type Listener&lt;S&gt; = (state: S) =&gt; void;
+type Middleware&lt;S, A&gt; = (store: { getState: () =&gt; S }) =&gt; (next: (a: A) =&gt; void) =&gt; (action: A) =&gt; void;
+
+interface Store&lt;S, A&gt; {
+  getState(): S;
+  dispatch(action: A): void;
+  subscribe(listener: Listener&lt;S&gt;): () =&gt; void;
+}
+
+function createStore&lt;S, A&gt;(reducer: Reducer&lt;S, A&gt;, initial: S, middleware: Middleware&lt;S, A&gt;[] = []): Store&lt;S, A&gt; {
+  let state = initial;
+  const listeners = new Set&lt;Listener&lt;S&gt;&gt;();
+  const getState = () =&gt; state;
+  const baseDispatch = (action: A) =&gt; {
+    state = reducer(state, action);
+    listeners.forEach(l =&gt; l(state));
+  };
+  const dispatch = middleware.reduceRight&lt;(a: A) =&gt; void&gt;((next, mw) =&gt; mw({ getState })(next), baseDispatch);
+  return {
+    getState,
+    dispatch,
+    subscribe(listener) {
+      listeners.add(listener);
+      return () =&gt; { listeners.delete(listener); };
+    },
+  };
+}
+
+// ---------- the to-do app's types and reducer ----------
+interface Todo { readonly id: number; readonly text: string; readonly done: boolean }
+type Filter = "all" | "active" | "done";
+interface State { readonly todos: readonly Todo[]; readonly filter: Filter; readonly nextId: number }
+type Action =
+  | { type: "added"; text: string }
+  | { type: "toggled"; id: number }
+  | { type: "removed"; id: number }
+  | { type: "filterChanged"; filter: Filter }
+  | { type: "clearedDone" };
+
+function assertNever(x: never): never { throw new Error("Unhandled action: " + JSON.stringify(x)); }
+
+const todoReducer: Reducer&lt;State, Action&gt; = (state, action) =&gt; {
+  switch (action.type) {
+    case "added": {
+      const text = action.text.trim();
+      if (!text) return state;
+      return { ...state, todos: [...state.todos, { id: state.nextId, text, done: false }], nextId: state.nextId + 1 };
+    }
+    case "toggled": return { ...state, todos: state.todos.map(t =&gt; (t.id === action.id ? { ...t, done: !t.done } : t)) };
+    case "removed": return { ...state, todos: state.todos.filter(t =&gt; t.id !== action.id) };
+    case "filterChanged": return { ...state, filter: action.filter };
+    case "clearedDone": return { ...state, todos: state.todos.filter(t =&gt; !t.done) };
+    default: return assertNever(action);
+  }
+};
+
+// ---------- selectors: derived data ----------
+const selectVisible = (s: State) =&gt;
+  s.todos.filter(t =&gt; (s.filter === "active" ? !t.done : s.filter === "done" ? t.done : true));
+const selectCounts = (s: State) =&gt; ({ total: s.todos.length, done: s.todos.filter(t =&gt; t.done).length });
+
+// ---------- middleware: log every action with the state before and after ----------
+const logger: Middleware&lt;State, Action&gt; = store =&gt; next =&gt; action =&gt; {
+  const before = selectCounts(store.getState());
+  next(action);
+  const after = selectCounts(store.getState());
+  console.log(`⚡ ${action.type.padEnd(13)} todos ${before.total}→${after.total}, done ${before.done}→${after.done}`);
+};
+
+// ---------- use it ----------
+const store = createStore&lt;State, Action&gt;(todoReducer, { todos: [], filter: "all", nextId: 1 }, [logger]);
+const unsubscribe = store.subscribe(s =&gt; {
+  if (s.todos.length === 3) console.log("🎯 three todos!");
+});
+
+store.dispatch({ type: "added", text: "Model the state" });
+store.dispatch({ type: "added", text: "Write the reducer" });
+store.dispatch({ type: "added", text: "   " });                 // ignored by the reducer
+store.dispatch({ type: "added", text: "Build the store" });
+store.dispatch({ type: "toggled", id: 1 });
+store.dispatch({ type: "toggled", id: 2 });
+unsubscribe();
+store.dispatch({ type: "filterChanged", filter: "active" });
+console.log("visible:", selectVisible(store.getState()).map(t =&gt; t.text));
+store.dispatch({ type: "clearedDone" });
+console.table(store.getState().todos);
+// store.dispatch({ type: "toggled", id: "1" });   // error: id must be a number
+// store.dispatch({ type: "renamed", id: 1 });     // error: no such action</pre></li>
+</ol>
+
+<h3>How the code works</h3>
+<ul class="walk">
+<li><code>readonly Todo[]</code> and <code>readonly</code> fields The compiler rejects <code>state.todos.push(...)</code> or <code>todo.done = true</code>; the only way to change state is returning a new one.</li>
+<li><code>assertNever(action)</code> If every case is handled, <code>action</code> is <code>never</code> in the default branch. Add a new action type and this line becomes an error until you add its case.</li>
+<li><code>createStore&lt;S, A&gt;</code> The store knows nothing about to-dos. TypeScript infers <code>S</code> and <code>A</code> from the reducer, so <code>dispatch</code> only accepts this app's actions.</li>
+<li><code>reduceRight(…, baseDispatch)</code> Wraps the real dispatch in each middleware from the inside out, so the first middleware in the list runs first.</li>
+<li><code>store =&gt; next =&gt; action =&gt; …</code> The middleware shape used by Redux: configure with the store, wrap the next dispatcher, then handle each action.</li>
+<li>Selectors Derived data (visible items, counts) is computed from state on demand instead of stored, so it can never be out of date.</li>
+</ul>
+
+<h3>Ideas to extend it</h3>
+<ul>
+<li>Add an <code>"edited"</code> action and follow the compiler errors until it works.</li>
+<li>Write an undo middleware that keeps past states.</li>
+<li>Connect the store to a page (see the TypeScript with the DOM lesson).</li>
+</ul>
+</section>
+
+<section class="lesson" id="p-inventory" data-level="p" data-group="Projects">
+<header><span class="lvl p">Project 4</span><h2>Inventory manager with a generic repository</h2>
+<p class="lede">Write one generic <code>Repository&lt;T&gt;</code> class (add, find, update, query, sort) and reuse it for products and suppliers. Then build an inventory on top: selling, restocking, low-stock alerts and stock value per category. This is how real apps share data-access code without losing type safety.</p>
+<div class="proj-meta"><span>⏱ about 60 minutes</span><span>Uses: generics, constraints, keyof, Partial, Omit, Map, Record</span></div></header>
+
+<h3>What you'll build</h3>
+<ul class="feat">
+<li>A reusable, fully typed repository</li>
+<li>Queries like <code>where({ category: "tools" })</code></li>
+<li>Type-safe <code>sortBy("price")</code></li>
+<li>Sales, restocks, alerts and reports</li>
+</ul>
+
+<h3>Build it step by step</h3>
+<ol class="steps">
+<li class="step"><h4>A generic repository</h4>
+<p><code>T extends Entity</code> means "any type that has an <code>id</code>", so the class can use <code>item.id</code> while still knowing the full type of each item. <code>update</code> accepts <code>Partial&lt;Omit&lt;T, "id"&gt;&gt;</code>: any subset of fields except the id.</p>
+<pre class="code" data-run>interface Entity { id: string }
+
+class Repository&lt;T extends Entity&gt; {
+  private items = new Map&lt;string, T&gt;();
+
+  add(item: T): T {
+    if (this.items.has(item.id)) throw new Error(`Duplicate id ${item.id}`);
+    this.items.set(item.id, item);
+    return item;
+  }
+  get(id: string): T | undefined { return this.items.get(id); }
+  all(): T[] { return [...this.items.values()]; }
+  update(id: string, changes: Partial&lt;Omit&lt;T, "id"&gt;&gt;): T {
+    const current = this.items.get(id);
+    if (!current) throw new Error(`No item ${id}`);
+    const next = { ...current, ...changes };
+    this.items.set(id, next);
+    return next;
+  }
+}
+
+interface Supplier extends Entity { name: string; email: string }
+const suppliers = new Repository&lt;Supplier&gt;();
+suppliers.add({ id: "s1", name: "ToolCo", email: "sales@toolco.test" });
+suppliers.update("s1", { email: "orders@toolco.test" });
+// suppliers.update("s1", { id: "x" });       // error: id can't be changed
+// suppliers.add({ id: "s2", name: "NoMail" }); // error: email is missing
+console.log(suppliers.all());</pre></li>
+
+<li class="step"><h4>Typed queries and sorting</h4>
+<p><code>where(filter: Partial&lt;T&gt;)</code> returns items matching every given field. <code>sortBy&lt;K extends keyof T&gt;(key: K)</code> only accepts real property names, so <code>sortBy("prise")</code> is a compile error rather than a silent no-op.</p>
+<pre class="code" data-run>interface Entity { id: string }
+class Repository&lt;T extends Entity&gt; {
+  protected items = new Map&lt;string, T&gt;();
+  add(item: T) { this.items.set(item.id, item); return item; }
+  all(): T[] { return [...this.items.values()]; }
+
+  where(filter: Partial&lt;T&gt;): T[] {
+    const entries = Object.entries(filter) as [keyof T, unknown][];
+    return this.all().filter(item =&gt; entries.every(([key, value]) =&gt; item[key] === value));
+  }
+  sortBy&lt;K extends keyof T&gt;(key: K, direction: "asc" | "desc" = "asc"): T[] {
+    const sign = direction === "asc" ? 1 : -1;
+    return this.all().sort((a, b) =&gt; (a[key] &lt; b[key] ? -sign : a[key] &gt; b[key] ? sign : 0));
+  }
+}
+
+interface Product extends Entity { name: string; category: "tools" | "garden" | "paint"; price: number }
+const products = new Repository&lt;Product&gt;();
+products.add({ id: "p1", name: "Hammer", category: "tools", price: 12 });
+products.add({ id: "p2", name: "Rake", category: "garden", price: 18 });
+products.add({ id: "p3", name: "Wrench", category: "tools", price: 9 });
+
+console.log(products.where({ category: "tools" }).map(p =&gt; p.name));
+console.log(products.sortBy("price", "desc").map(p =&gt; `${p.name} $${p.price}`));
+// products.where({ category: "toys" });   // error: not a valid category
+// products.sortBy("prise");               // error: not a key of Product</pre></li>
+
+<li class="step" id="p-inventory-final"><h4>The finished inventory</h4>
+<p><code>Inventory</code> combines the repository with business rules. Stock changes return a small result union, every movement is logged as a typed event, and reports use <code>Record&lt;Category, number&gt;</code> so every category appears even when it's zero.</p>
+<pre class="code" data-run>interface Entity { id: string }
+
+class Repository&lt;T extends Entity&gt; {
+  private items = new Map&lt;string, T&gt;();
+  add(item: T): T {
+    if (this.items.has(item.id)) throw new Error(`Duplicate id ${item.id}`);
+    this.items.set(item.id, item);
+    return item;
+  }
+  get(id: string): T | undefined { return this.items.get(id); }
+  all(): T[] { return [...this.items.values()]; }
+  update(id: string, changes: Partial&lt;Omit&lt;T, "id"&gt;&gt;): T {
+    const current = this.items.get(id);
+    if (!current) throw new Error(`No item ${id}`);
+    const next = { ...current, ...changes };
+    this.items.set(id, next);
+    return next;
+  }
+  where(filter: Partial&lt;T&gt;): T[] {
+    const entries = Object.entries(filter) as [keyof T, unknown][];
+    return this.all().filter(item =&gt; entries.every(([k, v]) =&gt; item[k] === v));
+  }
+  sortBy&lt;K extends keyof T&gt;(key: K, direction: "asc" | "desc" = "asc"): T[] {
+    const sign = direction === "asc" ? 1 : -1;
+    return this.all().sort((a, b) =&gt; (a[key] &lt; b[key] ? -sign : a[key] &gt; b[key] ? sign : 0));
+  }
+}
+
+const CATEGORIES = ["tools", "garden", "paint"] as const;
+type Category = (typeof CATEGORIES)[number];
+
+interface Product extends Entity {
+  name: string;
+  category: Category;
+  priceCents: number;
+  stock: number;
+  reorderAt: number;
+  supplierId: string;
+}
+interface Supplier extends Entity { name: string; email: string }
+
+type StockEvent =
+  | { type: "sold"; productId: string; qty: number }
+  | { type: "restocked"; productId: string; qty: number }
+  | { type: "rejected"; productId: string; reason: string };
+
+type StockResult = { ok: true; stock: number } | { ok: false; reason: string };
+
+const money = (cents: number) =&gt; new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100);
+
+class Inventory {
+  readonly products = new Repository&lt;Product&gt;();
+  readonly suppliers = new Repository&lt;Supplier&gt;();
+  readonly log: StockEvent[] = [];
+
+  sell(productId: string, qty: number): StockResult {
+    const p = this.products.get(productId);
+    const reason = !p ? "unknown product" : qty &lt;= 0 ? "quantity must be positive" : qty &gt; p.stock ? `only ${p.stock} in stock` : null;
+    if (!p || reason) {
+      this.log.push({ type: "rejected", productId, reason: reason ?? "unknown product" });
+      return { ok: false, reason: reason ?? "unknown product" };
+    }
+    const updated = this.products.update(productId, { stock: p.stock - qty });
+    this.log.push({ type: "sold", productId, qty });
+    return { ok: true, stock: updated.stock };
+  }
+
+  restock(productId: string, qty: number): StockResult {
+    const p = this.products.get(productId);
+    if (!p) return { ok: false, reason: "unknown product" };
+    const updated = this.products.update(productId, { stock: p.stock + qty });
+    this.log.push({ type: "restocked", productId, qty });
+    return { ok: true, stock: updated.stock };
+  }
+
+  lowStock(): { product: string; stock: number; supplier: string }[] {
+    return this.products.all()
+      .filter(p =&gt; p.stock &lt;= p.reorderAt)
+      .map(p =&gt; ({ product: p.name, stock: p.stock, supplier: this.suppliers.get(p.supplierId)?.email ?? "?" }));
+  }
+
+  valueByCategory(): Record&lt;Category, string&gt; {
+    const totals = Object.fromEntries(CATEGORIES.map(c =&gt; [c, 0])) as Record&lt;Category, number&gt;;
+    for (const p of this.products.all()) totals[p.category] += p.priceCents * p.stock;
+    return Object.fromEntries(CATEGORIES.map(c =&gt; [c, money(totals[c])])) as Record&lt;Category, string&gt;;
+  }
+}
+
+const inv = new Inventory();
+inv.suppliers.add({ id: "s1", name: "ToolCo", email: "orders@toolco.test" });
+inv.suppliers.add({ id: "s2", name: "GreenThumb", email: "hi@greenthumb.test" });
+const seed: Product[] = [
+  { id: "p1", name: "Hammer", category: "tools", priceCents: 1299, stock: 14, reorderAt: 5, supplierId: "s1" },
+  { id: "p2", name: "Wrench set", category: "tools", priceCents: 3450, stock: 4, reorderAt: 3, supplierId: "s1" },
+  { id: "p3", name: "Rake", category: "garden", priceCents: 1800, stock: 9, reorderAt: 4, supplierId: "s2" },
+  { id: "p4", name: "Seeds pack", category: "garden", priceCents: 399, stock: 40, reorderAt: 10, supplierId: "s2" },
+];
+seed.forEach(p =&gt; inv.products.add(p));
+
+const orders: [string, number][] = [["p1", 3], ["p2", 2], ["p3", 6], ["p2", 5], ["p9", 1], ["p1", 0]];
+for (const [id, qty] of orders) {
+  const r = inv.sell(id, qty);
+  console.log(`sell ${qty} × ${id}:`, r.ok ? `✓ ${r.stock} left` : `✗ ${r.reason}`);
+}
+inv.restock("p3", 10);
+
+console.log("\n⚠️ Low stock:");
+console.table(inv.lowStock());
+console.log("Stock value by category:", inv.valueByCategory());
+console.log("Most expensive first:", inv.products.sortBy("priceCents", "desc").map(p =&gt; p.name).join(", "));
+console.log("Events:", inv.log.map(e =&gt; (e.type === "rejected" ? `✗${e.productId}` : `${e.type}:${e.productId}×${e.qty}`)).join("  "));</pre></li>
+</ol>
+
+<h3>How the code works</h3>
+<ul class="walk">
+<li><code>class Repository&lt;T extends Entity&gt;</code> One implementation, many types. <code>new Repository&lt;Supplier&gt;()</code> only accepts suppliers and returns suppliers.</li>
+<li><code>{ ...current, ...changes }</code> The spread of <code>T</code> with <code>Partial&lt;Omit&lt;T, "id"&gt;&gt;</code> is still a <code>T</code>, so <code>update</code> returns a fully typed item.</li>
+<li><code>Object.entries(filter) as [keyof T, unknown][]</code> <code>Object.entries</code> returns <code>string</code> keys (objects may have extra properties at run time), so we narrow the type once, in one place.</li>
+<li><code>if (!p || reason)</code> One check handles every rejection reason, and after it TypeScript knows <code>p</code> is defined.</li>
+<li><code>e.type === "rejected" ? … : e.qty</code> Narrowing on the discriminant: only sold and restocked events have <code>qty</code>.</li>
+<li><code>Record&lt;Category, number&gt;</code> built from <code>CATEGORIES</code> Every category gets a starting 0, so a category with nothing in stock still appears in the report.</li>
+</ul>
+
+<h3>Ideas to extend it</h3>
+<ul>
+<li>Add <code>remove(id)</code> and a <code>Repository.count(filter)</code> method.</li>
+<li>Generate a purchase order per supplier from <code>lowStock()</code>.</li>
+<li>Persist the repository to JSON and load it back with a type guard.</li>
+</ul>
+</section>
+
+<section class="lesson" id="p-validator" data-level="p" data-group="Projects">
+<header><span class="lvl p">Project 5</span><h2>A form validator that infers its types</h2>
+<p class="lede">Build a mini version of libraries like Zod: describe a form's rules once as a <b>schema</b>, and get two things from it, a run-time validator for untrusted input <b>and</b> the TypeScript type of the valid data, inferred automatically. No type written twice, no way for them to drift apart.</p>
+<div class="proj-meta"><span>⏱ about 60 minutes</span><span>Uses: generics, infer, mapped types, unknown, Result types</span></div></header>
+
+<h3>What you'll build</h3>
+<ul class="feat">
+<li><code>s.string()</code>, <code>s.number()</code>, <code>s.boolean()</code> with options</li>
+<li><code>s.object({...})</code> and <code>.optional()</code></li>
+<li><code>Infer&lt;typeof schema&gt;</code> gives the data type</li>
+<li>All error messages at once, per field</li>
+</ul>
+
+<h3>Build it step by step</h3>
+<ol class="steps">
+<li class="step"><h4>A schema is an object that parses unknown input</h4>
+<p>A <code>Schema&lt;T&gt;</code> has a <code>parse(input: unknown)</code> method returning a <code>Result&lt;T&gt;</code>. The type parameter <code>T</code> is the type of valid data. <code>Infer</code> uses <code>infer</code> to read <code>T</code> back out of any schema.</p>
+<pre class="code" data-run>type Result&lt;T&gt; = { ok: true; value: T } | { ok: false; errors: string[] };
+interface Schema&lt;T&gt; { parse(input: unknown, path?: string): Result&lt;T&gt; }
+type Infer&lt;S&gt; = S extends Schema&lt;infer T&gt; ? T : never;
+
+const stringSchema: Schema&lt;string&gt; = {
+  parse(input, path = "value") {
+    return typeof input === "string" ? { ok: true, value: input.trim() } : { ok: false, errors: [`${path} must be text`] };
+  },
+};
+
+type S = Infer&lt;typeof stringSchema&gt;;   // string
+const good: S = "inferred!";
+console.log(stringSchema.parse("  hi  "), stringSchema.parse(42), good);</pre></li>
+
+<li class="step"><h4>Building blocks with options</h4>
+<p>Small factory functions create schemas. <code>makeSchema</code> adds an <code>.optional()</code> method to every schema, which returns a <code>Schema&lt;T | undefined&gt;</code>. Numbers accept numeric strings (form fields are always strings) and convert them.</p>
+<pre class="code" data-run>type Result&lt;T&gt; = { ok: true; value: T } | { ok: false; errors: string[] };
+interface Schema&lt;T&gt; { parse(input: unknown, path: string): Result&lt;T&gt;; optional(): Schema&lt;T | undefined&gt; }
+const ok = &lt;T&gt;(value: T): Result&lt;T&gt; =&gt; ({ ok: true, value });
+const fail = (message: string): Result&lt;never&gt; =&gt; ({ ok: false, errors: [message] });
+
+function makeSchema&lt;T&gt;(parse: (input: unknown, path: string) =&gt; Result&lt;T&gt;): Schema&lt;T&gt; {
+  return {
+    parse,
+    optional: () =&gt; makeSchema&lt;T | undefined&gt;((input, path) =&gt; (input === undefined || input === "" ? ok(undefined) : parse(input, path))),
+  };
+}
+
+const string = (opts: { min?: number; max?: number } = {}) =&gt;
+  makeSchema&lt;string&gt;((input, path) =&gt; {
+    if (typeof input !== "string") return fail(`${path} must be text`);
+    const v = input.trim();
+    if (opts.min !== undefined &amp;&amp; v.length &lt; opts.min) return fail(`${path} needs at least ${opts.min} characters`);
+    if (opts.max !== undefined &amp;&amp; v.length &gt; opts.max) return fail(`${path} allows at most ${opts.max} characters`);
+    return ok(v);
+  });
+
+const number = (opts: { min?: number; max?: number } = {}) =&gt;
+  makeSchema&lt;number&gt;((input, path) =&gt; {
+    const n = typeof input === "string" &amp;&amp; input.trim() !== "" ? Number(input) : input;
+    if (typeof n !== "number" || Number.isNaN(n)) return fail(`${path} must be a number`);
+    if (opts.min !== undefined &amp;&amp; n &lt; opts.min) return fail(`${path} must be at least ${opts.min}`);
+    if (opts.max !== undefined &amp;&amp; n &gt; opts.max) return fail(`${path} must be at most ${opts.max}`);
+    return ok(n);
+  });
+
+const age = number({ min: 13, max: 120 });
+const nick = string({ min: 2 }).optional();
+console.log(age.parse("42", "age"), age.parse("7", "age"), age.parse("abc", "age"));
+console.log(nick.parse("", "nickname"), nick.parse("x", "nickname"));</pre></li>
+
+<li class="step" id="p-validator-final"><h4>The finished validator</h4>
+<p><code>s.object(shape)</code> runs every field's schema, collects <b>all</b> errors, and its type is a mapped type over the shape: <code>{ [K in keyof Shape]: Infer&lt;Shape[K]&gt; }</code>. Declare a sign-up schema, then <code>type SignUp = Infer&lt;typeof signUpSchema&gt;</code> is the exact type of valid data.</p>
+<pre class="code" data-run>type Result&lt;T&gt; = { ok: true; value: T } | { ok: false; errors: string[] };
+interface Schema&lt;T&gt; { parse(input: unknown, path: string): Result&lt;T&gt;; optional(): Schema&lt;T | undefined&gt; }
+type Infer&lt;S&gt; = S extends Schema&lt;infer T&gt; ? T : never;
+
+const ok = &lt;T&gt;(value: T): Result&lt;T&gt; =&gt; ({ ok: true, value });
+const fail = (message: string): Result&lt;never&gt; =&gt; ({ ok: false, errors: [message] });
+
+function makeSchema&lt;T&gt;(parse: (input: unknown, path: string) =&gt; Result&lt;T&gt;): Schema&lt;T&gt; {
+  return {
+    parse,
+    optional: () =&gt; makeSchema&lt;T | undefined&gt;((input, path) =&gt; (input === undefined || input === "" ? ok(undefined) : parse(input, path))),
+  };
+}
+
+const s = {
+  string: (opts: { min?: number; max?: number; pattern?: RegExp; message?: string } = {}) =&gt;
+    makeSchema&lt;string&gt;((input, path) =&gt; {
+      if (typeof input !== "string") return fail(`${path} must be text`);
+      const v = input.trim();
+      if (opts.min !== undefined &amp;&amp; v.length &lt; opts.min) return fail(`${path} needs at least ${opts.min} characters`);
+      if (opts.max !== undefined &amp;&amp; v.length &gt; opts.max) return fail(`${path} allows at most ${opts.max} characters`);
+      if (opts.pattern &amp;&amp; !opts.pattern.test(v)) return fail(opts.message ?? `${path} has the wrong format`);
+      return ok(v);
+    }),
+
+  number: (opts: { min?: number; max?: number; int?: boolean } = {}) =&gt;
+    makeSchema&lt;number&gt;((input, path) =&gt; {
+      const n = typeof input === "string" &amp;&amp; input.trim() !== "" ? Number(input) : input;
+      if (typeof n !== "number" || Number.isNaN(n)) return fail(`${path} must be a number`);
+      if (opts.int &amp;&amp; !Number.isInteger(n)) return fail(`${path} must be a whole number`);
+      if (opts.min !== undefined &amp;&amp; n &lt; opts.min) return fail(`${path} must be at least ${opts.min}`);
+      if (opts.max !== undefined &amp;&amp; n &gt; opts.max) return fail(`${path} must be at most ${opts.max}`);
+      return ok(n);
+    }),
+
+  boolean: () =&gt;
+    makeSchema&lt;boolean&gt;((input, path) =&gt; {
+      if (typeof input === "boolean") return ok(input);
+      if (input === "on" || input === "true") return ok(true);
+      if (input === undefined || input === "false") return ok(false);
+      return fail(`${path} must be true or false`);
+    }),
+
+  enum: &lt;const V extends readonly string[]&gt;(values: V) =&gt;
+    makeSchema&lt;V[number]&gt;((input, path) =&gt;
+      typeof input === "string" &amp;&amp; (values as readonly string[]).includes(input)
+        ? ok(input as V[number])
+        : fail(`${path} must be one of ${values.join(", ")}`)),
+
+  object: &lt;Shape extends Record&lt;string, Schema&lt;unknown&gt;&gt;&gt;(shape: Shape) =&gt;
+    makeSchema&lt;{ [K in keyof Shape]: Infer&lt;Shape[K]&gt; }&gt;((input, path) =&gt; {
+      if (typeof input !== "object" || input === null) return fail(`${path || "value"} must be an object`);
+      const source = input as Record&lt;string, unknown&gt;;
+      const out: Record&lt;string, unknown&gt; = {};
+      const errors: string[] = [];
+      for (const key of Object.keys(shape)) {
+        const r = shape[key].parse(source[key], key);
+        if (r.ok) out[key] = r.value;
+        else errors.push(...r.errors);
+      }
+      return errors.length ? { ok: false, errors } : ok(out as { [K in keyof Shape]: Infer&lt;Shape[K]&gt; });
+    }),
+};
+
+// ---------- describe the form once ----------
+const signUpSchema = s.object({
+  username: s.string({ min: 3, max: 16, pattern: /^[a-z0-9_]+$/i, message: "username: letters, digits and _ only" }),
+  email: s.string({ pattern: /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i, message: "email doesn't look like an email" }),
+  age: s.number({ min: 13, int: true }),
+  plan: s.enum(["free", "pro", "team"]),
+  newsletter: s.boolean(),
+  referral: s.string({ max: 20 }).optional(),
+});
+
+// ---------- the type comes for free ----------
+type SignUp = Infer&lt;typeof signUpSchema&gt;;
+// { username: string; email: string; age: number; plan: "free" | "pro" | "team"; newsletter: boolean; referral: string | undefined }
+
+function welcome(user: SignUp): string {
+  return `Welcome ${user.username} (${user.plan})${user.newsletter ? ", subscribed" : ""}${user.referral ? `, invited by ${user.referral}` : ""}`;
+}
+
+// ---------- untrusted input, e.g. Object.fromEntries(new FormData(form)) ----------
+const submissions: unknown[] = [
+  { username: "ada_l", email: "ada@example.com", age: "36", plan: "pro", newsletter: "on", referral: "" },
+  { username: "x!", email: "not-an-email", age: "12.5", plan: "gold", referral: "a-very-long-referral-code" },
+  "not even an object",
+];
+
+for (const data of submissions) {
+  const result = signUpSchema.parse(data, "form");
+  if (result.ok) {
+    console.log("✓", welcome(result.value));
+    console.log("  parsed:", result.value);
+  } else {
+    console.log(`✗ ${result.errors.length} problem(s):`);
+    result.errors.forEach(e =&gt; console.log("   •", e));
+  }
+}</pre></li>
+</ol>
+
+<h3>How the code works</h3>
+<ul class="walk">
+<li><code>type Infer&lt;S&gt; = S extends Schema&lt;infer T&gt; ? T : never</code> Reads the "valid data" type out of any schema. This one line is what makes the whole library feel magical.</li>
+<li><code>fail(): Result&lt;never&gt;</code> A failure has no value, and <code>never</code> fits every <code>Result&lt;T&gt;</code>, so one helper serves all schemas.</li>
+<li><code>{ [K in keyof Shape]: Infer&lt;Shape[K]&gt; }</code> A mapped type: for each field in the shape, the type of data that field's schema accepts.</li>
+<li><code>&lt;const V extends readonly string[]&gt;</code> in <code>enum</code> A const type parameter keeps <code>["free", "pro", "team"]</code> as literal types, so <code>plan</code> becomes <code>"free" | "pro" | "team"</code>, not <code>string</code>.</li>
+<li><code>parse(input: unknown, …)</code> Validators accept <code>unknown</code> because input really can be anything; only code that checks it may produce a typed value.</li>
+<li><code>errors.push(...r.errors)</code> Every field is checked even after one fails, so a user sees all their mistakes at once.</li>
+</ul>
+
+<h3>Ideas to extend it</h3>
+<ul>
+<li>Add <code>s.array(itemSchema)</code> returning <code>Schema&lt;T[]&gt;</code>.</li>
+<li>Return errors as <code>Partial&lt;Record&lt;keyof Shape, string&gt;&gt;</code> to show them next to each field.</li>
+<li>Add <code>.refine(check, message)</code> for cross-field rules like "passwords match".</li>
+</ul>
+</section>
+
+<section class="lesson" id="p-pomodoro" data-level="p" data-group="Projects">
+<header><span class="lvl p">Project 6</span><h2>Pomodoro timer: a typed web app</h2>
+<p class="lede">A focus timer with work and break modes, a progress ring, start / pause / reset and a session counter, written in TypeScript against the real DOM types. The core is a <b>state machine</b>: a pure function that takes the current state and an event and returns the next state, which the page then draws.</p>
+<div class="proj-meta"><span>⏱ about 60 minutes</span><span>Uses: unions, Record, state machines, typed DOM, SVG, setInterval</span></div></header>
+
+<h3>What you'll build</h3>
+<ul class="feat">
+<li>Focus (25 min), short break (5) and long break (15)</li>
+<li>Start, pause, resume and reset</li>
+<li>An animated SVG progress ring</li>
+<li>Auto-switch modes; a long break every 4 focus sessions</li>
+</ul>
+
+<h3>Build it step by step</h3>
+<ol class="steps">
+<li class="step"><h4>Types and helpers</h4>
+<p>Modes and statuses are literal unions; durations are a <code>Record&lt;Mode, number&gt;</code> so every mode must have one. <code>formatTime</code> turns seconds into <code>mm:ss</code>.</p>
+<pre class="code" data-run>type Mode = "focus" | "short" | "long";
+type Status = "idle" | "running" | "paused";
+
+const DURATIONS: Record&lt;Mode, number&gt; = { focus: 25 * 60, short: 5 * 60, long: 15 * 60 };
+const LABELS: Record&lt;Mode, string&gt; = { focus: "Focus", short: "Short break", long: "Long break" };
+
+function formatTime(seconds: number): string {
+  const s = Math.max(0, Math.ceil(seconds));
+  return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+}
+
+const status: Status = "idle";
+console.log(Object.entries(DURATIONS).map(([m, s]) =&gt; `${LABELS[m as Mode]}: ${formatTime(s)}`), status);
+console.log(formatTime(61), formatTime(0.2), formatTime(-5));</pre></li>
+
+<li class="step"><h4>The state machine</h4>
+<p>All behavior lives in <code>transition(state, event)</code>. Events are a discriminated union. Because it's a pure function, you can test the whole timer in the console by feeding it events, with no page and no waiting.</p>
+<pre class="code" data-run>type Mode = "focus" | "short" | "long";
+type Status = "idle" | "running" | "paused";
+interface TimerState { mode: Mode; status: Status; remaining: number; completed: number }
+type TimerEvent =
+  | { type: "toggle" }                       // start / pause / resume
+  | { type: "reset" }
+  | { type: "switch"; mode: Mode }
+  | { type: "tick"; seconds: number };
+
+const DURATIONS: Record&lt;Mode, number&gt; = { focus: 25 * 60, short: 5 * 60, long: 15 * 60 };
+const fresh = (mode: Mode, completed: number): TimerState =&gt; ({ mode, status: "idle", remaining: DURATIONS[mode], completed });
+
+function transition(state: TimerState, event: TimerEvent): TimerState {
+  switch (event.type) {
+    case "toggle":
+      return { ...state, status: state.status === "running" ? "paused" : "running" };
+    case "reset":
+      return fresh(state.mode, state.completed);
+    case "switch":
+      return fresh(event.mode, state.completed);
+    case "tick": {
+      if (state.status !== "running") return state;
+      const remaining = state.remaining - event.seconds;
+      if (remaining &gt; 0) return { ...state, remaining };
+      if (state.mode !== "focus") return fresh("focus", state.completed);
+      const completed = state.completed + 1;
+      return fresh(completed % 4 === 0 ? "long" : "short", completed);
+    }
+  }
+}
+
+let s = fresh("focus", 0);
+const events: TimerEvent[] = [{ type: "tick", seconds: 60 }, { type: "toggle" }, { type: "tick", seconds: 600 },
+  { type: "toggle" }, { type: "tick", seconds: 60 }, { type: "toggle" }, { type: "tick", seconds: 900 }];
+for (const e of events) {
+  s = transition(s, e);
+  console.log(JSON.stringify(e).padEnd(32), "→", s.mode, s.status, s.remaining, `done ${s.completed}`);
+}</pre></li>
+
+<li class="step" id="p-pomodoro-final"><h4>The finished app</h4>
+<p>The page code is thin: it finds elements with a typed helper, sends events to <code>transition</code>, and <code>render()</code>s. <code>setInterval</code> sends a <code>tick</code> every 250 ms with the real elapsed time, multiplied by a demo speed so you can watch a whole session in seconds (untick "Demo speed" for real time).</p>
+<pre class="code" data-run="page">&lt;div class="app"&gt;
+  &lt;div class="modes" id="modes"&gt;
+    &lt;button data-mode="focus"&gt;Focus&lt;/button&gt;
+    &lt;button data-mode="short"&gt;Short break&lt;/button&gt;
+    &lt;button data-mode="long"&gt;Long break&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class="dial"&gt;
+    &lt;svg viewBox="0 0 120 120" aria-hidden="true"&gt;
+      &lt;circle class="track" cx="60" cy="60" r="52"&gt;&lt;/circle&gt;
+      &lt;circle class="bar" id="ring" cx="60" cy="60" r="52"&gt;&lt;/circle&gt;
+    &lt;/svg&gt;
+    &lt;div class="readout"&gt;&lt;b id="time"&gt;25:00&lt;/b&gt;&lt;small id="label"&gt;Focus&lt;/small&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="controls"&gt;
+    &lt;button id="toggle" class="primary"&gt;Start&lt;/button&gt;
+    &lt;button id="reset"&gt;Reset&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;p id="info"&gt;&lt;/p&gt;
+  &lt;label class="demo"&gt;&lt;input type="checkbox" id="fast" checked&gt; Demo speed (1 second = 1 minute)&lt;/label&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  type Mode = "focus" | "short" | "long";
+  type Status = "idle" | "running" | "paused";
+  interface TimerState { mode: Mode; status: Status; remaining: number; completed: number }
+  type TimerEvent =
+    | { type: "toggle" }
+    | { type: "reset" }
+    | { type: "switch"; mode: Mode }
+    | { type: "tick"; seconds: number };
+
+  const DURATIONS: Record&lt;Mode, number&gt; = { focus: 25 * 60, short: 5 * 60, long: 15 * 60 };
+  const LABELS: Record&lt;Mode, string&gt; = { focus: "Focus", short: "Short break", long: "Long break" };
+  const COLORS: Record&lt;Mode, string&gt; = { focus: "#e8590c", short: "#2f9e44", long: "#1c7ed6" };
+
+  // ---------- pure logic ----------
+  const fresh = (mode: Mode, completed: number): TimerState =&gt; ({ mode, status: "idle", remaining: DURATIONS[mode], completed });
+
+  function transition(state: TimerState, event: TimerEvent): TimerState {
+    switch (event.type) {
+      case "toggle": return { ...state, status: state.status === "running" ? "paused" : "running" };
+      case "reset": return fresh(state.mode, state.completed);
+      case "switch": return fresh(event.mode, state.completed);
+      case "tick": {
+        if (state.status !== "running") return state;
+        const remaining = state.remaining - event.seconds;
+        if (remaining &gt; 0) return { ...state, remaining };
+        if (state.mode !== "focus") return fresh("focus", state.completed);
+        const completed = state.completed + 1;
+        return fresh(completed % 4 === 0 ? "long" : "short", completed);
+      }
+    }
+  }
+
+  function formatTime(seconds: number): string {
+    const s = Math.max(0, Math.ceil(seconds));
+    return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+  }
+
+  // ---------- typed DOM ----------
+  function $&lt;T extends Element&gt;(selector: string): T {
+    const el = document.querySelector&lt;T&gt;(selector);
+    if (!el) throw new Error(`Missing element: ${selector}`);
+    return el;
+  }
+  const timeEl = $&lt;HTMLElement&gt;("#time");
+  const labelEl = $&lt;HTMLElement&gt;("#label");
+  const infoEl = $&lt;HTMLParagraphElement&gt;("#info");
+  const toggleBtn = $&lt;HTMLButtonElement&gt;("#toggle");
+  const resetBtn = $&lt;HTMLButtonElement&gt;("#reset");
+  const fastBox = $&lt;HTMLInputElement&gt;("#fast");
+  const ring = $&lt;SVGCircleElement&gt;("#ring");
+  const modeButtons = [...document.querySelectorAll&lt;HTMLButtonElement&gt;("#modes button")];
+
+  const CIRCUMFERENCE = 2 * Math.PI * ring.r.baseVal.value;
+  ring.style.strokeDasharray = String(CIRCUMFERENCE);
+
+  let state: TimerState = fresh("focus", 0);
+  let lastTick = performance.now();
+
+  function dispatch(event: TimerEvent): void {
+    const before = state;
+    state = transition(state, event);
+    if (before.mode !== state.mode &amp;&amp; event.type === "tick") {
+      console.log(`✓ ${LABELS[before.mode]} finished → ${LABELS[state.mode]} (focus sessions: ${state.completed})`);
+    }
+    render();
+  }
+
+  function render(): void {
+    const total = DURATIONS[state.mode];
+    timeEl.textContent = formatTime(state.remaining);
+    labelEl.textContent = LABELS[state.mode];
+    ring.style.stroke = COLORS[state.mode];
+    ring.style.strokeDashoffset = String(CIRCUMFERENCE * (1 - state.remaining / total));
+    toggleBtn.textContent = state.status === "running" ? "Pause" : state.status === "paused" ? "Resume" : "Start";
+    for (const b of modeButtons) b.setAttribute("aria-pressed", String(b.dataset.mode === state.mode));
+    const untilLong = 4 - (state.completed % 4);
+    infoEl.textContent = `Focus sessions done: ${state.completed} · long break after ${untilLong} more`;
+  }
+
+  // ---------- events ----------
+  toggleBtn.addEventListener("click", () =&gt; { lastTick = performance.now(); dispatch({ type: "toggle" }); });
+  resetBtn.addEventListener("click", () =&gt; dispatch({ type: "reset" }));
+  for (const b of modeButtons) {
+    b.addEventListener("click", () =&gt; {
+      const mode = b.dataset.mode;
+      if (mode === "focus" || mode === "short" || mode === "long") dispatch({ type: "switch", mode });
+    });
+  }
+
+  setInterval(() =&gt; {
+    const now = performance.now();
+    const elapsed = ((now - lastTick) / 1000) * (fastBox.checked ? 60 : 1);
+    lastTick = now;
+    if (state.status === "running") dispatch({ type: "tick", seconds: elapsed });
+  }, 250);
+
+  render();
+&lt;/script&gt;
+
+&lt;style&gt;
+  body { background: #1b1f2a; color: #f1f3f5; }
+  .app { max-width: 360px; margin: auto; text-align: center; }
+  .modes { display: flex; gap: 6px; justify-content: center; }
+  .modes button { font: inherit; border: 1px solid #495057; background: none; color: inherit; border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+  .modes button[aria-pressed="true"] { background: #f1f3f5; color: #1b1f2a; }
+  .dial { position: relative; width: 220px; height: 220px; margin: 14px auto; }
+  .dial svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .track { fill: none; stroke: #343a40; stroke-width: 8; }
+  .bar { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset .25s linear, stroke .3s; }
+  .readout { position: absolute; inset: 0; display: grid; place-content: center; }
+  .readout b { font-size: 2.6em; font-variant-numeric: tabular-nums; }
+  .readout small { color: #adb5bd; }
+  .controls { display: flex; gap: 8px; justify-content: center; }
+  .controls button { font: inherit; font-weight: 700; padding: 8px 20px; border-radius: 10px; border: 0; cursor: pointer; background: #343a40; color: inherit; }
+  .controls .primary { background: #79b8ff; color: #0d1626; }
+  #info { color: #adb5bd; font-size: .9em; }
+  .demo { font-size: .85em; color: #adb5bd; }
+&lt;/style&gt;</pre></li>
+</ol>
+
+<h3>How the code works</h3>
+<ul class="walk">
+<li><code>transition(state, event)</code> The entire timer's behavior in one pure function. The page never decides "what happens next"; it only asks. That's why step 2 could test it with no page.</li>
+<li><code>$&lt;T extends Element&gt;(selector)</code> One helper finds an element <b>and</b> gives it the right type, failing loudly if the HTML and script disagree.</li>
+<li><code>SVGCircleElement</code> and <code>ring.r.baseVal.value</code> The DOM types know SVG too: the radius is read from the circle itself to compute the circumference.</li>
+<li><code>strokeDashoffset</code> The ring is one long dash the length of the circle; shifting it by the elapsed fraction draws progress.</li>
+<li><code>elapsed = (now - lastTick) / 1000</code> Ticks use real elapsed time, not "250 ms passed", so the timer stays accurate even when the browser delays a callback.</li>
+<li><code>if (mode === "focus" || …)</code> <code>dataset.mode</code> is <code>string | undefined</code>; checking each allowed value narrows it to <code>Mode</code> without a cast.</li>
+</ul>
+
+<h3>Ideas to extend it</h3>
+<ul>
+<li>Play a sound with the Web Audio API when a session ends.</li>
+<li>Save <code>completed</code> and settings in <code>localStorage</code> with a type guard on load.</li>
+<li>Let users change durations through a typed settings form.</li>
+</ul>
+</section>
+
+<!-- ===================== REFERENCE ===================== -->
+<section class="lesson" id="cheatsheet" data-level="ref" data-group="Reference">
+<header><span class="lvl d">Quick reference</span><h2>Cheat sheet</h2>
+<p class="lede">Everything at a glance. The search box at the top filters these cards too.</p></header>
+<div class="cheat" id="cheat">
+<div class="cc"><h4>Basic types</h4><pre class="mini">let s: string; let n: number; let b: boolean
+let big: bigint; let sym: symbol
+let u: undefined; let nul: null
+any       // no checking: avoid
+unknown   // must narrow before use
+void      // returns nothing
+never     // can't happen / always throws</pre></div>
+<div class="cc"><h4>Arrays, tuples, objects</h4><pre class="mini">string[]   Array&lt;string&gt;   readonly string[]
+[string, number]   [name: string, age?: number]
+{ id: number; name?: string; readonly at: Date }
+{ [key: string]: number }   Record&lt;string, number&gt;</pre></div>
+<div class="cc"><h4>Functions</h4><pre class="mini">function f(a: number, b = 1, c?: string): string {}
+const g = (x: number): number =&gt; x * 2
+type Fn = (x: number) =&gt; void
+function f(...xs: number[]) {}
+function len(s: string): number;  // overloads
+function len(a: unknown[]): number;</pre></div>
+<div class="cc"><h4>Interfaces &amp; aliases</h4><pre class="mini">interface User { id: number; name: string }
+interface Admin extends User { perms: string[] }
+type ID = number | string
+type Point = { x: number; y: number }
+type Both = A &amp; B        // intersection</pre></div>
+<div class="cc"><h4>Unions &amp; narrowing</h4><pre class="mini">type Size = "sm" | "md" | "lg"
+typeof x === "string"   x instanceof Date
+"prop" in obj   Array.isArray(x)
+if (x) …  x === null  x ?? fallback
+function isUser(v: unknown): v is User
+function assertUser(v: unknown): asserts v is User</pre></div>
+<div class="cc"><h4>Discriminated unions</h4><pre class="mini">type Shape =
+  | { kind: "circle"; r: number }
+  | { kind: "square"; side: number }
+switch (s.kind) { case "circle": … }
+default: const never_: never = s</pre></div>
+<div class="cc"><h4>Classes</h4><pre class="mini">class A implements I {
+  private x = 0; protected y = 1; #z = 2
+  static count = 0; readonly id: string
+  constructor(public name: string) {}
+  override toString() { … }
+}
+abstract class Shape { abstract area(): number }</pre></div>
+<div class="cc"><h4>Generics</h4><pre class="mini">function first&lt;T&gt;(xs: T[]): T | undefined
+function get&lt;T, K extends keyof T&gt;(o: T, k: K): T[K]
+interface Box&lt;T = unknown&gt; { value: T }
+class Repo&lt;T extends { id: string }&gt; {}
+function f&lt;const T extends readonly string[]&gt;(x: T)</pre></div>
+<div class="cc"><h4>Utility types</h4><pre class="mini">Partial&lt;T&gt; Required&lt;T&gt; Readonly&lt;T&gt;
+Pick&lt;T, "a" | "b"&gt;  Omit&lt;T, "id"&gt;
+Record&lt;K, V&gt;  Exclude&lt;U, X&gt;  Extract&lt;U, X&gt;
+NonNullable&lt;T&gt;  ReturnType&lt;typeof f&gt;
+Parameters&lt;typeof f&gt;  Awaited&lt;P&gt;  InstanceType&lt;C&gt;</pre></div>
+<div class="cc"><h4>Type operators</h4><pre class="mini">keyof T             // union of keys
+typeof value        // type of a value
+T["key"]  T[number] // indexed access
+x as const          // literal + readonly
+value satisfies T   // check, keep inference
+x as T  x!          // casts: avoid</pre></div>
+<div class="cc"><h4>Mapped &amp; conditional</h4><pre class="mini">{ [K in keyof T]?: T[K] }
+{ -readonly [K in keyof T]-?: T[K] }
+{ [K in keyof T as `get${Capitalize&lt;K &amp; string&gt;}`]: … }
+T extends string ? "yes" : "no"
+T extends (infer E)[] ? E : never
+`btn-${Size}`  Uppercase&lt;S&gt;  Capitalize&lt;S&gt;</pre></div>
+<div class="cc"><h4>Async &amp; DOM</h4><pre class="mini">async function f(): Promise&lt;User&gt; {}
+const data = (await res.json()) as unknown
+document.querySelector&lt;HTMLInputElement&gt;("#x")
+el.addEventListener("click", (e: MouseEvent) =&gt; {})
+const id: number = setInterval(fn, 1000)</pre></div>
+<div class="cc"><h4>Modules &amp; config</h4><pre class="mini">import type { User } from "./types.js"
+export interface User {}  export type ID = string
+declare module "pkg" { export const x: number }
+npm i -D typescript @types/node
+npx tsc --noEmit   npx tsc --init
+"strict": true  "noUncheckedIndexedAccess": true</pre></div>
+<div class="cc"><h4>Common gotchas</h4><pre class="mini">types are erased: validate runtime data
+"as" doesn't check anything
+let x = "a"  // string;  const x = "a"  // "a"
+arr.find() returns T | undefined
+Object.keys(o) is string[], not (keyof T)[]
+excess property check: only object literals
+JSON.parse returns any: type it as unknown
+private is compile-time; #private is runtime</pre></div>
+</div>
+</section>
+
+<footer>Built for learning. Code is type-checked by the real TypeScript compiler (version 5.8, strict mode, loaded once from jsDelivr), compiled to JavaScript and run in your browser: console examples in a Web Worker with an 8-second limit, page examples in a sandboxed frame with the DOM types. Reference: <a href="https://www.typescriptlang.org/docs/">typescriptlang.org/docs</a>.</footer>
+</main>
+</div>
+<script src="course-data.js"></script>
+<script src="../../assets/course.js"></script>
+<script src="../../assets/jsts.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+/* TypeScript, Visually — page tokens. The layout is shared with the JavaScript page in /assets/jsts.css;
+   shared overrides live in /assets/theme.css. TypeScript blue on cool ink. */
+:root{
+  --bg:#f3f6fb; --surface:#ffffff; --ink:#152238; --muted:#566379; --line:#d7dfec;
+  --accent:#2a63b5; --accent-ink:#ffffff; --accent2:#79b8ff; --soft:#e5eefb;
+  --code-bg:#0d1626; --code-ink:#dde6f5; --code-line:#1c2a44;
+  --good:#1f8a5b; --warn:#b7791f; --bad:#c2410c; --adv:#7a4fd1; --proj:#c0267a;
+  --font-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius:10px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b111c; --surface:#121b2b; --ink:#e3eaf5; --muted:#98a5bb; --line:#24314a;
+    --accent:#7fb0ff; --accent-ink:#0b111c; --accent2:#79b8ff; --soft:#18243b;
+    --code-bg:#070c16; --code-ink:#dde6f5; --code-line:#18243b;
+    --good:#4cc38a; --warn:#e3a73a; --bad:#ff7a45; --adv:#a98bff; --proj:#ff6fb5; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b111c; --surface:#121b2b; --ink:#e3eaf5; --muted:#98a5bb; --line:#24314a;
+  --accent:#7fb0ff; --accent-ink:#0b111c; --accent2:#79b8ff; --soft:#18243b;
+  --code-bg:#070c16; --code-ink:#dde6f5; --code-line:#18243b;
+  --good:#4cc38a; --warn:#e3a73a; --bad:#ff7a45; --adv:#a98bff; --proj:#ff6fb5; color-scheme:dark;
+}
+/* type-erasure diagram */
+.erase{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:700px){.erase{grid-template-columns:1fr}}
+.erase pre{margin:0;background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);padding:12px 14px;font:13px/1.6 var(--font-mono);white-space:pre;overflow-x:auto}
+.erase .ty{color:#7fe0c6;background:rgba(127,224,198,.12);border-radius:3px;transition:opacity .5s,font-size .5s .3s}
+.erase.gone .ty{opacity:0;font-size:0}
+.erase h5{margin:0 0 6px;font:700 .72rem var(--font-body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.tyrow{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font:.88rem var(--font-mono);align-items:baseline}
+.tyrow .tb{color:var(--accent);font-weight:600}
+.props{display:grid;gap:4px;font:.9rem var(--font-mono)}
+.props div{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:4px 10px;transition:all .3s}
+.props div.new{animation:pop .4s}
+.props div.off{opacity:.3;text-decoration:line-through}
+.props .flag{color:var(--adv);font-weight:700}
