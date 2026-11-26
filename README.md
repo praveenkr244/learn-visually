@@ -40,7 +40,8 @@ learn-visually/
 │   ├── embed.js            # lets the shell set each page's theme
 │   ├── course.js/.css      # course mode: one lesson per screen, progress, practice, quick checks
 │   ├── java-runner.js/.css # Edit/Run boxes for the Java examples
-│   └── jsts.js/.css        # runner + shared layout for the JavaScript and TypeScript tabs
+│   ├── jsts.js/.css        # runner + shared layout for the JavaScript and TypeScript tabs
+│   └── ask.js/.css         # the "Ask a question" window on every tutorial page
 └── tutorials/
     ├── java-strings/  index.html · style.css · script.js · course-data.js
     ├── java-arrays/   index.html · style.css · script.js · course-data.js
@@ -106,6 +107,14 @@ The MCP flow animation is drawn by `tutorials/mcp/script.js` (see `SCENES`). Ope
 `tutorials/mcp/index.html?film` to get just the 1280×720 stage; `window.__flow.renderAt(seconds)`
 draws any frame, which is how `mcp-end-to-end.mp4` was recorded (Playwright screenshots piped into ffmpeg at 30 fps).
 After editing scenes, either re-record or remove the `<video>` block from the page.
+
+## Ask a question (AI help)
+
+Every tutorial page has an **💬 Ask** button (bottom right). It opens a chat window where you can ask about the lesson on screen; select some text or code first to ask about exactly that. Answers come from Claude (model `claude-opus-5-5`) through the official Anthropic SDK, loaded from jsDelivr on the first question.
+
+The site has no server, so each person uses **their own Anthropic API key**: create one at [console.anthropic.com](https://console.anthropic.com/settings/keys), press **Key** in the window and paste it. The key is stored only in that browser's `localStorage` and sent only to `api.anthropic.com`; questions are billed to that account (usually a few cents each). Remove it with **Key → Remove saved key**, and don't save a key on a shared computer. Conversations are kept per page in `localStorage`; **New** starts over.
+
+To change the model, the tutor's instructions or the CDN version, edit the constants and `systemPrompt()` at the top of `assets/ask.js`. A new tutorial page gets the window by adding `<link rel="stylesheet" href="../../assets/ask.css">` and `<script src="../../assets/ask.js" defer></script>`.
 
 ## Notes
 
