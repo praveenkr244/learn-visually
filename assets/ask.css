@@ -1,4 +1,4 @@
-/* "Ask a question" window (assets/ask.js), shared by every tutorial page.
+/* "Ask a question" window (assets/ask.js), shared by every tutorial page. Questions open in Claude.ai.
    Uses the page's own tokens where they exist, with fallbacks for pages that name them differently. */
 .ask-fab, .ask-panel {
   --ask-bg: var(--surface, #fff);
@@ -8,7 +8,6 @@
   --ask-soft: var(--soft, color-mix(in srgb, var(--ask-acc) 9%, var(--ask-bg)));
   --ask-acc: var(--accent, var(--c-acc, #3b4fd8));
   --ask-on: var(--accent-ink, var(--c-on, #fff));
-  --ask-code: var(--code-bg, #10172a);
   font-family: var(--font-body, var(--body, system-ui, sans-serif));
 }
 .ask-fab {
@@ -46,20 +45,10 @@
 .ask-msg { max-width: 100%; overflow-wrap: anywhere; }
 .ask-msg.me { justify-self: end; max-width: 88%; background: var(--ask-acc); color: var(--ask-on); padding: 8px 12px; border-radius: 14px 14px 4px 14px; white-space: pre-wrap; }
 .ask-msg.me .ask-quote { display: block; margin-bottom: 6px; padding: 4px 8px; border-radius: 6px; background: rgba(0, 0, 0, .18); font: .78rem/1.4 var(--font-mono, var(--mono, ui-monospace, monospace)); white-space: pre-wrap; max-height: 6.5em; overflow: hidden; }
-.ask-msg.ai { background: var(--ask-soft); padding: 8px 12px; border-radius: 14px 14px 14px 4px; }
-.ask-msg.ai > :first-child { margin-top: 0; }
-.ask-msg.ai > :last-child { margin-bottom: 0; }
-.ask-msg.ai p, .ask-msg.ai ul, .ask-msg.ai ol { margin: .45em 0; }
-.ask-msg.ai ul, .ask-msg.ai ol { padding-left: 1.3em; }
-.ask-msg.ai h4 { margin: .7em 0 .3em; font-size: .98rem; }
-.ask-msg.ai code { font: .86em var(--font-mono, var(--mono, ui-monospace, monospace)); background: color-mix(in srgb, var(--ask-ink) 9%, transparent); padding: .05em .3em; border-radius: 4px; }
-.ask-msg.ai pre { margin: .5em 0; background: var(--ask-code); color: #e3e9f5; padding: 10px 12px; border-radius: 8px; overflow-x: auto; }
-.ask-msg.ai pre code { background: none; padding: 0; font-size: .82rem; line-height: 1.5; color: inherit; }
-.ask-msg.ai a { color: var(--ask-acc); }
-.ask-msg.err { background: color-mix(in srgb, #e03131 12%, var(--ask-bg)); border: 1px solid color-mix(in srgb, #e03131 40%, transparent); padding: 8px 12px; border-radius: 10px; font-size: .9rem; }
+.ask-msg.ai { background: var(--ask-soft); padding: 8px 12px; border-radius: 14px 14px 14px 4px; font-size: .88rem; color: var(--ask-muted); }
+.ask-msg.ai b { color: var(--ask-ink); }
+.ask-msg.ai .ask-sugg { margin-top: 6px; }
 .ask-msg.note { color: var(--ask-muted); font-size: .85rem; text-align: center; }
-.ask-typing::after { content: "▍"; animation: ask-blink 1s steps(2) infinite; }
-@keyframes ask-blink { 50% { opacity: 0; } }
 
 .ask-msg.ask-hint { color: var(--ask-muted); font-size: .9rem; text-align: left; }
 .ask-hint p { margin: 0 0 .5em; }
@@ -77,10 +66,3 @@
 .ask-send { border: 0; border-radius: 12px; padding: 10px 14px; background: var(--ask-acc); color: var(--ask-on); font: 700 .9rem/1.2 inherit; cursor: pointer; }
 .ask-send:disabled { opacity: .5; cursor: default; }
 
-.ask-key { padding: 14px; overflow-y: auto; display: grid; gap: 10px; align-content: start; font-size: .92rem; }
-.ask-key p { margin: 0; }
-.ask-key input { width: 100%; box-sizing: border-box; padding: 9px 11px; border: 1px solid var(--ask-line); border-radius: 10px; background: var(--ask-bg); color: var(--ask-ink); font: .9rem var(--font-mono, var(--mono, ui-monospace, monospace)); }
-.ask-key .ask-row { display: flex; gap: 8px; flex-wrap: wrap; }
-.ask-key .ask-small { font-size: .8rem; color: var(--ask-muted); }
-.ask-btn2 { border: 1px solid var(--ask-line); background: var(--ask-bg); color: var(--ask-ink); border-radius: 10px; padding: 8px 12px; font: 600 .88rem/1.2 inherit; cursor: pointer; }
-.ask-key a { color: var(--ask-acc); }

@@ -108,13 +108,11 @@ The MCP flow animation is drawn by `tutorials/mcp/script.js` (see `SCENES`). Ope
 draws any frame, which is how `mcp-end-to-end.mp4` was recorded (Playwright screenshots piped into ffmpeg at 30 fps).
 After editing scenes, either re-record or remove the `<video>` block from the page.
 
-## Ask a question (AI help)
+## Ask a question
 
-Every tutorial page has an **💬 Ask** button (bottom right). It opens a chat window where you can ask about the lesson on screen; select some text or code first to ask about exactly that. Answers come from Claude (model `claude-opus-5-5`) through the official Anthropic SDK, loaded from jsDelivr on the first question.
+Every tutorial page has an **💬 Ask** button (bottom right). It opens a chat window: type a question about the lesson on screen (or select some text or code on the page first to ask about exactly that) and press **Ask**. The question opens in [Claude.ai](https://claude.ai) in a new tab, already written, together with the tutorial name, the lesson, its key idea and the selected text, so Claude answers in context. It needs only a Claude.ai account (the free plan works): no API key, no server, no cost to the site. The question is also copied to the clipboard in case Claude.ai doesn't fill it in. Past questions are kept per page in `localStorage`; **Clear** removes them.
 
-The site has no server, so each person uses **their own Anthropic API key**: create one at [console.anthropic.com](https://console.anthropic.com/settings/keys), press **Key** in the window and paste it. The key is stored only in that browser's `localStorage` and sent only to `api.anthropic.com`; questions are billed to that account (usually a few cents each). Remove it with **Key → Remove saved key**, and don't save a key on a shared computer. Conversations are kept per page in `localStorage`; **New** starts over.
-
-To change the model, the tutor's instructions or the CDN version, edit the constants and `systemPrompt()` at the top of `assets/ask.js`. A new tutorial page gets the window by adding `<link rel="stylesheet" href="../../assets/ask.css">` and `<script src="../../assets/ask.js" defer></script>`.
+To change what is sent, edit `buildPrompt()` in `assets/ask.js`. A new tutorial page gets the window by adding `<link rel="stylesheet" href="../../assets/ask.css">` and `<script src="../../assets/ask.js" defer></script>`.
 
 ## Notes
 

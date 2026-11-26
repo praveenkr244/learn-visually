@@ -37,7 +37,7 @@ MCP and Playwright tabs do **not** use course mode; they have their own `script.
 
 ### Ask-a-question window
 
-`assets/ask.js` + `assets/ask.css` (included by every tutorial page) add a floating **Ask** button and chat panel. It calls Claude from the browser with the official SDK (`@anthropic-ai/sdk`, pinned version loaded as an ES module from jsDelivr on first use, `dangerouslyAllowBrowser: true`) using the learner's own API key from `localStorage` (`lv-ask-key`); there is no server and no shared key, so never add one to the repo. Each request sends the current lesson's `innerText` in the system prompt (course mode: `[data-lesson].cur`; other pages: the `section[id]` at the top of the view), uses `claude-opus-5-5` with streaming, prompt caching and server-side refusal fallbacks, and passes earlier assistant `content` blocks back unchanged. Answers are rendered by a small Markdown renderer that escapes HTML first. Skipped on `?film` (the MCP video stage).
+`assets/ask.js` + `assets/ask.css` (included by every tutorial page) add a floating **Ask** button and chat panel. Sending opens `https://claude.ai/new?q=…` in a new tab with a prompt built by `buildPrompt()`: the tutorial name, the lesson on screen (course mode: `[data-lesson].cur`; other pages: the `section[id]` at the top of the view), its key idea, a public link when the site is served over https, any selected text (first 4,000 characters) and the question. The prompt is also copied to the clipboard. There is no API key or server, and the site must not hold one. Skipped on `?film` (the MCP video stage).
 
 ## Conventions
 
