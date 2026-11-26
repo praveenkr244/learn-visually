@@ -35,16 +35,12 @@ MCP and Playwright tabs do **not** use course mode; they have their own `script.
 - JavaScript / TypeScript (`assets/jsts.js`, chosen by `<body data-lang="js|ts">`): `<pre class="code" data-run>` runs console code in a fresh Web Worker (8 s limit, Node-style `console` output); `<pre class="code" data-run="page">` holds a small HTML page that runs in a sandboxed iframe preview with its console forwarded. On the TypeScript page every Run first type-checks with the real compiler (TypeScript 5.8.3 from jsDelivr, `strict`, lib es2022, plus DOM types for page blocks); type errors stop the run. Examples meant to show an error must still be valid TypeScript otherwise; use `// @ts-expect-error` to demonstrate an error while still running, and never start an ordinary comment with `@ts-expect-error`.
 - Inside HTML code blocks escape `<` as `&lt;` and `&` as `&amp;` (a page block must not contain a literal `</pre>`). In `course-data.js`, code uses a raw tag (`R\`...\``) so backslashes survive; on the JavaScript and TypeScript pages `\`` and `\${` inside it become a real backtick and `${`.
 
-### Ask-a-question window
-
-`assets/ask.js` + `assets/ask.css` (included by every tutorial page) add a floating **Ask** button and chat panel. Sending opens `https://claude.ai/new?q=…` in a new tab with a prompt built by `buildPrompt()`: the tutorial name, the lesson on screen (course mode: `[data-lesson].cur`; other pages: the `section[id]` at the top of the view), its key idea, a public link when the site is served over https, any selected text (first 4,000 characters) and the question. The prompt is also copied to the clipboard. There is no API key or server, and the site must not hold one. Skipped on `?film` (the MCP video stage).
-
 ## Conventions
 
 - `.editorconfig`: UTF-8, LF, 2-space indent, final newline. (The user's git has `core.autocrlf` on; the CRLF warnings on commit are harmless.)
 - Style each page with CSS variables in the `:root` block at the top of its `style.css`; light palette in `:root`, dark palette in the blocks right below. Use tokens, not hard-coded colors.
 - Match the existing JS style: IIFE-wrapped, `"use strict"`, small helpers (`$`, `$$`, `esc`, `store`), `localStorage` access always in `try/catch`.
-- Every tutorial `<head>` must include `../../assets/ask.css`, `../../assets/palettes.css`, then `../../assets/theme.css`, then `<script src="../../assets/embed.js">`; and `<script src="../../assets/ask.js" defer>` before `</body>`.
+- Every tutorial `<head>` must include `../../assets/palettes.css`, then `../../assets/theme.css`, then `<script src="../../assets/embed.js">`.
 - Fonts come from Google Fonts only; no other external CSS/JS beyond the runners above.
 
 ## Adding a tutorial tab

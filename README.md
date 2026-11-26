@@ -40,8 +40,7 @@ learn-visually/
 │   ├── embed.js            # lets the shell set each page's theme
 │   ├── course.js/.css      # course mode: one lesson per screen, progress, practice, quick checks
 │   ├── java-runner.js/.css # Edit/Run boxes for the Java examples
-│   ├── jsts.js/.css        # runner + shared layout for the JavaScript and TypeScript tabs
-│   └── ask.js/.css         # the "Ask a question" window on every tutorial page
+│   └── jsts.js/.css        # runner + shared layout for the JavaScript and TypeScript tabs
 └── tutorials/
     ├── java-strings/  index.html · style.css · script.js · course-data.js
     ├── java-arrays/   index.html · style.css · script.js · course-data.js
@@ -107,12 +106,6 @@ The MCP flow animation is drawn by `tutorials/mcp/script.js` (see `SCENES`). Ope
 `tutorials/mcp/index.html?film` to get just the 1280×720 stage; `window.__flow.renderAt(seconds)`
 draws any frame, which is how `mcp-end-to-end.mp4` was recorded (Playwright screenshots piped into ffmpeg at 30 fps).
 After editing scenes, either re-record or remove the `<video>` block from the page.
-
-## Ask a question
-
-Every tutorial page has an **💬 Ask** button (bottom right). It opens a chat window: type a question about the lesson on screen (or select some text or code on the page first to ask about exactly that) and press **Ask**. The question opens in [Claude.ai](https://claude.ai) in a new tab, already written, together with the tutorial name, the lesson, its key idea and the selected text, so Claude answers in context. It needs only a Claude.ai account (the free plan works): no API key, no server, no cost to the site. The question is also copied to the clipboard in case Claude.ai doesn't fill it in. Past questions are kept per page in `localStorage`; **Clear** removes them.
-
-To change what is sent, edit `buildPrompt()` in `assets/ask.js`. A new tutorial page gets the window by adding `<link rel="stylesheet" href="../../assets/ask.css">` and `<script src="../../assets/ask.js" defer></script>`.
 
 ## Notes
 
